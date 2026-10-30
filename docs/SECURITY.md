@@ -1,6 +1,6 @@
 # 🛡️ Security & Hostile-Input Defense Model
 
-`htmxUI` operates on a hypermedia architecture where the server is the single source of truth. This document establishes the formal security rules, Content Security Policy (CSP) guidelines, and injection mitigations.
+`Hyperstack` operates on a hypermedia architecture where the server is the single source of truth. This document establishes the formal security rules, Content Security Policy (CSP) guidelines, and injection mitigations.
 
 ---
 
@@ -11,19 +11,19 @@ If user-generated content (e.g. comments, usernames) is rendered raw into server
 
 ### Defense Mandate
 1. **Server-Side Template Escaping**: All server templates (Go `html/template`, Python `Jinja2`, Rust `Askama`, C# `Razor`) MUST HTML-escape user variables by default.
-2. **Safe Swap Targets**: `htmxUI` restricts OOB swaps to elements with explicit IDs and warns if an untrusted swap target attempts to replace `document.body` or `document.head`.
+2. **Safe Swap Targets**: `Hyperstack` restricts OOB swaps to elements with explicit IDs and warns if an untrusted swap target attempts to replace `document.body` or `document.head`.
 
 ---
 
 ## 📋 2. Content Security Policy (CSP) Compatibility & Zero-Eval Guarantees
 
-`htmxUI` is designed to operate under strict CSP environments **without requiring `'unsafe-eval'` or `'unsafe-inline'`**.
+`Hyperstack` is designed to operate under strict CSP environments **without requiring `'unsafe-eval'` or `'unsafe-inline'`**.
 
 ### Zero-Eval Safe Evaluator Mode
 When running in high-security enterprise environments, activate strict CSP mode:
 
 ```javascript
-HTMX PRO.config.strictCSP = true;
+Hyperstack.config.strictCSP = true;
 ```
 
 When `strictCSP` is active:
@@ -56,7 +56,7 @@ Content-Security-Policy: default-src 'self'; script-src 'self' 'nonce-rAnd0m123'
 
 ## 🔑 3. CSRF (Cross-Site Request Forgery) Token Docking
 
-To prevent unauthorized form mutations and state modifications, `htmxUI` automatically docks CSRF tokens from the document `<meta>` tag into all outgoing requests.
+To prevent unauthorized form mutations and state modifications, `Hyperstack` automatically docks CSRF tokens from the document `<meta>` tag into all outgoing requests.
 
 ```html
 <!-- In HTML Header -->
@@ -69,7 +69,7 @@ To prevent unauthorized form mutations and state modifications, `htmxUI` automat
 
 ## 🚫 4. DOM Clobbering & Sandbox Isolation
 
-`htmxUI` attributes use the standardized `hx-*` prefix and access state through explicit proxy sandboxes (`$store`, `$refs`, `$el`, `$event`, `$form`) rather than polluting the global `window` object with element IDs.
+`Hyperstack` attributes use the standardized `hx-*` prefix and access state through explicit proxy sandboxes (`$store`, `$refs`, `$el`, `$event`, `$form`) rather than polluting the global `window` object with element IDs.
 
 ---
 

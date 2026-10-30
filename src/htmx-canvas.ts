@@ -1,5 +1,5 @@
 /**
- * HTMXUI Canvas Engine: Zero-bloat plugin for draggable spatial nodes, snapping, and elastic SVG connections
+ * Hyperstack Canvas Engine: Zero-bloat plugin for draggable spatial nodes, snapping, and elastic SVG connections
  * 
  * Supports:
  * - Draggable spatial nodes ([hx-drag], [hx-drag-handle])

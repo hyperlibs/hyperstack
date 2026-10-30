@@ -1,6 +1,6 @@
 # 🤖 Machine-Actionable `@diag` Protocol Specification
 
-`@diag` is the universal, machine-readable diagnostic and autonomous self-healing protocol across the Hyperlibs ecosystem (`htmxUI`, `HMLR`, `htmFX`, `.fx`).
+`@diag` is the universal, machine-readable diagnostic and autonomous self-healing protocol across the Hyperlibs ecosystem (`Hyperstack`, `HMLR`, `htmFX`, `.fx`).
 
 ---
 
@@ -32,7 +32,7 @@
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
-| **`code`** | `string` | Unique error identifier (e.g. `FX-0404`, `FX-POLICY-004`, `HTMX PRO-BOLT-001`). |
+| **`code`** | `string` | Unique error identifier (e.g. `FX-0404`, `FX-POLICY-004`, `HYPERSTACK-BOLT-001`). |
 | **`severity`** | `enum` | `error` \| `warning` \| `info` \| `hint`. |
 | **`phase`** | `enum` | `compile` \| `validate` \| `scheduling` \| `execution` \| `runtime`. |
 | **`span`** | `string` | Source location in `line:col-line:col` format. |

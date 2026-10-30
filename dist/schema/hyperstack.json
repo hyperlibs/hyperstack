@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://htmxui.dev/schema/htmxui.json",
-  "title": "HTMXUI Framework Attribute & Grammar Specification",
-  "description": "Formal machine-readable grammar, attribute rules, element targets, and scope definitions for HTMXUI.",
+  "$id": "https://hyperstack.dev/schema/hyperstack.json",
+  "title": "Hyperstack Framework Attribute & Grammar Specification",
+  "description": "Formal machine-readable grammar, attribute rules, element targets, and scope definitions for Hyperstack.",
   "version": "1.0.0",
   "type": "object",
   "properties": {
@@ -312,15 +312,15 @@
       }
     },
     "errorCatalog": {
-      "HTMXUI-BOLT-001": "Invalid JSON/JS syntax in hx-state or <script type=\"application/json\" hx-state>",
-      "HTMXUI-BOLT-002": "Circular dependency detected in hx-computed property",
-      "HTMXUI-BOLT-003": "Invalid hx-for expression syntax. Expected 'item in list' or '(item, index) in list'",
-      "HTMXUI-BOLT-004": "Referenced undefined property or store in expression",
-      "HTMXUI-BOLT-005": "Possible typo in attribute name (autocorrect suggestion provided)",
-      "HTMXUI-FORM-001": "Form validation failed on submit",
-      "HTMXUI-FLASH-001": "Flash database queried before initialization or fetch error",
-      "HTMXUI-CALC-001": "Formula syntax error in hx-calc expression",
-      "HTMXUI-CALC-002": "Circular reference (#CYCLE!) in spreadsheet formula DAG"
+      "HYPERSTACK-BOLT-001": "Invalid JSON/JS syntax in hx-state or <script type=\"application/json\" hx-state>",
+      "HYPERSTACK-BOLT-002": "Circular dependency detected in hx-computed property",
+      "HYPERSTACK-BOLT-003": "Invalid hx-for expression syntax. Expected 'item in list' or '(item, index) in list'",
+      "HYPERSTACK-BOLT-004": "Referenced undefined property or store in expression",
+      "HYPERSTACK-BOLT-005": "Possible typo in attribute name (autocorrect suggestion provided)",
+      "HYPERSTACK-FORM-001": "Form validation failed on submit",
+      "HYPERSTACK-FLASH-001": "Flash database queried before initialization or fetch error",
+      "HYPERSTACK-CALC-001": "Formula syntax error in hx-calc expression",
+      "HYPERSTACK-CALC-002": "Circular reference (#CYCLE!) in spreadsheet formula DAG"
     }
   }
 }

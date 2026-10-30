@@ -16,7 +16,7 @@ export interface QueuedMutation {
   conflict?: any;
 }
 
-const DB_NAME = 'HTMXUI_OfflineDB';
+const DB_NAME = 'Hyperstack_OfflineDB';
 const DB_VERSION = 1;
 const STORE_NAME = 'mutation_queue';
 
@@ -223,7 +223,7 @@ export const HxOffline = new OfflineManager();
 
 if (typeof window !== 'undefined') {
   (window as any).HxOffline = HxOffline;
-  if (typeof (window as any).HTMXUI !== 'undefined') {
-    (window as any).HTMXUI.offline = HxOffline;
+  if (typeof (window as any).Hyperstack !== 'undefined') {
+    (window as any).Hyperstack.offline = HxOffline;
   }
 }

@@ -108,10 +108,10 @@ describe('Zero-Eval Safe Expression Evaluator & Action Executor', () => {
     clearDiagnostics();
     expect(getDiagnostics().length).toBe(0);
 
-    reportError('HTMXUI-BOLT-005', 'Typo in hx-click attribute');
+    reportError('HYPERSTACK-BOLT-005', 'Typo in hx-click attribute');
     const records = getDiagnostics();
     expect(records.length).toBe(1);
-    expect(records[0].code).toBe('HTMXUI-BOLT-005');
+    expect(records[0].code).toBe('HYPERSTACK-BOLT-005');
     expect(records[0].detail).toContain('Typo in hx-click');
 
     clearDiagnostics();
@@ -119,8 +119,8 @@ describe('Zero-Eval Safe Expression Evaluator & Action Executor', () => {
   });
 
   test('generates standardized [@diag CODE] outputs', () => {
-    const msg = formatDiag('HTMXUI-BOLT-006', 'Blocked by CSP policy');
-    expect(msg).toContain('[@diag HTMXUI-BOLT-006]');
+    const msg = formatDiag('HYPERSTACK-BOLT-006', 'Blocked by CSP policy');
+    expect(msg).toContain('[@diag HYPERSTACK-BOLT-006]');
     expect(msg).toContain('CSP EvalError');
     expect(msg).toContain('Fix:');
   });

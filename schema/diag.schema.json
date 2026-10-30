@@ -7,7 +7,7 @@
   "properties": {
     "code": {
       "type": "string",
-      "description": "Unique error taxonomy code (e.g. FX-0404, HTMXUI-BOLT-001)"
+      "description": "Unique error taxonomy code (e.g. FX-0404, HYPERSTACK-BOLT-001)"
     },
     "severity": {
       "type": "string",

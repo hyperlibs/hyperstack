@@ -26,8 +26,8 @@ describe('HxBolt Concurrency: Channels & Structs', () => {
       message = msg;
     });
 
-    HxBolt.send('chat', 'Hello HTMXUI!');
-    expect(message).toBe('Hello HTMXUI!');
+    HxBolt.send('chat', 'Hello Hyperstack!');
+    expect(message).toBe('Hello Hyperstack!');
     unsub();
   });
 

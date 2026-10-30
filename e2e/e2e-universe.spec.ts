@@ -55,7 +55,7 @@ test.describe('Kosmos 3D Universe Browser E2E Test Suite', () => {
     await expect(page.locator('#prop-habitability')).toHaveText('Extreme Gravitational Lensing');
   });
 
-  test('Interactive Time-Warp and Pause toggling via HTMXUI Bolt signals', async ({ page }) => {
+  test('Interactive Time-Warp and Pause toggling via Hyperstack Bolt signals', async ({ page }) => {
     await page.goto('http://localhost:3000/app/universe');
 
     const pauseBtn = page.locator('#btn-pause');

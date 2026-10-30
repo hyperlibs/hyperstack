@@ -27,7 +27,7 @@
       });
   };
 
-  // src/htmx-a11y.ts
+  // hyperstack/src/htmx-a11y.ts
   var exports_htmx_a11y = {};
   __export(exports_htmx_a11y, {
     trapFocus: () => trapFocus,

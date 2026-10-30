@@ -1,7 +1,7 @@
 /**
- * HTMXUI — Core TypeScript Definitions & Type Contracts
+ * Hyperstack — Core TypeScript Definitions & Type Contracts
  * 
- * Type definitions for HTMXUI engines:
+ * Type definitions for Hyperstack engines:
  * - HxBolt: Signal & Reactive State Engine
  * - HxFlash: In-Memory Fuzzy Search & Multi-Column Filter Engine
  * - HxForm: Declarative Validation & Form State Machine
@@ -23,7 +23,7 @@ declare global {
     HxOffline?: any;
     HxDevTools?: any;
     HxCalc?: any;
-    HTMXUI?: any;
+    Hyperstack?: any;
     htmFX?: any;
   }
 }

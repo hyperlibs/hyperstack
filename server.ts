@@ -22,7 +22,8 @@ const COMPONENTS = [
   "smart-lighting-dimmer","smart-pos-cashier","smart-relay-switchboard","smart-rotary-volume",
   "smart-smart-lock","smart-solar-power-flow","smart-step-activity-rings","smart-thermostat-dual-zone",
   "smart-tire-pressure-tpms","smart-turn-by-turn-nav","smart-uv-index-dial","smart-weather-hero",
-  "smart-wind-compass"
+  "smart-wind-compass",
+  "hy-hook"
 ];
 
 function formatName(slug: string): string {
@@ -71,7 +72,7 @@ async function buildComponentPage(slug: string): Promise<string> {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${name} — HTMX PRO</title>
+  <title>${name} — Hyperstack</title>
   <script src="/vendor/htmx.min.js"></script>
   <script src="/htmx-bolt.js"></script>
   <script src="/htmx-flash.js"></script>
@@ -97,7 +98,7 @@ async function buildComponentPage(slug: string): Promise<string> {
       <div class="flex h-14 items-center border-b border-border px-4">
         <a href="/" class="flex items-center gap-2">
           <svg class="h-5 w-5 text-primary" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
-          <span class="font-bold text-lg tracking-tight">HTMX PRO</span>
+          <span class="font-bold text-lg tracking-tight">Hyperstack</span>
         </a>
       </div>
       <div class="flex-1 p-3 overflow-y-auto">
@@ -194,7 +195,7 @@ async function buildComponentPage(slug: string): Promise<string> {
             Components include <code class="bg-muted px-1 py-0.5 rounded text-xs font-mono">hx-ext="reactive"</code> for htmx-bolt integration.
           </p>
           <div class="code-block"><code><pre>&lt;!-- Import in your layout --&gt;
-&lt;script src="https://unpkg.com/htmx.org@2.0.4"&gt;&lt;/script&gt;
+&lt;script src="https://unpkg.com/htmx.org@4.0.0/dist/htmx.min.js"&gt;&lt;/script&gt;
 &lt;script src="/htmx-bolt.js"&gt;&lt;/script&gt;
 
 &lt;!-- Use the component --&gt;
@@ -247,7 +248,7 @@ const server = Bun.serve({
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HTMX PRO — Hyper Reactive HTMX on Steroids</title>
+  <title>Hyperstack — Hyper Reactive HTMX on Steroids</title>
   <script src="/vendor/htmx.min.js"></script>
   <link rel="stylesheet" href="/styles.css">
 </head>
@@ -258,13 +259,13 @@ const server = Bun.serve({
     <div class="container mx-auto px-4 lg:px-8 h-16 flex items-center justify-between max-w-7xl">
       <div class="flex items-center gap-3 font-bold text-xl tracking-tight">
         <div class="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center text-sm shadow-sm font-black">H</div>
-        HTMX PRO
+        Hyperstack
       </div>
       <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
         <a href="/demo" class="text-primary font-semibold hover:text-primary transition-colors flex items-center gap-1"><span>🚀</span> Live Demos</a>
         <a href="/docs/components/introduction" class="hover:text-foreground transition-colors">Documentation</a>
         <a href="/docs/components/button" class="hover:text-foreground transition-colors">Components</a>
-        <a href="https://github.com/hyperlibs/htmxpro" target="_blank" class="hover:text-foreground transition-colors">GitHub</a>
+        <a href="https://github.com/hyperlibs/hyperstack" target="_blank" class="hover:text-foreground transition-colors">GitHub</a>
       </nav>
     </div>
   </header>
@@ -282,7 +283,7 @@ const server = Bun.serve({
           HTMX + Shadcn + <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">Reactive Engine</span>
         </h1>
         <p class="text-lg md:text-xl text-muted-foreground max-w-3xl mb-6 leading-relaxed">
-          HTMX PRO is not just a UI library. It is a <strong class="text-foreground">deliberate fork and reinvention of htmx</strong> into a hyperreactive, lean framework. 100+ Shadcn-quality components. ~2KB reactive engine. Zero NPM bloat.
+          Hyperstack completes HTML as a hypermedia-first, hyperreactive lean framework on htmx 4. 100+ Shadcn-quality components. Modular zero-eval micro-engines. Zero NPM bloat.
         </p>
         <p class="text-base text-muted-foreground max-w-2xl mb-10 leading-relaxed">
           Built for human developers <em>and</em> agentic AI coders who need predictable, composable, server-driven UIs.
@@ -338,7 +339,7 @@ const server = Bun.serve({
       <div class="container mx-auto max-w-7xl grid lg:grid-cols-2 gap-16">
         <div>
           <div class="inline-flex items-center rounded-full border border-border bg-muted/50 px-3 py-1 text-xs font-semibold mb-4 text-primary">FOR HUMAN DEVELOPERS</div>
-          <h2 class="text-3xl font-extrabold tracking-tight mb-6">Why developers choose HTMX PRO</h2>
+          <h2 class="text-3xl font-extrabold tracking-tight mb-6">Why developers choose Hyperstack</h2>
           <ol class="space-y-3 text-sm text-foreground">
             <li class="flex gap-3"><span class="font-bold text-primary shrink-0">01.</span><span>Zero NPM, zero Virtual DOM — no node_modules, no React, no webpack</span></li>
             <li class="flex gap-3"><span class="font-bold text-primary shrink-0">02.</span><span>Server remains the source of truth — true hypermedia architecture</span></li>
@@ -346,7 +347,7 @@ const server = Bun.serve({
             <li class="flex gap-3"><span class="font-bold text-primary shrink-0">04.</span><span>Instant local reactivity via Bolt — dropdowns, tabs, toggles without round-trips</span></li>
             <li class="flex gap-3"><span class="font-bold text-primary shrink-0">05.</span><span>Backend agnostic — Python, Go, PHP, Rust, Bun, any language that returns HTML</span></li>
             <li class="flex gap-3"><span class="font-bold text-primary shrink-0">06.</span><span>Tailwind-native theming — CSS variable system for dark mode and custom brands</span></li>
-            <li class="flex gap-3"><span class="font-bold text-primary shrink-0">07.</span><span>Sub-3KB total client JS — smaller than a single React hook import</span></li>
+            <li class="flex gap-3"><span class="font-bold text-primary shrink-0">07.</span><span>~71 KB gzipped for all 13 engines — no hydration pass, no virtual DOM</span></li>
             <li class="flex gap-3"><span class="font-bold text-primary shrink-0">08.</span><span>Progressive enhancement — start pure htmx, add Bolt/Flash only where needed</span></li>
             <li class="flex gap-3"><span class="font-bold text-primary shrink-0">09.</span><span>7 layout primitives — dashboards, marketing, print, canvases, mobile-first</span></li>
             <li class="flex gap-3"><span class="font-bold text-primary shrink-0">10.</span><span>No build step for logic — HTML is the component, the server is the framework</span></li>
@@ -354,7 +355,7 @@ const server = Bun.serve({
         </div>
         <div>
           <div class="inline-flex items-center rounded-full border border-border bg-muted/50 px-3 py-1 text-xs font-semibold mb-4 text-primary">FOR AGENTIC AI CODERS</div>
-          <h2 class="text-3xl font-extrabold tracking-tight mb-6">Why AI agents prefer HTMX PRO</h2>
+          <h2 class="text-3xl font-extrabold tracking-tight mb-6">Why AI agents prefer Hyperstack</h2>
           <ol class="space-y-3 text-sm text-foreground">
             <li class="flex gap-3"><span class="font-bold text-primary shrink-0">01.</span><span>Highly regular HTML structure — agents parse, generate, and modify UI with high success rates</span></li>
             <li class="flex gap-3"><span class="font-bold text-primary shrink-0">02.</span><span>Declarative attribute-based behavior — no imperative JS to reason about</span></li>
@@ -425,8 +426,8 @@ const server = Bun.serve({
 
   <footer class="border-t border-border py-12 px-4">
     <div class="container mx-auto max-w-7xl text-center">
-      <p class="text-sm text-muted-foreground mb-2">HTMX PRO — Hyper Reactive HTMX on Steroids</p>
-      <p class="text-xs text-muted-foreground">Original htmx completed HTML as a hypermedia. HTMX PRO completes it as a reactive, agent-friendly, composable application platform.</p>
+      <p class="text-sm text-muted-foreground mb-2">Hyperstack — Hyper Reactive HTMX on Steroids</p>
+      <p class="text-xs text-muted-foreground">Original htmx completed HTML as a hypermedia. Hyperstack completes it as a reactive, agent-friendly, composable application platform on htmx 4.</p>
     </div>
   </footer>
 
@@ -481,10 +482,8 @@ const server = Bun.serve({
       return new Response(JSON.stringify(invoices), { headers: { "Content-Type": "application/json" } });
     }
 
-    if (url.pathname === "/schema/htmxpro.json" || url.pathname === "/schema/htmxui.json") {
-      const proFile = Bun.file("schema/htmxpro.json");
-      const filePath = (await proFile.exists()) ? "schema/htmxpro.json" : "schema/htmxui.json";
-      return new Response(Bun.file(filePath), { headers: { "Content-Type": "application/json" } });
+    if (url.pathname === "/schema/hyperstack.json") {
+      return new Response(Bun.file("schema/hyperstack.json"), { headers: { "Content-Type": "application/json" } });
     }
 
     // Universal public file serving
@@ -528,4 +527,4 @@ const server = Bun.serve({
   }
 });
 
-console.log(`⚡ HTMX PRO Docs running at http://localhost:${server.port}`);
+console.log(`⚡ Hyperstack Docs running at http://localhost:${server.port}`);

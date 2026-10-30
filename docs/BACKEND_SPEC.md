@@ -1,10 +1,10 @@
 # 🔌 Backend Wire Protocol & Server Integration Specification
 
-`htmxUI` is 100% backend-agnostic. It requires **zero Node.js, zero NPM, and zero backend libraries**. Any backend that can write HTTP responses or Server-Sent Events (SSE) works instantly.
+`Hyperstack` is 100% backend-agnostic. It requires **zero Node.js, zero NPM, and zero backend libraries**. Any backend that can write HTTP responses or Server-Sent Events (SSE) works instantly.
 
 ---
 
-## 📋 The 4 Core Wire Protocols
+## 📋 The 5 Core Wire Protocols
 
 ### 1. Out-of-Band (OOB) Fragment Swaps
 To update multiple independent regions of the page in a single HTTP response:
@@ -60,6 +60,27 @@ Emit custom events to trigger client-side actions without DOM swaps:
 HTTP/1.1 200 OK
 Content-Type: text/html
 HX-Trigger: {"htmx:toast": {"message": "Position Closed", "type": "success"}}
+```
+
+---
+
+### 5. Hyperhooks (`hy-hook`) Event & Webhook Streams
+Declarative real-time webhooks, event streaming, and bi-directional feeds over SSE, WebSockets, or WebTransport:
+
+```html
+<div hy-hook="/api/live-orders" 
+     hy-action="merge" 
+     hy-filter="status == 'active'" 
+     hy-codec="json" 
+     hy-target="#order-feed">
+  <div id="order-feed" class="divide-y"></div>
+</div>
+```
+
+**Wire Event Format**:
+```
+event: hy-hook
+data: {"id": "ord-883", "status": "active", "html": "<div class='p-3'>Order #883 • $420.00</div>"}
 ```
 
 ---

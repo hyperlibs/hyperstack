@@ -14,7 +14,7 @@ const NO_SCALE_UI = [
   "dialog", "drawer", "sheet", "modal", "context-menu", "hover-card", "tooltip", "popover" // Fixed viewport overlays
 ];
 
-test.describe('HTMXUI Component Gallery Tests', () => {
+test.describe('Hyperstack Component Gallery Tests', () => {
   for (const slug of COMPONENTS) {
     test(`Component: ${slug}`, async ({ page }) => {
       await page.goto(`/docs/components/${slug}`);

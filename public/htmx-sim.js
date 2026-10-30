@@ -27,7 +27,7 @@
       });
   };
 
-  // src/htmx-sim.ts
+  // hyperstack/src/htmx-sim.ts
   var exports_htmx_sim = {};
   __export(exports_htmx_sim, {
     Vec2: () => Vec2,

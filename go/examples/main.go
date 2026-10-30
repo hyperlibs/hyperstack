@@ -1,14 +1,14 @@
 package main
 
 import (
-	"github.com/hyperlibs/htmxpro/go/components"
-	"github.com/hyperlibs/htmxpro/go/htmxpro"
+	"github.com/hyperlibs/hyperstack/go/components"
+	"github.com/hyperlibs/hyperstack/go/hyperstack"
 )
 
 func main() {
-	app := htmxpro.New()
+	app := hyperstack.New()
 
-	app.GET("/", func(c *htmxpro.Context) error {
+	app.GET("/", func(c *hyperstack.Context) error {
 		return c.Render(components.Page(components.PageProps{
 			Title: "Operations Cockpit",
 			Sidebar: components.NavMenu([]components.NavItem{

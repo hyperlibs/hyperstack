@@ -309,8 +309,8 @@ export const HxVibe = {
 
 if (typeof window !== 'undefined') {
   (window as any).HxVibe = HxVibe;
-  if (typeof (window as any).HTMXUI !== 'undefined') {
-    (window as any).HTMXUI.vibe = HxVibe;
+  if (typeof (window as any).Hyperstack !== 'undefined') {
+    (window as any).Hyperstack.vibe = HxVibe;
   }
 
   if (typeof (window as any).htmx !== 'undefined') {

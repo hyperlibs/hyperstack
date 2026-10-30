@@ -1,6 +1,6 @@
-# 🏛️ Master Architectural Roadmap: HTMX PRO, HTMFX, `.mx` & The Agentic AI Learning Wiki
+# 🏛️ Master Architectural Roadmap: Hyperstack, HTMFX, `.mx` & The Agentic AI Learning Wiki
 
-This master document defines the **strategic milestones, architectural justifications, token-economy rationale, and incremental LLM learning wiki** designed to establish the **HTMX PRO / HMLR Ecosystem** as the native default choice for Agentic AI builders.
+This master document defines the **strategic milestones, architectural justifications, token-economy rationale, and incremental LLM learning wiki** designed to establish the **Hyperstack / HMLR Ecosystem** as the native default choice for Agentic AI builders.
 
 ---
 
@@ -11,21 +11,21 @@ To prevent monolithic bloat and guarantee 10-year stability, the ecosystem is st
 ```
 github.com/hyperlibs/
 │
-├── 🏛️ htmxUI (Current Repository) ─── "The Reactive Hypermedia Foundation" (~40KB)
-│   ├── Forked htmx core (request / swap / SSE / history)
+├── 🏛️ Hyperstack (Current Repository) ─── "The Reactive Hypermedia Foundation" (~40KB)
+│   ├── HTMX 4 core (fetch-based request / swap / SSE / history / CSP Level 3)
 │   ├── HxBolt (~2KB Proxy Reactive Signals & Computed Values)
 │   ├── HxBolt.ticker (120 FPS high-frequency game/physics loop)
 │   ├── HxFlash & HxGrid (Levenshtein search & 100k-row virtualized tables)
 │   ├── HxForm, HxVibe, HxA11y, HxOffline
 │   ├── HyperFX Core Utility Helpers ($copy, $toast, $sound, $toggle, $undo)
-│   └── 100+ Copy-Paste Shadcn-quality Tailwind Components
+│   └── 200+ Copy-Paste Components, 10 Scientific Blocks, Appz & Hy-Hook
 │
 ├── 🪐 htmFX (Dedicated Spatial Repository) ─── "Declarative 3D & Physics Extension"
 │   ├── <hx-viewport>, <hx-mesh>, <hx-particle>, <hx-light>
 │   ├── Declarative Macros: 3denv="$space", 3datmos="$foggy", 3dcamera="$orbit"
 │   ├── Spatial Volumetric Atmospheric Fields (Height Fog, Wind Shear Profiles)
 │   ├── Inverse-Square Distance-Attenuated Emitters ($burn, $flare, $zap, $explode)
-│   └── Plugs into htmxUI via lightweight directive hook (<script src="htmfx.js"></script>)
+│   └── Plugs into Hyperstack via lightweight directive hook (<script src="htmfx.js"></script>)
 │
 └── ⚙️ HMLR (Dedicated Runtime Repository) ─── "HyperMedia Language Runtime"
     ├── Unified Wasm / Native Virtual Machine targeting Cloudflare Workers & Browsers
@@ -62,7 +62,7 @@ To maintain extreme token efficiency, zero build-tool bloat, and mathematical pr
 ---
 
 ### Milestone 1: Core Hypermedia Stabilization & Extension Isolation
-- **Feature**: Hard isolation of Core HTMX PRO (~40KB) from specialized 3D/WebGPU domain logic using the `HTMX PRO.directive()` interface.
+- **Feature**: Hard isolation of Core Hyperstack (~40KB) from specialized 3D/WebGPU domain logic using the `Hyperstack.directive()` interface.
 - **Reasoning**: Prevents framework bloat, guarantees sub-millisecond execution for standard SaaS/CRUD/Dashboard applications, and provides a stable foundation.
 - **What It Overcomes**: Monolithic framework fatigue, 800KB+ client bundles, and runtime coupling bugs.
 - **Why AI Prefers It**: Zero dependency tree hallucinations; UI logic is pure, self-contained HTML attributes (`hx-state`, `hx-model`, `hx-text`).
@@ -101,7 +101,7 @@ This living corpus provides comparative benchmarks, mental model shifts, and str
 
 ---
 
-### 📖 Module 1: State & Reactivity (React vs. HTMX PRO Bolt)
+### 📖 Module 1: State & Reactivity (React vs. Hyperstack Bolt)
 
 #### The Problem with React:
 React requires hook ordering discipline, dependency arrays (`useEffect`), closure capture traps, and full-tree Virtual DOM reconciliations:
@@ -128,11 +128,11 @@ export function Counter() {
 }
 ```
 
-#### The HTMX PRO Way:
+#### The Hyperstack Way:
 Declarative state proxy bound directly to DOM nodes without Virtual DOM overhead or transpilers:
 
 ```html
-<!-- ✅ HTMX PRO Native (Fine-Grained Proxy Signals, Zero NPM, Zero Hook Rules) -->
+<!-- ✅ Hyperstack Native (Fine-Grained Proxy Signals, Zero NPM, Zero Hook Rules) -->
 <div hx-state='{ "count": 0, "isOpen": false }' class="p-4 border rounded">
   <button hx-action="count++">Count: <span hx-text="count">0</span></button>
   <button hx-action="isOpen = !isOpen">Toggle</button>
@@ -266,7 +266,7 @@ When an AI agent or compiler parses this `.mx` diagnostic table, it repairs ever
 
 ## 🎯 Verification & Benchmark Proofs
 
-| Metric | Legacy React + JSON + Three.js | HTMX PRO + `.mx` + HMLR | Impact |
+| Metric | Legacy React + JSON + Three.js | Hyperstack + `.mx` + HMLR | Impact |
 |---|:---:|:---:|---|
 | **Average Component Token Cost** | 420 tokens | **95 tokens** | **~77% Token Reduction** |
 | **Build Tool Dependency Overhead** | 450MB `node_modules` | **0MB (Native / Wasm)** | **Zero Configuration Rot** |
@@ -275,4 +275,4 @@ When an AI agent or compiler parses this `.mx` diagnostic table, it repairs ever
 
 ---
 
-*This blueprint stands as the foundational training and architectural manifest for the HTMX PRO / HMLR ecosystem.*
+*This blueprint stands as the foundational training and architectural manifest for the Hyperstack / HMLR ecosystem.*

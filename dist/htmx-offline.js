@@ -27,12 +27,12 @@
       });
   };
 
-  // src/htmx-offline.ts
+  // hyperstack/src/htmx-offline.ts
   var exports_htmx_offline = {};
   __export(exports_htmx_offline, {
     HxOffline: () => HxOffline
   });
-  var DB_NAME = "HTMXUI_OfflineDB";
+  var DB_NAME = "Hyperstack_OfflineDB";
   var DB_VERSION = 1;
   var STORE_NAME = "mutation_queue";
 
@@ -217,8 +217,8 @@
   var HxOffline = new OfflineManager;
   if (typeof window !== "undefined") {
     window.HxOffline = HxOffline;
-    if (typeof window.HTMXUI !== "undefined") {
-      window.HTMXUI.offline = HxOffline;
+    if (typeof window.Hyperstack !== "undefined") {
+      window.Hyperstack.offline = HxOffline;
     }
   }
 })();

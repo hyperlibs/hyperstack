@@ -27,7 +27,7 @@
       });
   };
 
-  // src/htmx-devtools.ts
+  // hyperstack/src/htmx-devtools.ts
   var exports_htmx_devtools = {};
   __export(exports_htmx_devtools, {
     HxDevTools: () => HxDevTools
@@ -58,14 +58,14 @@
     }
     createDOM() {
       this.panelEl = document.createElement("div");
-      this.panelEl.id = "htmxui-devtools-panel";
+      this.panelEl.id = "hyperstack-devtools-panel";
       this.panelEl.className = "fixed bottom-4 right-4 w-96 max-h-[500px] bg-slate-950 text-slate-100 border border-slate-800 rounded-xl shadow-2xl z-50 flex flex-col font-mono text-xs overflow-hidden";
       this.panelEl.style.display = "none";
       this.panelEl.innerHTML = `
       <div class="p-3 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
         <div class="flex items-center gap-2">
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span class="font-bold text-slate-100">HTMX PRO DevTools</span>
+          <span class="font-bold text-slate-100">Hyperstack DevTools</span>
         </div>
         <div class="flex items-center gap-2">
           <button class="hx-dev-btn-undo px-2 py-0.5 bg-slate-800 hover:bg-slate-700 rounded text-[10px]">Undo</button>
@@ -146,8 +146,8 @@
   var HxDevTools = new DevToolsPanel;
   if (typeof window !== "undefined") {
     window.HxDevTools = HxDevTools;
-    if (typeof window.HTMXUI !== "undefined") {
-      window.HTMXUI.devtools = HxDevTools;
+    if (typeof window.Hyperstack !== "undefined") {
+      window.Hyperstack.devtools = HxDevTools;
     }
   }
 })();

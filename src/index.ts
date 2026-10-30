@@ -1,7 +1,7 @@
 /**
- * HTMXUI — Hyper Reactive Lean Framework Suite Entrypoint
+ * Hyperstack — Hyper Reactive Lean Framework Suite Entrypoint
  * 
- * Provides typed exports of all HTMXUI engines for fullstack frameworks,
+ * Provides typed exports of all Hyperstack engines for fullstack frameworks,
  * bundlers, SSR runtimes, and TypeScript applications.
  */
 
@@ -20,5 +20,5 @@ export { HxCalc, CalcEngine, cellToCoords, coordsToCell, expandRange } from './h
 export { HxSim, SimCanvasRunner, Vec2, Boid, GravitySimulation, CollisionSimulation, LifeSimulation, SlimeSimulation } from './htmx-sim';
 export { Appz, AppzChan, AppzNavigator, HardwareBridge, applySegmentLayerStyles, getAppzChannel } from './appz';
 export { initCanvasEngine, updateCanvasConnections, getCanvasLayer } from './htmx-canvas';
-
-
+export { HyHook, HyperHookEngine, HyperPlane, HyperFlag, HyperFrameCodec } from './hy-hook';
+export type { HyperFrame, HySwapStrategy, HyHookEvent, HySubscription, HyHookDiagnostics } from './hy-hook';

@@ -1,6 +1,6 @@
 ---
-name: htmxpro
-description: "Author, inspect, validate, and debug high-performance reactive web applications using HTMX PRO — the hyperreactive lean framework for human and AI agentic developers."
+name: hyperstack
+description: "Author, inspect, validate, and debug high-performance reactive web applications using Hyperstack — the hyperreactive lean framework for human and AI agentic developers."
 version: 1.0.0
 author: "Hyperlibs Engineering"
 license: "MIT"
@@ -14,19 +14,19 @@ tags:
   - agentic-coding
 ---
 
-# HTMX PRO Agent Skill Specification
+# Hyperstack Agent Skill Specification
 
-HTMX PRO is a hyperreactive, hypermedia-first web application framework engineered specifically for **human developers** and **autonomous AI coding agents**. It provides fine-grained signal reactivity, sub-millisecond in-memory search, enterprise data grids, physics-based FLIP animations, and accessible keyboard navigation without Virtual DOM overhead or multi-gigabyte client bundles.
+Hyperstack is a hyperreactive, hypermedia-first web application framework engineered specifically for **human developers** and **autonomous AI coding agents**. Powered by the htmx 4 base, it provides fine-grained signal reactivity, sub-millisecond in-memory search, enterprise data grids, physics-based FLIP animations, and accessible keyboard navigation without Virtual DOM overhead or multi-gigabyte client bundles.
 
 ---
 
 ## 1. Core Architectural Pillars
 
-1. **Hypermedia Source of Truth**: The server handles data persistence, routing, and major mutations via standard HTTP (GET, POST, PUT, DELETE, PATCH).
+1. **Hypermedia Source of Truth**: The server handles data persistence, routing, and major mutations via standard HTTP (GET, POST, PUT, DELETE, PATCH) on modern htmx 4.
 2. **Deterministic Declarative Grammar**: Local client state and reactivity are declared directly on DOM nodes via `hx-*` attributes.
 3. **Zero Virtual DOM & Zero Build**: HTML is parsed natively by the browser engine. No JSX compilation or bundlers required.
 4. **Out-of-the-Box Zero-`eval` Strict CSP**: 18-stage AST recursive descent parser runs by default as primary engine (handling ternaries, array closures `.reduce()`, balanced template literals, and `|>` pipeline chaining) without dynamic `new Function()`.
-5. **Universal Diagnostic Protocol (`@diag`)**: Standardized error taxonomy (`HTMX PRO-BOLT-xxx` ... `HTMX PRO-SPATIAL-xxx`) with Levenshtein autocorrect and `htmx:diag` DOM events.
+5. **Universal Diagnostic Protocol (`@diag`)**: Standardized error taxonomy (`HYPERSTACK-BOLT-xxx` ... `HYPERSTACK-SPATIAL-xxx`) with Levenshtein autocorrect and `htmx:diag` DOM events.
 
 ---
 
@@ -99,39 +99,39 @@ Available inside all `hx-action` and `hx-effect` scopes:
 
 ## 3. Universal Error Taxonomy (`@diag`)
 
-When HTMX PRO encounters a syntax error, invalid state, or potential AI typo, it outputs a structured diagnostic string conforming to the `@diag` specification:
+When Hyperstack encounters a syntax error, invalid state, or potential AI typo, it outputs a structured diagnostic string conforming to the `@diag` specification:
 
 ```
-[@diag HTMX PRO-BOLT-005] Unrecognized hx-* attribute detected (potential AI hallucination or typo).
+[@diag HYPERSTACK-BOLT-005] Unrecognized hx-* attribute detected (potential AI hallucination or typo).
   Target: <button.btn.btn-primary>
   Detail: Element has unknown attribute 'hx-click'. Did you mean 'hx-action'?
-  Fix: Check the attribute spelling against the official HTMX PRO schema in /schema/htmxpro.json.
+  Fix: Check the attribute spelling against the official Hyperstack schema in /schema/hyperstack.json.
 ```
 
 ### 3.1 Catalog Index
 
 | Code | Micro-Engine | Description | Typical Fix |
 | :--- | :--- | :--- | :--- |
-| `HTMX PRO-BOLT-001` | Bolt | Malformed JSON in state declaration. | Use `<script type="application/json" hx-state>` to avoid quote escaping. |
-| `HTMX PRO-BOLT-002` | Bolt | Circular recursion in `hx-computed`. | Break cyclic formula loops. |
-| `HTMX PRO-BOLT-003` | Bolt | Malformed `hx-for` syntax. | Use `item in items` on a `<template>` tag. |
-| `HTMX PRO-BOLT-004` | Bolt | Undefined store or state reference. | Register store with `HxBolt.store('name', {...})`. |
-| `HTMX PRO-BOLT-005` | Bolt | Typo or hallucinated `hx-*` attribute. | Autocorrect according to Levenshtein suggestion. |
-| `HTMX PRO-BOLT-006` | Bolt | CSP Eval blocked dynamic evaluation. | Set `HTMX PRO.config.strictCSP = true`. |
-| `HTMX PRO-CALC-001` | Calc | Cycle detected in calculation graph DAG. | Verify acyclic formula dependencies. |
-| `HTMX PRO-FORM-001` | Form | Validation constraint syntax error. | Check regex pattern in `hx-validate`. |
-| `HTMX PRO-VIBE-001` | Vibe | Negative or invalid spring physics parameters. | Set `stiffness > 0` and `mass > 0`. |
-| `HTMX PRO-FLASH-001` | Flash | Columnar store buffer mismatch. | Verify schema descriptor field keys. |
-| `HTMX PRO-A11Y-001` | A11y | Missing accessible name or broken roving boundary. | Add `aria-label` or verify `hx-roving` container. |
-| `HTMX PRO-VIRTUAL-001` | Virtual | Negative viewport or item height. | Ensure item height and container clientHeight > 0. |
-| `HTMX PRO-GRID-001` | Grid | Column definition mismatch. | Ensure column field matches row record key. |
-| `HTMX PRO-OFFLINE-001` | Offline | Mutation replay queue conflict. | Ensure server endpoint accepts replay payload. |
+| `HYPERSTACK-BOLT-001` | Bolt | Malformed JSON in state declaration. | Use `<script type="application/json" hx-state>` to avoid quote escaping. |
+| `HYPERSTACK-BOLT-002` | Bolt | Circular recursion in `hx-computed`. | Break cyclic formula loops. |
+| `HYPERSTACK-BOLT-003` | Bolt | Malformed `hx-for` syntax. | Use `item in items` on a `<template>` tag. |
+| `HYPERSTACK-BOLT-004` | Bolt | Undefined store or state reference. | Register store with `HxBolt.store('name', {...})`. |
+| `HYPERSTACK-BOLT-005` | Bolt | Typo or hallucinated `hx-*` attribute. | Autocorrect according to Levenshtein suggestion. |
+| `HYPERSTACK-BOLT-006` | Bolt | CSP Eval blocked dynamic evaluation. | Set `Hyperstack.config.strictCSP = true`. |
+| `HYPERSTACK-CALC-001` | Calc | Cycle detected in calculation graph DAG. | Verify acyclic formula dependencies. |
+| `HYPERSTACK-FORM-001` | Form | Validation constraint syntax error. | Check regex pattern in `hx-validate`. |
+| `HYPERSTACK-VIBE-001` | Vibe | Negative or invalid spring physics parameters. | Set `stiffness > 0` and `mass > 0`. |
+| `HYPERSTACK-FLASH-001` | Flash | Columnar store buffer mismatch. | Verify schema descriptor field keys. |
+| `HYPERSTACK-A11Y-001` | A11y | Missing accessible name or broken roving boundary. | Add `aria-label` or verify `hx-roving` container. |
+| `HYPERSTACK-VIRTUAL-001` | Virtual | Negative viewport or item height. | Ensure item height and container clientHeight > 0. |
+| `HYPERSTACK-GRID-001` | Grid | Column definition mismatch. | Ensure column field matches row record key. |
+| `HYPERSTACK-OFFLINE-001` | Offline | Mutation replay queue conflict. | Ensure server endpoint accepts replay payload. |
 
 ---
 
 ## 4. Anti-Hallucination Rules for AI Agents
 
-When generating code for HTMX PRO:
+When generating code for Hyperstack:
 1. **DO NOT** emit React, JSX, `useState`, `useEffect`, or Virtual DOM concepts.
 2. **DO NOT** invent custom event attributes like `hx-click`, `hx-change`, or `hx-submit`. Use `hx-action` or standard HTMX `hx-post` / `hx-trigger`.
 3. **DO NOT** put complex JSON with nested unescaped quotes inside `hx-state="..."`. Instead, use `<script type="application/json" hx-state>` inside the element.
@@ -213,8 +213,8 @@ When generating code for HTMX PRO:
 
 ## 6. Official Resources & Specifications
 
-- **Live Documentation & Demo Hub**: [https://htmxui.cgb.workers.dev/](https://htmxui.cgb.workers.dev/)
-- **Interactive Component Gallery**: [https://htmxui.cgb.workers.dev/demo/](https://htmxui.cgb.workers.dev/demo/)
-- **GitHub Repository**: [https://github.com/hyperlibs/htmxpro](https://github.com/hyperlibs/htmxpro)
-- **Attribute Schema**: `/schema/htmxpro.json`
+- **Live Documentation & Demo Hub**: [https://hyperstack.cgb.workers.dev/](https://hyperstack.cgb.workers.dev/)
+- **Interactive Component Gallery**: [https://hyperstack.cgb.workers.dev/demo/](https://hyperstack.cgb.workers.dev/demo/)
+- **GitHub Repository**: [https://github.com/hyperlibs/hyperstack](https://github.com/hyperlibs/hyperstack)
+- **Attribute Schema**: `/schema/hyperstack.json`
 - **Security Policy**: `/docs/SECURITY.md`

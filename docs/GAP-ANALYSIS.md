@@ -1,6 +1,6 @@
-# HTMX PRO — Deep Gap Analysis vs React/Node
+# Hyperstack — Deep Gap Analysis vs React/Node
 
-**Date:** 2026-10-16 · **Scope:** repository `hyperlibs/htmxpro` @ `da021576` · **Method:** static inspection + one test run
+**Date:** 2026-10-16 · **Scope:** repository `hyperlibs/hyperstack` @ `da021576` · **Method:** static inspection + one test run
 
 Every claim below is tied to a file, a count, or a command result observed in the working tree.
 Where a claim is a judgement rather than a measurement, it is marked *(judgement)*.
@@ -20,26 +20,26 @@ Where a claim is a judgement rather than a measurement, it is marked *(judgement
 | CI matrix: ubuntu/macos/windows, engines build, checksums, tests, `<300 KB` JS budget | `.github/workflows/ci.yml` |
 | Repo pack **97.77 MiB**; `dist/` tracked (172 files, 3.1 MB) | `git count-objects -vH`, `git ls-files dist \| wc -l` |
 
-**Baseline verdict:** the client-engine layer is genuinely solid — real tests, real checksums, real size budget, a real JSON grammar spec (`schema/htmxpro.json`). The gaps are almost entirely in the **application platform**: packaging, type safety, server-side capabilities, offline, and the promised component parity.
+**Baseline verdict:** the client-engine layer is genuinely solid — real tests, real checksums, real size budget, a real JSON grammar spec (`schema/hyperstack.json`). The gaps are almost entirely in the **application platform**: packaging, type safety, server-side capabilities, offline, and the promised component parity.
 
 ---
 
-## 2. Where HTMX PRO loses to React/Node
+## 2. Where Hyperstack loses to React/Node
 
-| # | Axis | React/Node | HTMX PRO today | Verdict |
+| # | Axis | React/Node | Hyperstack today | Verdict |
 |---|---|---|---|---|
-| 2.1 | **Compile-time safety** | TSX fails the build on a bad prop; type errors are impossible to ship | `hx-*` attributes are unvalidated strings. No `tsconfig.json` exists, so **the 9,605 lines of "100% Strict TypeScript" are never type-checked**. `schema/htmxpro.json` is advisory prose-equivalent — nothing runs it in CI | **React wins outright** |
+| 2.1 | **Compile-time safety** | TSX fails the build on a bad prop; type errors are impossible to ship | `hx-*` attributes are unvalidated strings. No `tsconfig.json` exists, so **the 9,605 lines of "100% Strict TypeScript" are never type-checked**. `schema/hyperstack.json` is advisory prose-equivalent — nothing runs it in CI | **React wins outright** |
 | 2.2 | **Component encapsulation** | Props boundary, typed contracts, colocation | 160 components are copy-paste HTML with inline Tailwind strings; no props contract between a view and its consumers | **React wins** |
 | 2.3 | **Ecosystem & talent** | npm registry, Testing Library, DevTools, millions of examples | No markup-testing story (only **1** test file references `views/components`), no component registry, no framework-agnostic testing harness | **React wins** |
 | 2.4 | **Offline-first + client routing** | SPA + service worker is a documented pattern | No service worker, no manifest, no client routes. `htmx-offline.ts` uses `indexedDB` once with zero `serviceWorker`/`caches.*` references — data cache only, no app shell | **React wins** |
 | 2.5 | **Interaction latency** | Local state mutation in <1 ms | Every interaction is a round-trip. `htmx-vibe`/`htmx-sim` do FLIP + physics, but sustained 60 fps local editing still routes through the server | **React wins on interaction-heavy UI** |
 | 2.6 | **Cost model** | One bundle, then client CPU is free | Server CPU scales with interactions. Read-mostly apps get cheaper; chatty UI gets more expensive per user | **Tradeoff, not a loss** |
 | 2.7 | **Ecosystem lock-out** | Composability with the entire JS ecosystem | 13 hand-written engines replace libraries you cannot otherwise use | **Tradeoff** — this is the whole point of the project |
-| 2.8 | **Bundle + hydration** | 40–150 KB framework + hydration cost | No hydration, no VDOM, 22 KB gzipped bolt engine | **HTMX PRO wins** |
-| 2.9 | **Version hell** | React 18/19, Next pages/app-router ambiguity, breaking ecosystem churn | One htmx pin + engine files | **HTMX PRO wins** |
-| 2.10 | **Agent token cost** | Infinite API surface; every feature re-litigated | Constrained vocabulary is a real advantage *if* the parity and validation gaps above are closed | **HTMX PRO can win — currently unproven** (see §5.3) |
+| 2.8 | **Bundle + hydration** | 40–150 KB framework + hydration cost | No hydration, no VDOM, 22 KB gzipped bolt engine | **Hyperstack wins** |
+| 2.9 | **Version hell** | React 18/19, Next pages/app-router ambiguity, breaking ecosystem churn | One htmx pin + engine files | **Hyperstack wins** |
+| 2.10 | **Agent token cost** | Infinite API surface; every feature re-litigated | Constrained vocabulary is a real advantage *if* the parity and validation gaps above are closed | **Hyperstack can win — currently unproven** (see §5.3) |
 
-**Blunt summary:** today `htmxpro` is a superb **client-engine library** and an immature **application platform**. React loses on weight and token surface; HTMX PRO loses on safety, offline, and server-side capability.
+**Blunt summary:** today `Hyperstack` is a superb **client-engine library** and an immature **application platform**. React loses on weight and token surface; Hyperstack loses on safety, offline, and server-side capability.
 
 ---
 
@@ -52,11 +52,11 @@ Where a claim is a judgement rather than a measurement, it is marked *(judgement
 | Web manifest / `theme-color` / `apple-mobile-web-app-*` | ❌ **missing** | `app-mobile.html` has `viewport` only |
 | Service worker, precache, offline shell | ❌ **missing** | no `serviceWorker`/`sw.js` anywhere outside the browser extension (`releases/*.crx`, `hmlr.mx`) |
 | Install prompt / app lifecycle | ❌ **missing** | no `beforeinstallprompt` handler |
-| Local htmx copy (offline hard requirement) | ❌ **missing** | 13 references to `https://unpkg.com/htmx.org@2.0.4`, zero vendored copy |
+| Local htmx copy (offline hard requirement) | ❌ **missing** | 13 references to `https://unpkg.com/htmx.org@4.0.0/dist/htmx.min.js`, zero vendored copy |
 | Touch/safe-area shell | ⚠️ partial | `safe-area-inset` present in `go/components/appz.go`; `app-*` shell exists |
 | Push notifications | ❌ **missing** | no `pushsubscription` / Notification permission flow |
 | Offline mutation queue + conflict resolution | ✅ present | `htmx:offlineConflict` event, IndexedDB path in `htmx-offline.ts` |
-| Go backend story | ⚠️ partial | `go/htmxpro/htmxpro.go` exists (23 funcs) but **no `go:embed` anywhere** → no single binary, contradicting AGENTS.md §1 |
+| Go backend story | ⚠️ partial | `go/hyperstack/hyperstack.go` exists (23 funcs) but **no `go:embed` anywhere** → no single binary, contradicting AGENTS.md §1 |
 | Python backend story | ❌ **missing** | Python appears **only as a code sample** in `docs/BACKEND_SPEC.md`. No `.py`, no Jinja macros, no FastAPI/ASGI adapter, no PyPI artifact |
 
 ### 3.2 Operating-system UI (desktop-like shell in the browser)
@@ -94,7 +94,7 @@ Legend: **P0** blocker for a real app · **P1** high value · **P2** polish.
 
 1. **[P0] Add `tsconfig.json` and a typecheck step.** No `tsconfig.json` exists, so 9,605 lines of TypeScript are transpiled by `bun build` without ever being type-checked — AGENTS.md §3's "100% Strict TypeScript" is unenforced. Add `strict: true`, `bun run typecheck`, and a CI job.
 2. **[P0] Fix the ESM entry point.** `package.json` maps `exports["."].import` → `./src/index.ts` and `types` → `./src/index.ts`. Shipping raw `.ts` as the import target breaks every consumer that does not transpile `node_modules`. Point it at a built ESM file (`dist/index.mjs` + `.d.ts`).
-3. **[P0] Single-source the engine list.** `schema/htmxpro.json` declares **11** engines (missing `sim` and `appz`); `package.json` exports **12** (missing `./canvas`); `build:engines` compiles **13**. Three lists, three different answers.
+3. **[P0] Single-source the engine list.** `schema/hyperstack.json` declares **11** engines (missing `sim` and `appz`); `package.json` exports **12** (missing `./canvas`); `build:engines` compiles **13**. Three lists, three different answers.
 4. **[P0] Fix or retract AGENTS.md §5 (1:1 Go parity).** 54 Go constructors exist for 160 HTML components ≈ **34% parity**. Either generate the Go DSL from `views/components/*.html`, or scope the rule to the implemented subset. A rule that is 66% violated trains agents to ignore rules.
 5. **[P1] Stop violating AGENTS.md §3.** Loose `.js` files in root: `worker.js`, `tailwind.config.js`, `postcss.config.js` — the exact thing §3 forbids.
 6. **[P1] Reconcile `wrangler.toml` with reality.** `main = "worker.js"` and `worker.ts` is a 9-line passthrough to `env.ASSETS.fetch` — the edge deployment can do nothing but serve static files. Remove the Worker or implement real routing.
@@ -109,11 +109,11 @@ Legend: **P0** blocker for a real app · **P1** high value · **P2** polish.
 12. **[P0] Remove `express@5.2.1` from `dependencies`.** Repo-wide grep for `from "express"` / `require("express")` returns **zero matches** — dead weight installed for every consumer of the package.
 13. **[P1] Delete `package-lock.json`.** It coexists with `bun.lock` in a repo whose first rule is zero npm; two lockfiles drift.
 14. **[P1] Untrack `dist/`** (172 files, 3.1 MB of committed build output). Build it in CI; publish to Pages or the Worker.
-15. **[P1] Remove the 16 MB of binaries and the 137 MB archive** from the working tree (`htmxpro-server.exe` 8.0 MB, `htmxui-server.exe` 8.0 MB, `sun.zip` 137 MB) and route them through `releases/`.
+15. **[P1] Remove the 16 MB of binaries and the 137 MB archive** from the working tree (`hyperstack-server.exe` 8.0 MB, `hyperstack-server.exe` 8.0 MB, `sun.zip` 137 MB) and route them through `releases/`.
 16. **[P1] Delete `postcss.config.js`, `postcss`, and `autoprefixer`.** Nothing invokes PostCSS — `build:css` calls the Tailwind CLI directly. Dead config plus two dead devDependencies.
 17. **[P1] Replace `bunx tailwindcss` with a declared `@tailwindcss/cli` devDependency.** Installed `tailwindcss@4.3.3` has **no `bin` field** (`grep '"bin"'` → exit 1), so the CLI is resolved outside the declared, locked dependency set.
 18. **[P1] Delete `tailwind.config.js` or wire it properly.** Tailwind v4 ignores `content:` globs unless `@config` is present in the CSS entry; `public/styles/input.css` has no `@config`, so source detection happens incidentally.
-19. **[P1] Replace all 13 CDN `<script src="https://unpkg.com/htmx.org@2.0.4">` tags** with a vendored, SRI-pinned local copy. A third-party CDN on the hot path is both a security and an offline blocker.
+19. **[P1] Replace all 13 CDN `<script src="https://unpkg.com/htmx.org@4.0.0/dist/htmx.min.js">` tags** with a vendored, SRI-pinned local copy. A third-party CDN on the hot path is both a security and an offline blocker.
 20. **[P2] Replace the no-op custom elements** (~16 `app-*` tags registered as `class extends HTMLElement {}`) with either real elements exposing lifecycle/attributes, or documented plain elements — today "custom element" implies behaviour the tags do not have.
 
 ### C. Improvements & additions
@@ -128,7 +128,7 @@ Legend: **P0** blocker for a real app · **P1** high value · **P2** polish.
 28. **[P1] Add a time-series/chart engine** (sparkline, line, OHLC, axis ticks) — there is no charting primitive, which makes "data-streaming dashboard" aspirational.
 29. **[P1] Add stream resilience:** sequence numbers, `Last-Event-ID` resume, delta coalescing, and a reconnect/backoff policy on the client.
 30. **[P1] Add a Python integration for real:** a Jinja2 macro library mirroring the 160 components, a FastAPI/ASGI adapter, and a distributable package. Today Python is prose only, while Go gets 54 constructors and a linked library — the parity is asymmetric.
-31. **[P1] Add `go:embed` + a `htmxpro` CLI** (`new`, `dev`, `build`, `doctor`) so a Go backend really is one binary, and so the parity/schema/checksum rules become automated checks instead of prose.
+31. **[P1] Add `go:embed` + a `Hyperstack` CLI** (`new`, `dev`, `build`, `doctor`) so a Go backend really is one binary, and so the parity/schema/checksum rules become automated checks instead of prose.
 32. **[P1] Add markup-level tests for the 160 components.** Only one test file references `views/components`; engines are well tested and the actual product surface is not. Add render snapshots + axe-core a11y assertions (no axe anywhere today).
 33. **[P1] Add an auth/session/CSRF reference implementation** for Go and Python. Neither server sets a cookie or a CSRF token; sessions, RBAC enforcement, and headers are entirely absent from the shipped servers.
 34. **[P1] Formalize the wire protocol as a machine-readable contract** (JSON Schema + contract tests for `hxMatrixUpdate`, `hxStateUpdate`, OOB, `HX-Trigger`) and add i18n/RTL support (no i18n framework, no `dir="rtl"`, no logical-property audit).
@@ -138,7 +138,7 @@ Legend: **P0** blocker for a real app · **P1** high value · **P2** polish.
 ## 5. What I could not verify
 
 1. **Runtime truths.** I did not start the servers, so no latency, throughput, or memory claim here is measured. The 100k-row / 60 FPS / 32-node figures come from the repo's own docs and are unverified.
-2. **The token-efficiency claim.** "HTMX PRO is more token-efficient for AI" is plausible (fewer degrees of freedom, finite vocabulary) but untested. The metric that would settle it is **tokens-to-first-correct-change including retries**, not tokens per line of source. The retry tax is the real risk: React is heavily overrepresented in model training data, so an agent's first attempt on `hx-*` attributes is more likely to be wrong.
+2. **The token-efficiency claim.** "Hyperstack is more token-efficient for AI" is plausible (fewer degrees of freedom, finite vocabulary) but untested. The metric that would settle it is **tokens-to-first-correct-change including retries**, not tokens per line of source. The retry tax is the real risk: React is heavily overrepresented in model training data, so an agent's first attempt on `hx-*` attributes is more likely to be wrong.
 3. **Tailwind's token cost.** Long utility class strings may consume the savings that dropping component boilerplate produces. This is measurable and should be measured before the claim is published.
 4. **Two flags worth re-checking:** whether `<app-thermostat>` (used in views) is in the `defineCE` list, and whether the `COMPONENTS` array in `server.ts` matches the 160 files on disk.
 

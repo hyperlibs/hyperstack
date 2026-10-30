@@ -3,7 +3,7 @@
   <div class="space-y-3">
     <h1 class="text-4xl font-extrabold tracking-tight text-foreground">Installation & Quickstart</h1>
     <p class="text-lg text-muted-foreground leading-relaxed font-medium">
-      Set up the hyperreactive HTMX PRO suite in your project in under 2 minutes. Zero NPM build step required.
+      Set up the hyperreactive Hyperstack suite in your project in under 2 minutes. Zero NPM build step required.
     </p>
   </div>
 
@@ -17,11 +17,11 @@
       </div>
       <div class="p-4 rounded-xl border border-border bg-card text-card-foreground shadow-sm">
         <div class="font-semibold text-sm mb-1 text-foreground">Any Backend</div>
-        <div class="text-xs text-muted-foreground">Python, Go, Rust, PHP, Bun, Node, Ruby, Java</div>
+        <div class="text-xs text-muted-foreground">Go, Python, Rust, C# (.NET), PHP, Bun, Ruby, Java</div>
       </div>
       <div class="p-4 rounded-xl border border-border bg-card text-card-foreground shadow-sm">
         <div class="font-semibold text-sm mb-1 text-foreground">Zero Node Modules</div>
-        <div class="text-xs text-muted-foreground">No React runtime, no JSX, no webpack bundler</div>
+        <div class="text-xs text-muted-foreground">No React runtime, no JSX, no webpack/vite bundler</div>
       </div>
     </div>
   </div>
@@ -30,29 +30,31 @@
   <div class="space-y-4">
     <h2 class="text-2xl font-bold tracking-tight text-foreground border-b border-border pb-2">Step 1 — Include Core Scripts</h2>
     <p class="text-sm text-muted-foreground leading-relaxed">
-      Add HTMX and the HTMX PRO engines to your base HTML layout. <code class="bg-muted px-1.5 py-0.5 rounded text-xs font-mono">htmx-bolt.js</code> is the only required extension for signals and reactivity.
+      Add HTMX 4 and the Hyperstack engines to your base HTML layout. <code class="bg-muted px-1.5 py-0.5 rounded text-xs font-mono">htmx-bolt.js</code> is the core reactive signal engine.
     </p>
     <div class="bg-[#1e293b] text-[#e2e8f0] rounded-xl p-4 font-mono text-xs overflow-x-auto leading-relaxed shadow-sm">
-      <pre>&lt;!-- 1. HTMX Core --&gt;
-&lt;script src="https://unpkg.com/htmx.org@2.0.4"&gt;&lt;/script&gt;
+      <pre>&lt;!-- 1. HTMX 4 Core &amp; Official Extensions --&gt;
+&lt;script src="https://unpkg.com/htmx.org@4.0.0/dist/htmx.min.js"&gt;&lt;/script&gt;
+&lt;script src="/vendor/hx-csp.min.js"&gt;&lt;/script&gt;
+&lt;script src="/vendor/hx-live.min.js"&gt;&lt;/script&gt;
 
-&lt;!-- 2. Signal-Based Reactive Engine (~8KB) --&gt;
+&lt;!-- 2. Hyperstack Core Reactive Signal Engine (~23KB) --&gt;
 &lt;script src="/htmx-bolt.js"&gt;&lt;/script&gt;
 
-&lt;!-- Optional: In-Memory Fuzzy Search &amp; Multi-Filter Engine --&gt;
-&lt;script src="/htmx-flash.js"&gt;&lt;/script&gt;
-
-&lt;!-- Optional: Form Validation &amp; Optimistic UI Engine --&gt;
-&lt;script src="/htmx-form.js"&gt;&lt;/script&gt;
-
-&lt;!-- Optional: FLIP Vibe &amp; Layout Animation Engine --&gt;
-&lt;script src="/htmx-vibe.js"&gt;&lt;/script&gt;
-
-&lt;!-- Optional: Focus Trap &amp; Roving Tabindex Engine --&gt;
-&lt;script src="/htmx-a11y.js"&gt;&lt;/script&gt;
-
-&lt;!-- Optional: Visual Spatial Node Canvas Engine --&gt;
-&lt;script src="/htmx-canvas.js"&gt;&lt;/script&gt;</pre>
+&lt;!-- 3. Optional Micro-Engines (Load Only What You Need) --&gt;
+&lt;script src="/htmx-flash.js"&gt;&lt;/script&gt;     &lt;!-- In-Memory Fuzzy Search &amp; Columnar Queries --&gt;
+&lt;script src="/htmx-form.js"&gt;&lt;/script&gt;      &lt;!-- Declarative Validation &amp; Optimistic Rollback --&gt;
+&lt;script src="/htmx-vibe.js"&gt;&lt;/script&gt;      &lt;!-- FLIP Layout Animations &amp; Spring Physics --&gt;
+&lt;script src="/htmx-a11y.js"&gt;&lt;/script&gt;      &lt;!-- WAI-ARIA Focus Trapping &amp; 2D Matrix Tabindex --&gt;
+&lt;script src="/htmx-virtual.js"&gt;&lt;/script&gt;   &lt;!-- 1D/2D Viewport Virtualization (100k+ rows) --&gt;
+&lt;script src="/htmx-grid.js"&gt;&lt;/script&gt;      &lt;!-- Enterprise Data Grid with Column Drag &amp; CSV --&gt;
+&lt;script src="/htmx-offline.js"&gt;&lt;/script&gt;   &lt;!-- IndexedDB Mutation Queue &amp; Auto-Sync --&gt;
+&lt;script src="/htmx-calc.js"&gt;&lt;/script&gt;      &lt;!-- Topological Formula DAG &amp; Cycle Detection --&gt;
+&lt;script src="/htmx-sim.js"&gt;&lt;/script&gt;       &lt;!-- Kinetic Particle Physics &amp; Swarm Boids --&gt;
+&lt;script src="/htmx-canvas.js"&gt;&lt;/script&gt;    &lt;!-- Spatial Node Diagram Canvas &amp; Wire Routing --&gt;
+&lt;script src="/htmx-devtools.js"&gt;&lt;/script&gt;  &lt;!-- In-Browser Signal HUD &amp; @diag Telemetry --&gt;
+&lt;script src="/appz.js"&gt;&lt;/script&gt;           &lt;!-- 4-Layer Mobile OS &amp; Hardware Bridge --&gt;
+&lt;script src="/hy-hook.js"&gt;&lt;/script&gt;        &lt;!-- Hyperhooks Real-Time Webhooks &amp; Streaming --&gt;</pre>
     </div>
   </div>
 
@@ -60,7 +62,7 @@
   <div class="space-y-4">
     <h2 class="text-2xl font-bold tracking-tight text-foreground border-b border-border pb-2">Step 2 — Configure CSS Design Tokens</h2>
     <p class="text-sm text-muted-foreground leading-relaxed">
-      HTMX PRO components use CSS custom properties for instant dark mode and theme switching. Add these variables to your stylesheet:
+      Hyperstack components use CSS custom properties for instant dark mode and theme switching. Add these variables to your stylesheet:
     </p>
     <div class="bg-[#1e293b] text-[#e2e8f0] rounded-xl p-4 font-mono text-xs overflow-x-auto leading-relaxed shadow-sm">
       <pre>@layer base {
@@ -153,6 +155,11 @@
             <td class="font-sans text-muted-foreground">Declarative input validation rules</td>
             <td>hx-validate="required|email|min:5"</td>
           </tr>
+          <tr class="hover:bg-muted/30">
+            <td class="py-2.5 px-4 text-primary font-bold">hy-hook</td>
+            <td class="font-sans text-muted-foreground">Declarative real-time webhooks &amp; event streams</td>
+            <td>hy-hook="/api/stream" hy-action="merge"</td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -178,18 +185,18 @@ hx-computed='{
 
   &lt;!-- Two-way input binding --&gt;
   &lt;div class="flex gap-2"&gt;
-    &lt;input type="text" hx-model="newItem" placeholder="Add item name..." class="px-3 py-2 border rounded-md text-sm flex-1"&gt;
+    &lt;input type="text" hx-model="newItem" placeholder="Add item name..." class="px-3 py-2 border rounded-md text-sm flex-1 bg-background"&gt;
     &lt;button hx-on:click='if(newItem.trim()) { items.push({ id: Date.now(), name: newItem, price: 40, qty: 1 }); newItem = ""; }' class="bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium"&gt;Add&lt;/button&gt;
   &lt;/div&gt;
 
   &lt;!-- List rendering with hx-for --&gt;
   &lt;div class="divide-y border rounded-md overflow-hidden"&gt;
     &lt;template hx-for="(item, idx) in items"&gt;
-      &lt;div class="p-3 flex items-center justify-between bg-background"&gt;
+      &lt;div class="p-3 flex items-center justify-between bg-card"&gt;
         &lt;span hx-text="item.name" class="font-medium text-sm"&gt;&lt;/span&gt;
         &lt;div class="flex items-center gap-3"&gt;
           &lt;span class="text-sm text-muted-foreground"&gt;$&lt;span hx-text="item.price"&gt;&lt;/span&gt;&lt;/span&gt;
-          &lt;input type="number" hx-model.number="item.qty" min="1" class="w-16 px-2 py-1 border rounded text-xs"&gt;
+          &lt;input type="number" hx-model.number="item.qty" min="1" class="w-16 px-2 py-1 border rounded text-xs bg-background"&gt;
           &lt;button hx-on:click="items.splice(idx, 1)" class="text-destructive text-xs hover:underline"&gt;Remove&lt;/button&gt;
         &lt;/div&gt;
       &lt;/div&gt;

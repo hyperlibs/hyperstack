@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'bun:test';
 import { HxBolt } from '../src/htmx-bolt';
 
-describe('HTMXUI Hyper-Extensibility & Directive Hooks', () => {
+describe('Hyperstack Hyper-Extensibility & Directive Hooks', () => {
   test('HxBolt global store reactivity', () => {
     HxBolt.store('game', { score: 0, fps: 60 });
     const game = HxBolt.getStore('game');

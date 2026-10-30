@@ -27,7 +27,7 @@
       });
   };
 
-  // src/htmx-flash.ts
+  // hyperstack/src/htmx-flash.ts
   var exports_htmx_flash = {};
   __export(exports_htmx_flash, {
     HxFlash: () => HxFlash,

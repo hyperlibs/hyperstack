@@ -22,7 +22,7 @@ Official browser extension distribution binaries for **HMLR (HyperMedia Language
    - Edge: `edge://extensions/`
 3. Enable **Developer mode** (toggle in top-right corner).
 4. Click **Load unpacked** and select the extracted folder (or the `extension/` directory in this repo).
-5. Open Developer Tools (<kbd>F12</kbd> or <kbd>Ctrl+Shift+I</kbd>) on any HTMXUI application to see the **⚡ HMLR** tab!
+5. Open Developer Tools (<kbd>F12</kbd> or <kbd>Ctrl+Shift+I</kbd>) on any Hyperstack application to see the **⚡ HMLR** tab!
 
 ### Option B: Drag & Drop `.crx` (Chromium)
 1. Open `chrome://extensions/` with Developer Mode enabled.

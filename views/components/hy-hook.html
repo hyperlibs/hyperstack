@@ -1,0 +1,415 @@
+<!-- =========================================================================
+     HY-HOOK: HYPERMEDIA WEBHOOKS & QUANTUM STATE FABRIC SHOWCASE
+     Forward-Focused State Wire: Edge AI Tensors, Atomic DOM, 60fps Telemetry,
+     Speculative Pre-Cognition, and Cluster Swarm Synchronization.
+     ========================================================================= -->
+<div class="rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden flex flex-col select-none text-slate-100"
+     id="hy-hook-showcase-container">
+
+  <!-- ZONE 1: HEADER -->
+  <div class="px-5 py-4 bg-slate-950 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-400 font-black text-xl shadow-md">
+        🪝
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h2 class="text-base font-black text-white tracking-tight flex items-center gap-2">
+            <span>hy-hook</span>
+            <span class="text-[10px] font-mono text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded-full border border-teal-500/20">Autonomous State Fabric</span>
+          </h2>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">QUANTUM 5-PLANE</span>
+        </div>
+        <p class="text-xs text-slate-400 mt-0.5 font-sans">
+          Zero-allocation binary state fabric multiplexing Edge AI tokens, hypermedia DOM, 60fps telemetry, pre-cognition & swarm mesh.
+        </p>
+      </div>
+    </div>
+
+    <!-- Active Telemetry Badge -->
+    <div class="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 font-mono text-xs">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span class="text-slate-400">Binary Frames:</span>
+      <span id="hy-telemetry-frames" class="text-teal-400 font-bold">0</span>
+      <span class="text-slate-600">|</span>
+      <span class="text-slate-400">Planes:</span>
+      <span class="text-purple-400 font-bold">5 Active</span>
+    </div>
+  </div>
+
+  <!-- ZONE 2: SIMULATOR STAGE (5-PLANE DASHBOARD) -->
+  <div class="p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 bg-slate-900/60">
+
+    <!-- LEFT COLUMN: CONTROLS & DISPATCHERS -->
+    <div class="lg:col-span-5 flex flex-col space-y-4">
+      <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+            <span>⚡</span> Quantum Plane Dispatcher
+          </span>
+          <span class="text-[10px] font-mono text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded border border-teal-500/20">Binary 16B Wire</span>
+        </div>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Trigger binary quantum frames across 5 distinct architectural compute planes:
+        </p>
+
+        <!-- Plane 0: Edge AI Neural Stream -->
+        <button onclick="simulateNeuralStream()"
+                class="w-full py-2.5 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center justify-between transition-all shadow-md">
+          <span class="flex items-center gap-2">
+            <span>🧠</span>
+            <span>Plane 0: Stream Edge AI Tokens</span>
+          </span>
+          <span class="font-mono text-[10px] bg-indigo-800/60 px-1.5 py-0.5 rounded">TENSOR [0x00]</span>
+        </button>
+
+        <!-- Plane 1: Hypermedia Sub-Millisecond Morph -->
+        <button onclick="simulateHypermediaMorph()"
+                class="w-full py-2.5 px-3 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-bold text-xs flex items-center justify-between transition-all shadow-md">
+          <span class="flex items-center gap-2">
+            <span>🩻</span>
+            <span>Plane 1: Atomic Hypermedia Morph</span>
+          </span>
+          <span class="font-mono text-[10px] bg-teal-800/60 px-1.5 py-0.5 rounded">HYPERMEDIA [0x01]</span>
+        </button>
+
+        <!-- Plane 2: Continuous 60fps Telemetry Vector -->
+        <button onclick="toggleTelemetryStream()" id="btn-telemetry"
+                class="w-full py-2.5 px-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs flex items-center justify-between transition-all shadow-md">
+          <span class="flex items-center gap-2">
+            <span>📊</span>
+            <span id="telemetry-btn-text">Plane 2: Start 60fps Telemetry</span>
+          </span>
+          <span class="font-mono text-[10px] bg-cyan-800/60 px-1.5 py-0.5 rounded">TELEMETRY [0x02]</span>
+        </button>
+
+        <!-- Plane 3: Speculative Pre-Cognition -->
+        <button onclick="simulatePrecognition()"
+                class="w-full py-2.5 px-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs flex items-center justify-between transition-all shadow-md">
+          <span class="flex items-center gap-2">
+            <span>🔮</span>
+            <span>Plane 3: Pre-Cache Speculative State</span>
+          </span>
+          <span class="font-mono text-[10px] bg-amber-800/60 px-1.5 py-0.5 rounded">PRECOG [0x03]</span>
+        </button>
+
+        <!-- Plane 4: Swarm Cluster Gossip -->
+        <button onclick="simulateSwarmGossip()"
+                class="w-full py-2.5 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center justify-between transition-all shadow-md">
+          <span class="flex items-center gap-2">
+            <span>🌐</span>
+            <span>Plane 4: Swarm Mesh Peer Gossip</span>
+          </span>
+          <span class="font-mono text-[10px] bg-purple-800/60 px-1.5 py-0.5 rounded">SWARM [0x04]</span>
+        </button>
+      </div>
+
+      <!-- Binary Frame Header Spec Card -->
+      <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2 font-mono text-[11px]">
+        <div class="text-xs font-sans font-bold text-slate-300 uppercase tracking-wider mb-1">HyperFrame Fixed 16-Byte Header</div>
+        <div class="text-teal-400">[0..1] 'HY' (Magic 0x48 0x59)</div>
+        <div class="text-slate-400">[2] Ver: 0x01 | [3] Plane: 0x00..0x04</div>
+        <div class="text-slate-400">[4] Flags: 0x01 (Datagram) | 0x02 (Reliable)</div>
+        <div class="text-slate-400">[6..7] ChannelId (uint16) | [8..11] Seq (uint32)</div>
+        <div class="text-purple-400">[12..15] PayloadLength (uint32)</div>
+        <div class="text-slate-500">[16..N] Zero-Copy Raw Memory Slice</div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: LIVE QUANTUM PLANE RECEIVERS -->
+    <div class="lg:col-span-7 flex flex-col space-y-4">
+      
+      <!-- Plane 0 Sink: Edge AI Neural Stream -->
+      <div class="p-3.5 rounded-xl border border-indigo-500/30 bg-slate-950 transition-all">
+        <div class="flex items-center justify-between text-xs mb-1.5">
+          <div class="flex items-center gap-2">
+            <span class="text-indigo-400">🧠</span>
+            <strong class="text-slate-200">Plane 0: Edge AI Neural Reasoning Stream</strong>
+          </div>
+          <span class="text-[10px] font-mono text-indigo-400">hy-ai-stream="101"</span>
+        </div>
+        <div id="neural-ai-output"
+             class="p-3 rounded-lg bg-slate-900 border border-indigo-900/50 font-mono text-xs text-indigo-200 min-h-[48px] flex items-center leading-relaxed">
+          <span class="italic text-slate-500">Ready to receive token stream...</span>
+        </div>
+      </div>
+
+      <!-- Plane 1 Sink: Atomic Hypermedia Morph -->
+      <div class="p-3.5 rounded-xl border border-teal-500/30 bg-slate-950 transition-all">
+        <div class="flex items-center justify-between text-xs mb-1.5">
+          <div class="flex items-center gap-2">
+            <span class="text-teal-400">🩻</span>
+            <strong class="text-slate-200">Plane 1: Sub-Millisecond Hypermedia Morph</strong>
+          </div>
+          <span class="text-[10px] font-mono text-teal-400">hy-hook="pacs:morph"</span>
+        </div>
+        <div id="hypermedia-target-card"
+             class="p-3 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400 flex items-center justify-between">
+          <span class="italic">PACS Series awaiting scan slice morph...</span>
+          <span class="w-2 h-2 rounded-full bg-slate-600 animate-pulse"></span>
+        </div>
+      </div>
+
+      <!-- Plane 2 Sink: 60fps Telemetry Canvas -->
+      <div class="p-3.5 rounded-xl border border-cyan-500/30 bg-slate-950 transition-all">
+        <div class="flex items-center justify-between text-xs mb-1.5">
+          <div class="flex items-center gap-2">
+            <span class="text-cyan-400">📊</span>
+            <strong class="text-slate-200">Plane 2: 60fps Binary Vector Telemetry (Packed Float32Array)</strong>
+          </div>
+          <span class="text-[10px] font-mono text-cyan-400" id="fps-counter">0 fps • 0 GC</span>
+        </div>
+        <canvas id="telemetry-canvas" width="560" height="70" class="w-full h-[70px] bg-slate-900 rounded-lg border border-slate-800"></canvas>
+      </div>
+
+      <!-- Plane 3 Sink: Speculative Pre-Cognition -->
+      <div class="p-3.5 rounded-xl border border-amber-500/30 bg-slate-950 transition-all">
+        <div class="flex items-center justify-between text-xs mb-1.5">
+          <div class="flex items-center gap-2">
+            <span class="text-amber-400">🔮</span>
+            <strong class="text-slate-200">Plane 3: Speculative Pre-Cognition (0.0ms Latency)</strong>
+          </div>
+          <span class="text-[10px] font-mono text-amber-400" id="speculative-status">Cache: Empty</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <div id="speculative-commit-target"
+               class="flex-1 p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400">
+            Hover button on left to pre-cache; hover here to instantly activate!
+          </div>
+          <button id="btn-commit-spec" onclick="commitSpeculativeNow()"
+                  class="px-3 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow">
+            Commit 0ms →
+          </button>
+        </div>
+      </div>
+
+      <!-- Plane 4 Sink: Swarm Cluster Mesh -->
+      <div class="p-3.5 rounded-xl border border-purple-500/30 bg-slate-950 transition-all">
+        <div class="flex items-center justify-between text-xs mb-1.5">
+          <div class="flex items-center gap-2">
+            <span class="text-purple-400">🌐</span>
+            <strong class="text-slate-200">Plane 4: Swarm Mesh Topology & Vector Clocks</strong>
+          </div>
+          <span class="text-[10px] font-mono text-purple-400" id="swarm-node-count">0 Nodes</span>
+        </div>
+        <div id="swarm-nodes-list" class="flex flex-wrap gap-2 text-xs font-mono">
+          <span class="text-slate-500 italic p-1">No peer nodes discovered yet. Click Plane 4 above.</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ZONE 3: DIAGNOSTIC LOG FOOTER -->
+  <div class="px-5 py-3 bg-slate-950 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-slate-400">
+    <div class="flex items-center gap-2">
+      <span class="text-teal-400 font-bold">@diag hyperhooks:</span>
+      <span id="hy-diag-status" class="text-slate-300">Quantum State Fabric Active • 5 Planes Armed</span>
+    </div>
+    <div class="flex items-center gap-3 text-[10px]">
+      <span class="text-emerald-400">● Zero-Copy TypedArray Engine: ARMED</span>
+      <span class="text-slate-500">•</span>
+      <span class="text-indigo-400">Edge AI Tensor Stream: READY</span>
+      <span class="text-slate-500">•</span>
+      <span class="text-teal-400">CSP Level 3 Verified</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- Embedded Interactive Simulator Scripts -->
+<script>
+  let frameCounter = 0;
+  let telemetryInterval = null;
+  let telemetryAngle = 0;
+
+  function updateDiag(msg) {
+    frameCounter++;
+    const countEl = document.getElementById('hy-telemetry-frames');
+    const statusEl = document.getElementById('hy-diag-status');
+    if (countEl) countEl.textContent = frameCounter;
+    if (statusEl) statusEl.textContent = msg;
+  }
+
+  // 1. Simulate Plane 0: Edge AI Neural Token Stream
+  window.simulateNeuralStream = function() {
+    if (typeof HyperFrameCodec === 'undefined' || typeof HyHook === 'undefined') return;
+
+    const outputEl = document.getElementById('neural-ai-output');
+    if (outputEl) outputEl.innerHTML = '';
+
+    const tokens = [
+      "Analyzing ", "DICOM ", "volume... ", 
+      "Identified ", "nodule ", "in ", "Right ", "Upper ", "Lobe ", 
+      "[RECIST: ", "14.2mm]. ", "Confidence: ", "98.7%."
+    ];
+
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i >= tokens.length) {
+        clearInterval(interval);
+        const eosFrame = HyperFrameCodec.encodeTensor(101, "", true, i);
+        HyHook.routeBinaryFrame(eosFrame);
+        updateDiag("Plane 0: Neural stream EOS reached.");
+        return;
+      }
+
+      const frame = HyperFrameCodec.encodeTensor(101, tokens[i], false, i);
+      HyHook.routeBinaryFrame(frame);
+
+      if (outputEl) {
+        outputEl.insertAdjacentText('beforeend', tokens[i]);
+      }
+      i++;
+      updateDiag("Plane 0: Streamed AI token (" + i + "/" + tokens.length + ")");
+    }, 90);
+  };
+
+  // 2. Simulate Plane 1: Atomic Hypermedia Morph
+  window.simulateHypermediaMorph = function() {
+    if (typeof HyperFrameCodec === 'undefined' || typeof HyHook === 'undefined') return;
+
+    const html = `
+      <div class="flex items-center justify-between w-full p-2 bg-teal-950/60 rounded border border-teal-500/40 text-teal-200 animate-fadeIn">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">🩻</span>
+          <div>
+            <strong class="text-white text-xs block">CT Chest Axial (0.625mm High-Res)</strong>
+            <span class="text-[10px] text-teal-300">Target Series #8820 • 640 Slices • Zero-Eval Swapped</span>
+          </div>
+        </div>
+        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30">
+          SUB-MS MORPH
+        </span>
+      </div>
+    `;
+
+    const frame = HyperFrameCodec.encodeHypermedia(201, '#hypermedia-target-card', 'innerHTML', html, 1);
+    HyHook.routeBinaryFrame(frame);
+    updateDiag("Plane 1: Atomic Hypermedia Morph completed on #hypermedia-target-card");
+  };
+
+  // 3. Simulate Plane 2: Continuous 60fps Telemetry Vector
+  window.toggleTelemetryStream = function() {
+    if (telemetryInterval) {
+      clearInterval(telemetryInterval);
+      telemetryInterval = null;
+      document.getElementById('telemetry-btn-text').textContent = 'Plane 2: Start 60fps Telemetry';
+      document.getElementById('fps-counter').textContent = 'Paused';
+      return;
+    }
+
+    const canvas = document.getElementById('telemetry-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    document.getElementById('telemetry-btn-text').textContent = 'Plane 2: Stop 60fps Telemetry';
+    document.getElementById('fps-counter').textContent = '60 fps • 0 GC';
+
+    let lastTime = performance.now();
+    let frames = 0;
+
+    HyHook.registerTelemetryRenderer(301, (floats) => {
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.strokeStyle = '#06b6d4';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      const step = canvas.width / floats.length;
+      for (let i = 0; i < floats.length; i++) {
+        const val = floats[i];
+        const y = (canvas.height / 2) + val * 25;
+        if (i === 0) ctx.moveTo(0, y);
+        else ctx.lineTo(i * step, y);
+      }
+      ctx.stroke();
+
+      frames++;
+      const now = performance.now();
+      if (now - lastTime >= 1000) {
+        document.getElementById('fps-counter').textContent = frames + ' fps • 0 GC Alloc';
+        frames = 0;
+        lastTime = now;
+      }
+    });
+
+    telemetryInterval = setInterval(() => {
+      telemetryAngle += 0.15;
+      const points = 32;
+      const floats = new Float32Array(points);
+      for (let i = 0; i < points; i++) {
+        floats[i] = Math.sin(telemetryAngle + i * 0.3) * Math.cos(telemetryAngle * 0.5);
+      }
+
+      const frame = HyperFrameCodec.encodeTelemetry(301, floats);
+      HyHook.routeBinaryFrame(frame);
+      updateDiag("Plane 2: Dispatched 60fps packed Float32Array frame (32 floats)");
+    }, 16);
+  };
+
+  // 4. Simulate Plane 3: Speculative Pre-Cognition
+  window.simulatePrecognition = function() {
+    if (typeof HyperFrameCodec === 'undefined' || typeof HyHook === 'undefined') return;
+
+    const preRenderedHTML = `
+      <div class="flex items-center justify-between w-full p-2 bg-amber-950/60 rounded border border-amber-500/40 text-amber-200 animate-fadeIn">
+        <div class="flex items-center gap-2">
+          <span>🔮</span>
+          <div>
+            <strong class="text-white text-xs block">Pre-Materialized Patient Analytics</strong>
+            <span class="text-[10px] text-amber-300">Speculative State Active • 0.0ms Activation</span>
+          </div>
+        </div>
+        <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">CONF: 94.2%</span>
+      </div>
+    `;
+
+    const frame = HyperFrameCodec.encodePrecognition(401, 'spec_patient_analytics', 0.942, preRenderedHTML);
+    HyHook.routeBinaryFrame(frame);
+
+    const statusEl = document.getElementById('speculative-status');
+    if (statusEl) statusEl.textContent = 'Pre-Cached (Conf: 94%)';
+    updateDiag("Plane 3: Pre-Cached speculative state 'spec_patient_analytics'");
+  };
+
+  window.commitSpeculativeNow = function() {
+    if (typeof HyHook === 'undefined') return;
+    const committed = HyHook.commitSpeculation('spec_patient_analytics', '#speculative-commit-target', 'innerHTML');
+    if (committed) {
+      document.getElementById('speculative-status').textContent = 'Committed in 0.0ms!';
+      updateDiag("Plane 3: Speculative branch committed into DOM in 0.0ms.");
+    } else {
+      alert("Please pre-cache speculative state first by clicking 'Plane 3: Pre-Cache Speculative State'!");
+    }
+  };
+
+  // 5. Simulate Plane 4: Swarm Cluster Gossip
+  let swarmClock = 100;
+  window.simulateSwarmGossip = function() {
+    if (typeof HyperFrameCodec === 'undefined' || typeof HyHook === 'undefined') return;
+
+    const nodes = ['edge-gateway-pacs', 'cluster-gpu-node-01', 'mobile-npu-client'];
+    const chosenNode = nodes[Math.floor(Math.random() * nodes.length)];
+    swarmClock += 15;
+
+    const frame = HyperFrameCodec.encodeSwarm(501, chosenNode, swarmClock, '{"state":"synced"}');
+    HyHook.routeBinaryFrame(frame);
+
+    const activeNodes = HyHook.getSwarmNodes();
+    const countEl = document.getElementById('swarm-node-count');
+    if (countEl) countEl.textContent = activeNodes.length + ' Nodes';
+
+    const listEl = document.getElementById('swarm-nodes-list');
+    if (listEl) {
+      listEl.innerHTML = activeNodes.map(n => `
+        <span class="px-2.5 py-1 rounded bg-purple-950/80 border border-purple-500/40 text-purple-200">
+          ● <strong>${n.nodeId}</strong> (v-clock: ${n.vectorClock})
+        </span>
+      `).join('');
+    }
+
+    updateDiag("Plane 4: Swarm Gossip synced node '" + chosenNode + "' (v-clock: " + swarmClock + ")");
+  };
+</script>

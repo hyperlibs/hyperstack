@@ -1,6 +1,6 @@
 @meta
   project: htmFX
-  title: Declarative 3D, WebGPU & Spatial Simulation Companion for htmxUI
+  title: Declarative 3D, WebGPU & Spatial Simulation Companion for Hyperstack
   version: 1.2.0
   runtime: hmlr@1.2
   repo: github.com/hyperlibs/htmFX
@@ -31,7 +31,7 @@
   material: string
 
 # htmFX: Declarative 3D & Spatial Engine Specification (v1.2.0)
-A lightweight (33.99 KB gzipped), declarative WebGL/WebGPU companion for htmxUI. 
+A lightweight (33.99 KB gzipped), declarative WebGL/WebGPU companion for Hyperstack. 
 Eliminates 400-line Three.js boilerplate in favor of declarative HTML components (<hx-viewport>, <hx-mesh>), 240+ spatial physics FX, and FlatBuffer SpatialEdgeDB storage for >100,000 entities.
 
 ## Core Directives & Macros | @model EnvConfig
@@ -91,7 +91,7 @@ When spatial entity counts exceed 1,000 items, DOM node creation is bypassed. En
 @3d[0, 5, -20]:         3D.Mesh("/models/satellite.gltf", spin: 0.01)
 @3d[0, 5, -20]:         3D.Emitter(type: "$burn", intensity: 0.8)
 
-# 2D Screen Anchors (HTMXUI HUD)
+# 2D Screen Anchors (Hyperstack HUD)
 @pin[top-left]:         Panel.HUD("Satellite Telemetry", sub: "WebGPU Active")
 @pin[bottom-bar]:       ActionBar(
                           Button("⚡ Pulse Thruster", action: $flare('#target'); $sound('ping')),
@@ -102,6 +102,6 @@ When spatial entity counts exceed 1,000 items, DOM node creation is bypassed. En
 
 ## Autonomous Handoff Protocol & Diagnostic Bridge
 - Standalone Library: `dist/htmfx.js` (33.99 KB gzipped)
-- HTMXUI Bridge: Autonomous directive scanner (`hx-3d`, `3denv`, `3datmos`, `3dfx`, `<hx-viewport>`) delegates to `window.htmFX.mount(el)`
+- Hyperstack Bridge: Autonomous directive scanner (`hx-3d`, `3denv`, `3datmos`, `3dfx`, `<hx-viewport>`) delegates to `window.htmFX.mount(el)`
 - Missing Companion Diagnostic: `@diag FX-0404: htmFX spatial companion required for 3D rendering.`
 - Fallback Pipeline: Auto-detects WebGPU (`navigator.gpu`) with seamless WebGL2 fallback.

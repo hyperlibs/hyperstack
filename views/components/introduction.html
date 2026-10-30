@@ -4,29 +4,29 @@
     <div class="flex items-center gap-2">
       <span class="px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-primary/10 text-primary border border-primary/20 flex items-center gap-1.5">
         <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-        v0.1.0 • September 2026 Release
+        v0.10.30 • October 2026 Release
       </span>
       <span class="px-2.5 py-1 rounded-full text-xs font-mono bg-muted text-muted-foreground border border-border">
-        10 Micro-Engines • Zero VDOM • Sub-48KB
+        HTMX 4 Core • 13 Micro-Engines • Zero VDOM • ~71 KB Gzipped
       </span>
     </div>
     <h1 class="text-4xl font-extrabold tracking-tight text-foreground">Introduction</h1>
     <p class="text-lg text-muted-foreground leading-relaxed font-medium">
-      HTMX on Steroids. Hyper Reactive. Lean. Built to make heavy client frameworks obsolete.
+      HTMX on Steroids. Hyperreactive. Lean. Built natively on HTMX 4 to make heavy client frameworks obsolete.
     </p>
   </div>
 
-  <!-- Section: What is HTMX PRO? -->
+  <!-- Section: What is Hyperstack? -->
   <div class="space-y-4">
-    <h2 class="text-2xl font-bold tracking-tight text-foreground border-b border-border pb-2">What is HTMX PRO?</h2>
+    <h2 class="text-2xl font-bold tracking-tight text-foreground border-b border-border pb-2">What is Hyperstack?</h2>
     <p class="text-sm text-muted-foreground leading-relaxed">
-      HTMX PRO is not a simple UI library bolted on top of htmx. It is a deliberate fork and reinvention of htmx into a hyperreactive, lean, hypermedia-first framework.
+      Hyperstack is built natively on top of HTMX 4. It completes HTML as a hyperreactive, lean, hypermedia-first application platform — with zero Virtual DOM, zero NPM runtime bloat, and sub-millisecond local reactivity.
     </p>
     <p class="text-sm text-muted-foreground leading-relaxed">
-      Original htmx completed HTML as a hypermedia. HTMX PRO completes it as a high-performance, signal-reactive, agent-friendly application platform — with zero Virtual DOM, zero NPM runtime bloat, and sub-millisecond local reactivity.
+      Original htmx completed HTML as a hypermedia. Hyperstack completes it as a high-performance, signal-reactive, agent-friendly application platform — providing 13 modular micro-engines, real-time webhooks (<code class="bg-muted px-1.5 py-0.5 rounded text-xs font-mono">hy-hook</code>), and a 200+ component library (100 Basic + 100 Smart components + 10 domain workstations).
     </p>
     <div class="p-4 rounded-xl border border-border bg-muted/40 font-mono text-sm text-foreground leading-relaxed shadow-sm">
-      <span class="text-primary font-bold">HTMX PRO</span> = HTMX (Hypermedia Core) + Bolt (Signal Reactivity) + Flash (Fuzzy Search) + Form (Validation Machine) + Vibe (FLIP Layout) + A11y (Accessible Navigation) + Virtual (100k Windowing) + Grid (Data Grid) + Offline (IndexedDB Sync) + Calc (Excel DAG) + DevTools (HUD) + 100+ Production-Grade Components
+      <span class="text-primary font-bold">Hyperstack</span> = HTMX 4 Core + Bolt (Signals &amp; State) + Flash (Fuzzy Search) + Form (Validation FSM) + Vibe (FLIP Layout) + A11y (Matrix Nav) + Virtual (100k Windowing) + Grid (Data Grid) + Offline (IndexedDB Sync) + Calc (Excel DAG) + Sim (Kinetics) + Canvas (Spatial Graphs) + DevTools (HUD) + Appz (4-Layer Mobile OS) + Hy-Hook (Streaming Webhooks) + 200+ Components
     </div>
   </div>
 
@@ -39,16 +39,26 @@
       </a>
     </div>
     <p class="text-sm text-muted-foreground leading-relaxed">
-      HTMX PRO powers real-world enterprise applications out of the box with zero client-side framework overhead. Explore our full flagship implementations:
+      Hyperstack powers real-world enterprise applications out of the box with zero client-side framework overhead. Explore our full flagship implementations:
     </p>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <a href="/demo/tailadmin" class="group p-4 rounded-xl border border-border bg-card hover:border-primary/50 transition-all shadow-sm space-y-2">
         <div class="flex items-center justify-between">
           <span class="font-bold text-sm text-foreground group-hover:text-primary transition-colors">📊 HyperAdmin Dashboard</span>
-          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">100% Pure HTMX PRO</span>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">100% Pure Hyperstack</span>
         </div>
         <p class="text-xs text-muted-foreground leading-relaxed">
           Complete single-page admin panel recreation with 10 interactive views: E-Commerce, Analytics, Calendar, Profile, Forms, Tables, Settings, Alerts, Buttons Sandbox, and Auth.
+        </p>
+      </a>
+
+      <a href="/demo/mobile" class="group p-4 rounded-xl border border-border bg-card hover:border-primary/50 transition-all shadow-sm space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-sm text-foreground group-hover:text-primary transition-colors">📱 AppzOS Mobile Simulator</span>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">8 Modes • 0-9 Layers</span>
+        </div>
+        <p class="text-xs text-muted-foreground leading-relaxed">
+          Turnkey mobile OS viewport simulator. OS-H/P, Tab-H/P, Mob-H/P, TV-H/P with Photoshop Z-layers, coroutines, and hardware haptics.
         </p>
       </a>
 
@@ -84,9 +94,9 @@
     </div>
   </div>
 
-  <!-- Section: The 10 Micro-Engines Suite -->
+  <!-- Section: The Micro-Engines Suite -->
   <div class="space-y-4">
-    <h2 class="text-2xl font-bold tracking-tight text-foreground border-b border-border pb-2">The 10 Micro-Engines Suite</h2>
+    <h2 class="text-2xl font-bold tracking-tight text-foreground border-b border-border pb-2">The Micro-Engines Suite (~71 KB Gzipped)</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- 1. htmx-bolt.js -->
       <div class="rounded-xl border border-border bg-card p-5 text-card-foreground shadow-sm space-y-2">
@@ -191,10 +201,54 @@
       <div class="rounded-xl border border-border bg-card p-5 text-card-foreground shadow-sm space-y-2">
         <div class="flex items-center justify-between">
           <h3 class="font-semibold text-base text-card-foreground">htmx-devtools.js</h3>
-          <span class="bg-primary/10 text-primary px-2 py-0.5 rounded-full text-xs font-mono font-medium">In-Browser HUD</span>
+          <span class="bg-primary/10 text-primary px-2 py-0.5 rounded-full text-xs font-mono font-medium">In-Browser HUD &amp; @diag</span>
         </div>
         <p class="text-sm text-muted-foreground leading-relaxed">
-          Interactive developer HUD (<kbd class="bg-muted px-1 py-0.5 rounded text-[10px] font-mono">Ctrl+Shift+H</kbd>) with real-time signal tree inspection, event stream timeline, mutation logger, and live state editing.
+          Interactive developer HUD (<kbd class="bg-muted px-1 py-0.5 rounded text-[10px] font-mono">Ctrl+Shift+H</kbd>) with real-time signal tree inspection, event stream timeline, mutation logger, and SARIF 2.1.0 diagnostic stream.
+        </p>
+      </div>
+
+      <!-- 11. htmx-sim.js -->
+      <div class="rounded-xl border border-border bg-card p-5 text-card-foreground shadow-sm space-y-2">
+        <div class="flex items-center justify-between">
+          <h3 class="font-semibold text-base text-card-foreground">htmx-sim.js</h3>
+          <span class="bg-primary/10 text-primary px-2 py-0.5 rounded-full text-xs font-mono font-medium">Kinetic Particle Physics</span>
+        </div>
+        <p class="text-sm text-muted-foreground leading-relaxed">
+          Particle physics and swarm intelligence. Reynolds boids flocking, N-body gravitational dynamics, elastic momentum conservation, 23/3 Conway Life, and chemoattractant slime mould sensors.
+        </p>
+      </div>
+
+      <!-- 12. htmx-canvas.js -->
+      <div class="rounded-xl border border-border bg-card p-5 text-card-foreground shadow-sm space-y-2">
+        <div class="flex items-center justify-between">
+          <h3 class="font-semibold text-base text-card-foreground">htmx-canvas.js</h3>
+          <span class="bg-primary/10 text-primary px-2 py-0.5 rounded-full text-xs font-mono font-medium">Spatial Node Graph</span>
+        </div>
+        <p class="text-sm text-muted-foreground leading-relaxed">
+          Spatial node canvas with draggable nodes, automatic connector/bézier routing, grid snapping, and per-node layer resolution for visual flowcharts and architecture editors.
+        </p>
+      </div>
+
+      <!-- 13. appz.js -->
+      <div class="rounded-xl border border-border bg-card p-5 text-card-foreground shadow-sm space-y-2">
+        <div class="flex items-center justify-between">
+          <h3 class="font-semibold text-base text-card-foreground">appz.js</h3>
+          <span class="bg-primary/10 text-primary px-2 py-0.5 rounded-full text-xs font-mono font-medium">Mobile OS &amp; Spatial Stack</span>
+        </div>
+        <p class="text-sm text-muted-foreground leading-relaxed">
+          4-layer OS architecture for mobile &amp; spatial devices. Photoshop 0–9 Z-index layer stacking, 8 ergonomic viewport specs, coroutine channels (<code class="bg-muted px-1 py-0.5 rounded text-xs font-mono">AppzChan</code>), and hardware bridges (haptics, battery, network).
+        </p>
+      </div>
+
+      <!-- 14. hy-hook.js -->
+      <div class="rounded-xl border border-border bg-card p-5 text-card-foreground shadow-sm space-y-2">
+        <div class="flex items-center justify-between">
+          <h3 class="font-semibold text-base text-card-foreground">hy-hook.js</h3>
+          <span class="bg-primary/10 text-primary px-2 py-0.5 rounded-full text-xs font-mono font-medium">Hyperhooks Protocol</span>
+        </div>
+        <p class="text-sm text-muted-foreground leading-relaxed">
+          Declarative hypermedia webhooks and real-time event streaming (<code class="bg-muted px-1 py-0.5 rounded text-xs font-mono">hy-hook</code>). Asymmetric transport over WebTransport/UDP and WebSockets with automatic fallback to SSE and HTTP streaming.
         </p>
       </div>
     </div>
@@ -205,15 +259,15 @@
     <h2 class="text-2xl font-bold tracking-tight text-foreground border-b border-border pb-2">Benefits for Human Developers</h2>
     <ol class="list-decimal list-inside space-y-2.5 text-sm text-muted-foreground leading-relaxed marker:text-foreground marker:font-medium">
       <li><strong class="text-foreground">Zero NPM runtime dependencies</strong> — no node_modules, no webpack/vite config nightmares</li>
-      <li><strong class="text-foreground">Full reactive suite under 48KB total</strong> — smaller than a single React hook bundle</li>
+      <li><strong class="text-foreground">Full reactive suite at ~71 KB gzipped total</strong> — smaller than <code>react-dom</code> alone, before any router or state library</li>
+      <li><strong class="text-foreground">Native HTMX 4 Core</strong> — modern fetch-based swaps, official CSP Level 3 safe parser, and live DOM reactivity</li>
       <li><strong class="text-foreground">Server remains the source of truth</strong> — true hypermedia architecture with hyperreactive client ergonomics</li>
       <li><strong class="text-foreground">Computed values &amp; fine-grained signals</strong> — no unnecessary re-renders or brute-force DOM sweeps</li>
       <li><strong class="text-foreground">Two-way binding with hx-model</strong> — effortless form controls with number, trim, and lazy modifiers</li>
       <li><strong class="text-foreground">Structural loops (hx-for) &amp; conditionals (hx-if)</strong> — clean HTML templates without JSX transpilation</li>
       <li><strong class="text-foreground">Backend agnostic</strong> — works seamlessly with Python (FastAPI/Django), Go, Rust, PHP (Laravel), Bun, or Ruby</li>
       <li><strong class="text-foreground">Built-in accessible focus traps &amp; roving tabindex</strong> — instant compliance without third-party libraries</li>
-      <li><strong class="text-foreground">Fluid ScaleUI resizing</strong> — interactive testing and responsive component scaling</li>
-      <li><strong class="text-foreground">Extensible directive ecosystem</strong> — community-ready hooks for custom domain-specific UI behaviors</li>
+      <li><strong class="text-foreground">Real-time Hyperhooks</strong> — declarative streaming webhooks with zero custom socket boilerplate</li>
     </ol>
   </div>
 
@@ -226,11 +280,11 @@
       <li><strong class="text-foreground">Predictable signal grammar</strong> — <code class="bg-muted px-1.5 py-0.5 rounded text-xs font-mono">hx-state</code>, <code class="bg-muted px-1.5 py-0.5 rounded text-xs font-mono">hx-model</code>, <code class="bg-muted px-1.5 py-0.5 rounded text-xs font-mono">hx-for</code>, <code class="bg-muted px-1.5 py-0.5 rounded text-xs font-mono">hx-if</code> form an unambiguous grammar</li>
       <li><strong class="text-foreground">Server-driven atomic mutations</strong> — AI agents can update parts of the UI by simply returning standard HTML fragments</li>
       <li><strong class="text-foreground">Zero build configuration fragility</strong> — agents don't get stuck debugging tsconfig, Babel, or Vite plugin errors</li>
-      <li><strong class="text-foreground">Machine-readable component contracts</strong> — uniform attribute standards across 100+ production-grade components</li>
+      <li><strong class="text-foreground">Machine-readable component contracts</strong> — uniform attribute standards across 200+ production-grade components</li>
       <li><strong class="text-foreground">Self-contained components</strong> — copy, paste, or mutate an HTML block without breaking distant client state graphs</li>
       <li><strong class="text-foreground">Declarative validation rules</strong> — form validation in pure HTML attributes (<code class="bg-muted px-1.5 py-0.5 rounded text-xs font-mono">hx-validate="required|email"</code>)</li>
-      <li><strong class="text-foreground">Global store access</strong> — clean shared state manipulation via <code class="bg-muted px-1.5 py-0.5 rounded text-xs font-mono">$store.name</code></li>
-      <li><strong class="text-foreground">Vastly lower token overhead</strong> — concise declarative templates require fewer prompt tokens to read and generate</li>
+      <li><strong class="text-foreground">Autonomous self-healing via @diag</strong> — machine-actionable error codes and replacement suggestions directly in SARIF 2.1.0</li>
+      <li><strong class="text-foreground">Vastly lower token overhead</strong> — concise declarative templates require ~75% fewer prompt tokens than React/JSX</li>
     </ol>
   </div>
 
@@ -254,7 +308,7 @@
           </tr>
           <tr>
             <td class="py-3 px-4 font-bold text-foreground">Lean</td>
-            <td class="py-3 px-4">Minimal runtime footprint (&lt;48KB total for all 10 engines combined)</td>
+            <td class="py-3 px-4">Minimal runtime footprint (~71 KB gzipped for all 13 core engines combined)</td>
             <td class="py-3 px-4">Megabyte-scale dependency graphs and build pipelines</td>
           </tr>
           <tr>

@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hy Hook — Hyperstack</title>
+  <script src="/vendor/htmx.min.js"></script>
+  <script src="/htmx-bolt.js"></script>
+  <script src="/htmx-flash.js"></script>
+  <script src="/htmx-form.js"></script>
+  <script src="/htmx-vibe.js"></script>
+  <script src="/htmx-a11y.js"></script>
+  <script src="/htmx-virtual.js"></script>
+  <script src="/htmx-grid.js"></script>
+  <script src="/htmx-offline.js"></script>
+  <script src="/htmx-devtools.js"></script>
+  <script src="/htmx-calc.js"></script>
+  <script src="/htmx-sim.js"></script>
+  <script src="/appz.js"></script>
+  <script src="/htmx-canvas.js"></script>
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    .code-block { background: #1e293b; color: #e2e8f0; border-radius: 0.5rem; padding: 1rem; overflow-x: auto; font-size: 0.8rem; line-height: 1.6; }
+    .code-block code { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace; }
+  </style>
+</head>
+<body class="bg-background text-foreground antialiased min-h-screen">
+  <div class="flex min-h-screen">
+    <aside id="doc-sidebar" class="hidden lg:flex w-60 flex-col border-r border-border bg-card overflow-y-auto sticky top-0 h-screen">
+      <div class="flex h-14 items-center border-b border-border px-4">
+        <a href="/" class="flex items-center gap-2">
+          <svg class="h-5 w-5 text-primary" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+          <span class="font-bold text-lg tracking-tight">Hyperstack</span>
+        </a>
+      </div>
+      <div class="flex-1 p-3 overflow-y-auto"><div class="mb-6"><h4 class="mb-2 px-3 text-sm font-semibold tracking-tight">Getting Started</h4><div class="space-y-1"><a href="/docs/components/introduction/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Introduction</a>
+<a href="/docs/components/installation/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Installation</a>
+<a href="/docs/components/rosetta-stone/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Rosetta Stone</a>
+<a href="/docs/components/common-ai-hallucinations/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Common Ai Hallucinations</a>
+<a href="/docs/components/directives-guide/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Directives Guide</a></div></div><div><h4 class="mb-2 px-3 text-sm font-semibold tracking-tight">Components</h4><div class="space-y-1"><a href="/docs/components/accordion/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Accordion</a>
+<a href="/docs/components/alert/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Alert</a>
+<a href="/docs/components/alert-dialog/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Alert Dialog</a>
+<a href="/docs/components/aspect-ratio/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Aspect Ratio</a>
+<a href="/docs/components/avatar/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Avatar</a>
+<a href="/docs/components/avatar-group/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Avatar Group</a>
+<a href="/docs/components/badge/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Badge</a>
+<a href="/docs/components/banner/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Banner</a>
+<a href="/docs/components/breadcrumb/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Breadcrumb</a>
+<a href="/docs/components/button/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Button</a>
+<a href="/docs/components/button-group/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Button Group</a>
+<a href="/docs/components/calendar/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Calendar</a>
+<a href="/docs/components/card/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Card</a>
+<a href="/docs/components/carousel/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Carousel</a>
+<a href="/docs/components/checkbox/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Checkbox</a>
+<a href="/docs/components/checkbox-group/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Checkbox Group</a>
+<a href="/docs/components/chip/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Chip</a>
+<a href="/docs/components/collapsible/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Collapsible</a>
+<a href="/docs/components/color-picker/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Color Picker</a>
+<a href="/docs/components/combobox/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Combobox</a>
+<a href="/docs/components/command/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Command</a>
+<a href="/docs/components/container/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Container</a>
+<a href="/docs/components/context-menu/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Context Menu</a>
+<a href="/docs/components/data-table/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Data Table</a>
+<a href="/docs/components/date-picker/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Date Picker</a>
+<a href="/docs/components/dialog/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Dialog</a>
+<a href="/docs/components/divider/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Divider</a>
+<a href="/docs/components/drawer/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Drawer</a>
+<a href="/docs/components/dropdown-menu/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Dropdown Menu</a>
+<a href="/docs/components/empty-state/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Empty State</a>
+<a href="/docs/components/error-message/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Error Message</a>
+<a href="/docs/components/file-upload/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">File Upload</a>
+<a href="/docs/components/flash-search/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Flash Search</a>
+<a href="/docs/components/form/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Form</a>
+<a href="/docs/components/gallery/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Gallery</a>
+<a href="/docs/components/hover-card/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Hover Card</a>
+<a href="/docs/components/hypertext-editor/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Hypertext Editor</a>
+<a href="/docs/components/icon/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Icon</a>
+<a href="/docs/components/image/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Image</a>
+<a href="/docs/components/indicator/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Indicator</a>
+<a href="/docs/components/input/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Input</a>
+<a href="/docs/components/input-otp/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Input Otp</a>
+<a href="/docs/components/kbd/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Kbd</a>
+<a href="/docs/components/label/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Label</a>
+<a href="/docs/components/layout-block/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Layout Block</a>
+<a href="/docs/components/layout-canvas/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Layout Canvas</a>
+<a href="/docs/components/layout-grid/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Layout Grid</a>
+<a href="/docs/components/layout-page/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Layout Page</a>
+<a href="/docs/components/layout-print/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Layout Print</a>
+<a href="/docs/components/layout-scaffold/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Layout Scaffold</a>
+<a href="/docs/components/layout-web/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Layout Web</a>
+<a href="/docs/components/layout-mweb/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Layout Mweb</a>
+<a href="/docs/components/layout-mapp/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Layout Mapp</a>
+<a href="/docs/components/link/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Link</a>
+<a href="/docs/components/list/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">List</a>
+<a href="/docs/components/list-item/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">List Item</a>
+<a href="/docs/components/loading-spinner/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Loading Spinner</a>
+<a href="/docs/components/masonry-grid/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Masonry Grid</a>
+<a href="/docs/components/menubar/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Menubar</a>
+<a href="/docs/components/message-bubble/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Message Bubble</a>
+<a href="/docs/components/navigation-menu/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Navigation Menu</a>
+<a href="/docs/components/notification/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Notification</a>
+<a href="/docs/components/number-input/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Number Input</a>
+<a href="/docs/components/page-header/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Page Header</a>
+<a href="/docs/components/pagination/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Pagination</a>
+<a href="/docs/components/panel/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Panel</a>
+<a href="/docs/components/password-input/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Password Input</a>
+<a href="/docs/components/pin-input/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Pin Input</a>
+<a href="/docs/components/popover/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Popover</a>
+<a href="/docs/components/profile-badge/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Profile Badge</a>
+<a href="/docs/components/progress/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Progress</a>
+<a href="/docs/components/progress-bar/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Progress Bar</a>
+<a href="/docs/components/pulse/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Pulse</a>
+<a href="/docs/components/radio-button/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Radio Button</a>
+<a href="/docs/components/radio-group/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Radio Group</a>
+<a href="/docs/components/rating/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Rating</a>
+<a href="/docs/components/resizable/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Resizable</a>
+<a href="/docs/components/ribbon/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Ribbon</a>
+<a href="/docs/components/scroll-area/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Scroll Area</a>
+<a href="/docs/components/search-input/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Search Input</a>
+<a href="/docs/components/select/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Select</a>
+<a href="/docs/components/separator/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Separator</a>
+<a href="/docs/components/sheet/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Sheet</a>
+<a href="/docs/components/sidebar/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Sidebar</a>
+<a href="/docs/components/skeleton/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Skeleton</a>
+<a href="/docs/components/slider/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Slider</a>
+<a href="/docs/components/slider-range/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Slider Range</a>
+<a href="/docs/components/snackbar/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Snackbar</a>
+<a href="/docs/components/splitter/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Splitter</a>
+<a href="/docs/components/stat-card/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Stat Card</a>
+<a href="/docs/components/stepper/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Stepper</a>
+<a href="/docs/components/submenu/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Submenu</a>
+<a href="/docs/components/switch/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Switch</a>
+<a href="/docs/components/table/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Table</a>
+<a href="/docs/components/tabs/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Tabs</a>
+<a href="/docs/components/tag/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Tag</a>
+<a href="/docs/components/text/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Text</a>
+<a href="/docs/components/textarea/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Textarea</a>
+<a href="/docs/components/timeline/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Timeline</a>
+<a href="/docs/components/time-picker/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Time Picker</a>
+<a href="/docs/components/toast/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Toast</a>
+<a href="/docs/components/toggle/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Toggle</a>
+<a href="/docs/components/toggle-group/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Toggle Group</a>
+<a href="/docs/components/toggle-switch/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Toggle Switch</a>
+<a href="/docs/components/toolbar/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Toolbar</a>
+<a href="/docs/components/tooltip/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Tooltip</a>
+<a href="/docs/components/tree-view/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Tree View</a>
+<a href="/docs/components/user-card/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">User Card</a>
+<a href="/docs/components/video-player/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Video Player</a>
+<a href="/docs/components/watermark/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Watermark</a>
+<a href="/docs/components/wizard/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Wizard</a>
+<a href="/docs/components/hx-wizard/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Hx Wizard</a>
+<a href="/docs/components/date-range-picker/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Date Range Picker</a>
+<a href="/docs/components/hx-grid/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Hx Grid</a>
+<a href="/docs/components/hx-virtual/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Hx Virtual</a>
+<a href="/docs/components/hx-offline/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Hx Offline</a>
+<a href="/docs/components/hollywood-webfx/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Hollywood Webfx</a>
+<a href="/docs/components/simulation/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Simulation</a>
+<a href="/docs/components/block-pathology-lab/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Block Pathology Lab</a>
+<a href="/docs/components/block-radiology-dicom/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Block Radiology Dicom</a>
+<a href="/docs/components/block-biology-atlas/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Block Biology Atlas</a>
+<a href="/docs/components/block-crispr-studio/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Block Crispr Studio</a>
+<a href="/docs/components/block-genomic-map/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Block Genomic Map</a>
+<a href="/docs/components/block-civil-architect/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Block Civil Architect</a>
+<a href="/docs/components/block-marine-navigation/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Block Marine Navigation</a>
+<a href="/docs/components/block-agriculture-precision/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Block Agriculture Precision</a>
+<a href="/docs/components/block-energy-scada/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Block Energy Scada</a>
+<a href="/docs/components/block-pcb-semiconductor/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Block Pcb Semiconductor</a>
+<a href="/docs/components/appz-gauge/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Appz Gauge</a>
+<a href="/docs/components/appz-keypad/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Appz Keypad</a>
+<a href="/docs/components/appz-statusbar/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Appz Statusbar</a>
+<a href="/docs/components/appz-swipeout/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Appz Swipeout</a>
+<a href="/docs/components/appz-thermostat/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Appz Thermostat</a>
+<a href="/docs/components/sortable-item/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Sortable Item</a>
+<a href="/docs/components/smart-air-quality-pill/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Air Quality Pill</a>
+<a href="/docs/components/smart-ambient-aod-clock/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Ambient Aod Clock</a>
+<a href="/docs/components/smart-car-cockpit-hud/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Car Cockpit Hud</a>
+<a href="/docs/components/smart-conveyor-belt/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Conveyor Belt</a>
+<a href="/docs/components/smart-drive-mode/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Drive Mode</a>
+<a href="/docs/components/smart-ev-battery-range/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Ev Battery Range</a>
+<a href="/docs/components/smart-forecast-daily/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Forecast Daily</a>
+<a href="/docs/components/smart-heart-rate/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Heart Rate</a>
+<a href="/docs/components/smart-lighting-dimmer/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Lighting Dimmer</a>
+<a href="/docs/components/smart-pos-cashier/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Pos Cashier</a>
+<a href="/docs/components/smart-relay-switchboard/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Relay Switchboard</a>
+<a href="/docs/components/smart-rotary-volume/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Rotary Volume</a>
+<a href="/docs/components/smart-smart-lock/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Smart Lock</a>
+<a href="/docs/components/smart-solar-power-flow/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Solar Power Flow</a>
+<a href="/docs/components/smart-step-activity-rings/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Step Activity Rings</a>
+<a href="/docs/components/smart-thermostat-dual-zone/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Thermostat Dual Zone</a>
+<a href="/docs/components/smart-tire-pressure-tpms/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Tire Pressure Tpms</a>
+<a href="/docs/components/smart-turn-by-turn-nav/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Turn By Turn Nav</a>
+<a href="/docs/components/smart-uv-index-dial/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Uv Index Dial</a>
+<a href="/docs/components/smart-weather-hero/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Weather Hero</a>
+<a href="/docs/components/smart-wind-compass/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Wind Compass</a>
+<a href="/docs/components/hy-hook/" class="block rounded-md px-3 py-1.5 text-sm bg-accent font-medium text-accent-foreground transition-colors">Hy Hook</a></div></div></div>
+    </aside>
+    <main class="flex-1 flex flex-col min-w-0">
+      <header class="h-14 border-b border-border flex items-center justify-between px-6 bg-card sticky top-0 z-30">
+        <div class="flex items-center gap-4">
+          <h1 class="font-semibold text-base">Hy Hook</h1>
+          <a href="/demo/" class="text-xs bg-primary/10 text-primary font-medium px-2.5 py-1 rounded-full hover:bg-primary/20 transition-colors">Live Demos Hub</a>
+        </div>
+        <a href="https://github.com/hyperlibs/hyperstack" target="_blank" class="text-xs text-muted-foreground hover:text-foreground">GitHub ↗</a>
+      </header>
+      <div class="flex-1 p-8 max-w-5xl mx-auto w-full space-y-8">
+        <div class="space-y-2">
+          <h1 class="text-3xl font-extrabold tracking-tight">Hy Hook</h1>
+          <p class="text-muted-foreground text-sm">Interactive Shadcn-quality hypermedia component for Hyperstack.</p>
+        </div>
+        <div class="space-y-4">
+          <h2 class="text-xl font-bold tracking-tight">Interactive Preview</h2>
+          <div class="rounded-xl border border-border p-8 bg-card shadow-sm flex items-center justify-center min-h-[160px]">
+            <div class="w-full max-w-xl flex flex-col items-center gap-4"><!-- =========================================================================
+     HY-HOOK: HYPERMEDIA WEBHOOKS & QUANTUM STATE FABRIC SHOWCASE
+     Forward-Focused State Wire: Edge AI Tensors, Atomic DOM, 60fps Telemetry,
+     Speculative Pre-Cognition, and Cluster Swarm Synchronization.
+     ========================================================================= -->
+<div class="rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden flex flex-col select-none text-slate-100"
+     id="hy-hook-showcase-container">
+
+  <!-- ZONE 1: HEADER -->
+  <div class="px-5 py-4 bg-slate-950 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-400 font-black text-xl shadow-md">
+        🪝
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h2 class="text-base font-black text-white tracking-tight flex items-center gap-2">
+            <span>hy-hook</span>
+            <span class="text-[10px] font-mono text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded-full border border-teal-500/20">Autonomous State Fabric</span>
+          </h2>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">QUANTUM 5-PLANE</span>
+        </div>
+        <p class="text-xs text-slate-400 mt-0.5 font-sans">
+          Zero-allocation binary state fabric multiplexing Edge AI tokens, hypermedia DOM, 60fps telemetry, pre-cognition & swarm mesh.
+        </p>
+      </div>
+    </div>
+
+    <!-- Active Telemetry Badge -->
+    <div class="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 font-mono text-xs">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span class="text-slate-400">Binary Frames:</span>
+      <span id="hy-telemetry-frames" class="text-teal-400 font-bold">0</span>
+      <span class="text-slate-600">|</span>
+      <span class="text-slate-400">Planes:</span>
+      <span class="text-purple-400 font-bold">5 Active</span>
+    </div>
+  </div>
+
+  <!-- ZONE 2: SIMULATOR STAGE (5-PLANE DASHBOARD) -->
+  <div class="p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 bg-slate-900/60">
+
+    <!-- LEFT COLUMN: CONTROLS & DISPATCHERS -->
+    <div class="lg:col-span-5 flex flex-col space-y-4">
+      <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+            <span>⚡</span> Quantum Plane Dispatcher
+          </span>
+          <span class="text-[10px] font-mono text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded border border-teal-500/20">Binary 16B Wire</span>
+        </div>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Trigger binary quantum frames across 5 distinct architectural compute planes:
+        </p>
+
+        <!-- Plane 0: Edge AI Neural Stream -->
+        <button onclick="simulateNeuralStream()"
+                class="w-full py-2.5 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center justify-between transition-all shadow-md">
+          <span class="flex items-center gap-2">
+            <span>🧠</span>
+            <span>Plane 0: Stream Edge AI Tokens</span>
+          </span>
+          <span class="font-mono text-[10px] bg-indigo-800/60 px-1.5 py-0.5 rounded">TENSOR [0x00]</span>
+        </button>
+
+        <!-- Plane 1: Hypermedia Sub-Millisecond Morph -->
+        <button onclick="simulateHypermediaMorph()"
+                class="w-full py-2.5 px-3 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-bold text-xs flex items-center justify-between transition-all shadow-md">
+          <span class="flex items-center gap-2">
+            <span>🩻</span>
+            <span>Plane 1: Atomic Hypermedia Morph</span>
+          </span>
+          <span class="font-mono text-[10px] bg-teal-800/60 px-1.5 py-0.5 rounded">HYPERMEDIA [0x01]</span>
+        </button>
+
+        <!-- Plane 2: Continuous 60fps Telemetry Vector -->
+        <button onclick="toggleTelemetryStream()" id="btn-telemetry"
+                class="w-full py-2.5 px-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs flex items-center justify-between transition-all shadow-md">
+          <span class="flex items-center gap-2">
+            <span>📊</span>
+            <span id="telemetry-btn-text">Plane 2: Start 60fps Telemetry</span>
+          </span>
+          <span class="font-mono text-[10px] bg-cyan-800/60 px-1.5 py-0.5 rounded">TELEMETRY [0x02]</span>
+        </button>
+
+        <!-- Plane 3: Speculative Pre-Cognition -->
+        <button onclick="simulatePrecognition()"
+                class="w-full py-2.5 px-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs flex items-center justify-between transition-all shadow-md">
+          <span class="flex items-center gap-2">
+            <span>🔮</span>
+            <span>Plane 3: Pre-Cache Speculative State</span>
+          </span>
+          <span class="font-mono text-[10px] bg-amber-800/60 px-1.5 py-0.5 rounded">PRECOG [0x03]</span>
+        </button>
+
+        <!-- Plane 4: Swarm Cluster Gossip -->
+        <button onclick="simulateSwarmGossip()"
+                class="w-full py-2.5 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center justify-between transition-all shadow-md">
+          <span class="flex items-center gap-2">
+            <span>🌐</span>
+            <span>Plane 4: Swarm Mesh Peer Gossip</span>
+          </span>
+          <span class="font-mono text-[10px] bg-purple-800/60 px-1.5 py-0.5 rounded">SWARM [0x04]</span>
+        </button>
+      </div>
+
+      <!-- Binary Frame Header Spec Card -->
+      <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2 font-mono text-[11px]">
+        <div class="text-xs font-sans font-bold text-slate-300 uppercase tracking-wider mb-1">HyperFrame Fixed 16-Byte Header</div>
+        <div class="text-teal-400">[0..1] 'HY' (Magic 0x48 0x59)</div>
+        <div class="text-slate-400">[2] Ver: 0x01 | [3] Plane: 0x00..0x04</div>
+        <div class="text-slate-400">[4] Flags: 0x01 (Datagram) | 0x02 (Reliable)</div>
+        <div class="text-slate-400">[6..7] ChannelId (uint16) | [8..11] Seq (uint32)</div>
+        <div class="text-purple-400">[12..15] PayloadLength (uint32)</div>
+        <div class="text-slate-500">[16..N] Zero-Copy Raw Memory Slice</div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: LIVE QUANTUM PLANE RECEIVERS -->
+    <div class="lg:col-span-7 flex flex-col space-y-4">
+      
+      <!-- Plane 0 Sink: Edge AI Neural Stream -->
+      <div class="p-3.5 rounded-xl border border-indigo-500/30 bg-slate-950 transition-all">
+        <div class="flex items-center justify-between text-xs mb-1.5">
+          <div class="flex items-center gap-2">
+            <span class="text-indigo-400">🧠</span>
+            <strong class="text-slate-200">Plane 0: Edge AI Neural Reasoning Stream</strong>
+          </div>
+          <span class="text-[10px] font-mono text-indigo-400">hy-ai-stream="101"</span>
+        </div>
+        <div id="neural-ai-output"
+             class="p-3 rounded-lg bg-slate-900 border border-indigo-900/50 font-mono text-xs text-indigo-200 min-h-[48px] flex items-center leading-relaxed">
+          <span class="italic text-slate-500">Ready to receive token stream...</span>
+        </div>
+      </div>
+
+      <!-- Plane 1 Sink: Atomic Hypermedia Morph -->
+      <div class="p-3.5 rounded-xl border border-teal-500/30 bg-slate-950 transition-all">
+        <div class="flex items-center justify-between text-xs mb-1.5">
+          <div class="flex items-center gap-2">
+            <span class="text-teal-400">🩻</span>
+            <strong class="text-slate-200">Plane 1: Sub-Millisecond Hypermedia Morph</strong>
+          </div>
+          <span class="text-[10px] font-mono text-teal-400">hy-hook="pacs:morph"</span>
+        </div>
+        <div id="hypermedia-target-card"
+             class="p-3 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400 flex items-center justify-between">
+          <span class="italic">PACS Series awaiting scan slice morph...</span>
+          <span class="w-2 h-2 rounded-full bg-slate-600 animate-pulse"></span>
+        </div>
+      </div>
+
+      <!-- Plane 2 Sink: 60fps Telemetry Canvas -->
+      <div class="p-3.5 rounded-xl border border-cyan-500/30 bg-slate-950 transition-all">
+        <div class="flex items-center justify-between text-xs mb-1.5">
+          <div class="flex items-center gap-2">
+            <span class="text-cyan-400">📊</span>
+            <strong class="text-slate-200">Plane 2: 60fps Binary Vector Telemetry (Packed Float32Array)</strong>
+          </div>
+          <span class="text-[10px] font-mono text-cyan-400" id="fps-counter">0 fps • 0 GC</span>
+        </div>
+        <canvas id="telemetry-canvas" width="560" height="70" class="w-full h-[70px] bg-slate-900 rounded-lg border border-slate-800"></canvas>
+      </div>
+
+      <!-- Plane 3 Sink: Speculative Pre-Cognition -->
+      <div class="p-3.5 rounded-xl border border-amber-500/30 bg-slate-950 transition-all">
+        <div class="flex items-center justify-between text-xs mb-1.5">
+          <div class="flex items-center gap-2">
+            <span class="text-amber-400">🔮</span>
+            <strong class="text-slate-200">Plane 3: Speculative Pre-Cognition (0.0ms Latency)</strong>
+          </div>
+          <span class="text-[10px] font-mono text-amber-400" id="speculative-status">Cache: Empty</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <div id="speculative-commit-target"
+               class="flex-1 p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400">
+            Hover button on left to pre-cache; hover here to instantly activate!
+          </div>
+          <button id="btn-commit-spec" onclick="commitSpeculativeNow()"
+                  class="px-3 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow">
+            Commit 0ms →
+          </button>
+        </div>
+      </div>
+
+      <!-- Plane 4 Sink: Swarm Cluster Mesh -->
+      <div class="p-3.5 rounded-xl border border-purple-500/30 bg-slate-950 transition-all">
+        <div class="flex items-center justify-between text-xs mb-1.5">
+          <div class="flex items-center gap-2">
+            <span class="text-purple-400">🌐</span>
+            <strong class="text-slate-200">Plane 4: Swarm Mesh Topology & Vector Clocks</strong>
+          </div>
+          <span class="text-[10px] font-mono text-purple-400" id="swarm-node-count">0 Nodes</span>
+        </div>
+        <div id="swarm-nodes-list" class="flex flex-wrap gap-2 text-xs font-mono">
+          <span class="text-slate-500 italic p-1">No peer nodes discovered yet. Click Plane 4 above.</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ZONE 3: DIAGNOSTIC LOG FOOTER -->
+  <div class="px-5 py-3 bg-slate-950 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-slate-400">
+    <div class="flex items-center gap-2">
+      <span class="text-teal-400 font-bold">@diag hyperhooks:</span>
+      <span id="hy-diag-status" class="text-slate-300">Quantum State Fabric Active • 5 Planes Armed</span>
+    </div>
+    <div class="flex items-center gap-3 text-[10px]">
+      <span class="text-emerald-400">● Zero-Copy TypedArray Engine: ARMED</span>
+      <span class="text-slate-500">•</span>
+      <span class="text-indigo-400">Edge AI Tensor Stream: READY</span>
+      <span class="text-slate-500">•</span>
+      <span class="text-teal-400">CSP Level 3 Verified</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- Embedded Interactive Simulator Scripts -->
+<script>
+  let frameCounter = 0;
+  let telemetryInterval = null;
+  let telemetryAngle = 0;
+
+  function updateDiag(msg) {
+    frameCounter++;
+    const countEl = document.getElementById('hy-telemetry-frames');
+    const statusEl = document.getElementById('hy-diag-status');
+    if (countEl) countEl.textContent = frameCounter;
+    if (statusEl) statusEl.textContent = msg;
+  }
+
+  // 1. Simulate Plane 0: Edge AI Neural Token Stream
+  window.simulateNeuralStream = function() {
+    if (typeof HyperFrameCodec === 'undefined' || typeof HyHook === 'undefined') return;
+
+    const outputEl = document.getElementById('neural-ai-output');
+    if (outputEl) outputEl.innerHTML = '';
+
+    const tokens = [
+      "Analyzing ", "DICOM ", "volume... ", 
+      "Identified ", "nodule ", "in ", "Right ", "Upper ", "Lobe ", 
+      "[RECIST: ", "14.2mm]. ", "Confidence: ", "98.7%."
+    ];
+
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i >= tokens.length) {
+        clearInterval(interval);
+        const eosFrame = HyperFrameCodec.encodeTensor(101, "", true, i);
+        HyHook.routeBinaryFrame(eosFrame);
+        updateDiag("Plane 0: Neural stream EOS reached.");
+        return;
+      }
+
+      const frame = HyperFrameCodec.encodeTensor(101, tokens[i], false, i);
+      HyHook.routeBinaryFrame(frame);
+
+      if (outputEl) {
+        outputEl.insertAdjacentText('beforeend', tokens[i]);
+      }
+      i++;
+      updateDiag("Plane 0: Streamed AI token (" + i + "/" + tokens.length + ")");
+    }, 90);
+  };
+
+  // 2. Simulate Plane 1: Atomic Hypermedia Morph
+  window.simulateHypermediaMorph = function() {
+    if (typeof HyperFrameCodec === 'undefined' || typeof HyHook === 'undefined') return;
+
+    const html = `
+      <div class="flex items-center justify-between w-full p-2 bg-teal-950/60 rounded border border-teal-500/40 text-teal-200 animate-fadeIn">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">🩻</span>
+          <div>
+            <strong class="text-white text-xs block">CT Chest Axial (0.625mm High-Res)</strong>
+            <span class="text-[10px] text-teal-300">Target Series #8820 • 640 Slices • Zero-Eval Swapped</span>
+          </div>
+        </div>
+        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30">
+          SUB-MS MORPH
+        </span>
+      </div>
+    `;
+
+    const frame = HyperFrameCodec.encodeHypermedia(201, '#hypermedia-target-card', 'innerHTML', html, 1);
+    HyHook.routeBinaryFrame(frame);
+    updateDiag("Plane 1: Atomic Hypermedia Morph completed on #hypermedia-target-card");
+  };
+
+  // 3. Simulate Plane 2: Continuous 60fps Telemetry Vector
+  window.toggleTelemetryStream = function() {
+    if (telemetryInterval) {
+      clearInterval(telemetryInterval);
+      telemetryInterval = null;
+      document.getElementById('telemetry-btn-text').textContent = 'Plane 2: Start 60fps Telemetry';
+      document.getElementById('fps-counter').textContent = 'Paused';
+      return;
+    }
+
+    const canvas = document.getElementById('telemetry-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    document.getElementById('telemetry-btn-text').textContent = 'Plane 2: Stop 60fps Telemetry';
+    document.getElementById('fps-counter').textContent = '60 fps • 0 GC';
+
+    let lastTime = performance.now();
+    let frames = 0;
+
+    HyHook.registerTelemetryRenderer(301, (floats) => {
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.strokeStyle = '#06b6d4';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      const step = canvas.width / floats.length;
+      for (let i = 0; i < floats.length; i++) {
+        const val = floats[i];
+        const y = (canvas.height / 2) + val * 25;
+        if (i === 0) ctx.moveTo(0, y);
+        else ctx.lineTo(i * step, y);
+      }
+      ctx.stroke();
+
+      frames++;
+      const now = performance.now();
+      if (now - lastTime >= 1000) {
+        document.getElementById('fps-counter').textContent = frames + ' fps • 0 GC Alloc';
+        frames = 0;
+        lastTime = now;
+      }
+    });
+
+    telemetryInterval = setInterval(() => {
+      telemetryAngle += 0.15;
+      const points = 32;
+      const floats = new Float32Array(points);
+      for (let i = 0; i < points; i++) {
+        floats[i] = Math.sin(telemetryAngle + i * 0.3) * Math.cos(telemetryAngle * 0.5);
+      }
+
+      const frame = HyperFrameCodec.encodeTelemetry(301, floats);
+      HyHook.routeBinaryFrame(frame);
+      updateDiag("Plane 2: Dispatched 60fps packed Float32Array frame (32 floats)");
+    }, 16);
+  };
+
+  // 4. Simulate Plane 3: Speculative Pre-Cognition
+  window.simulatePrecognition = function() {
+    if (typeof HyperFrameCodec === 'undefined' || typeof HyHook === 'undefined') return;
+
+    const preRenderedHTML = `
+      <div class="flex items-center justify-between w-full p-2 bg-amber-950/60 rounded border border-amber-500/40 text-amber-200 animate-fadeIn">
+        <div class="flex items-center gap-2">
+          <span>🔮</span>
+          <div>
+            <strong class="text-white text-xs block">Pre-Materialized Patient Analytics</strong>
+            <span class="text-[10px] text-amber-300">Speculative State Active • 0.0ms Activation</span>
+          </div>
+        </div>
+        <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">CONF: 94.2%</span>
+      </div>
+    `;
+
+    const frame = HyperFrameCodec.encodePrecognition(401, 'spec_patient_analytics', 0.942, preRenderedHTML);
+    HyHook.routeBinaryFrame(frame);
+
+    const statusEl = document.getElementById('speculative-status');
+    if (statusEl) statusEl.textContent = 'Pre-Cached (Conf: 94%)';
+    updateDiag("Plane 3: Pre-Cached speculative state 'spec_patient_analytics'");
+  };
+
+  window.commitSpeculativeNow = function() {
+    if (typeof HyHook === 'undefined') return;
+    const committed = HyHook.commitSpeculation('spec_patient_analytics', '#speculative-commit-target', 'innerHTML');
+    if (committed) {
+      document.getElementById('speculative-status').textContent = 'Committed in 0.0ms!';
+      updateDiag("Plane 3: Speculative branch committed into DOM in 0.0ms.");
+    } else {
+      alert("Please pre-cache speculative state first by clicking 'Plane 3: Pre-Cache Speculative State'!");
+    }
+  };
+
+  // 5. Simulate Plane 4: Swarm Cluster Gossip
+  let swarmClock = 100;
+  window.simulateSwarmGossip = function() {
+    if (typeof HyperFrameCodec === 'undefined' || typeof HyHook === 'undefined') return;
+
+    const nodes = ['edge-gateway-pacs', 'cluster-gpu-node-01', 'mobile-npu-client'];
+    const chosenNode = nodes[Math.floor(Math.random() * nodes.length)];
+    swarmClock += 15;
+
+    const frame = HyperFrameCodec.encodeSwarm(501, chosenNode, swarmClock, '{"state":"synced"}');
+    HyHook.routeBinaryFrame(frame);
+
+    const activeNodes = HyHook.getSwarmNodes();
+    const countEl = document.getElementById('swarm-node-count');
+    if (countEl) countEl.textContent = activeNodes.length + ' Nodes';
+
+    const listEl = document.getElementById('swarm-nodes-list');
+    if (listEl) {
+      listEl.innerHTML = activeNodes.map(n => `
+        <span class="px-2.5 py-1 rounded bg-purple-950/80 border border-purple-500/40 text-purple-200">
+          ● <strong>${n.nodeId}</strong> (v-clock: ${n.vectorClock})
+        </span>
+      `).join('');
+    }
+
+    updateDiag("Plane 4: Swarm Gossip synced node '" + chosenNode + "' (v-clock: " + swarmClock + ")");
+  };
+</script>
+</div>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <h2 class="text-xl font-bold tracking-tight">HTML Source</h2>
+          <div class="code-block"><pre><code>&lt;!-- =========================================================================
+     HY-HOOK: HYPERMEDIA WEBHOOKS &amp; QUANTUM STATE FABRIC SHOWCASE
+     Forward-Focused State Wire: Edge AI Tensors, Atomic DOM, 60fps Telemetry,
+     Speculative Pre-Cognition, and Cluster Swarm Synchronization.
+     ========================================================================= --&gt;
+&lt;div class=&quot;rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden flex flex-col select-none text-slate-100&quot;
+     id=&quot;hy-hook-showcase-container&quot;&gt;
+
+  &lt;!-- ZONE 1: HEADER --&gt;
+  &lt;div class=&quot;px-5 py-4 bg-slate-950 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3&quot;&gt;
+    &lt;div class=&quot;flex items-center gap-3&quot;&gt;
+      &lt;div class=&quot;w-10 h-10 rounded-xl bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-400 font-black text-xl shadow-md&quot;&gt;
+        🪝
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;div class=&quot;flex items-center gap-2&quot;&gt;
+          &lt;h2 class=&quot;text-base font-black text-white tracking-tight flex items-center gap-2&quot;&gt;
+            &lt;span&gt;hy-hook&lt;/span&gt;
+            &lt;span class=&quot;text-[10px] font-mono text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded-full border border-teal-500/20&quot;&gt;Autonomous State Fabric&lt;/span&gt;
+          &lt;/h2&gt;
+          &lt;span class=&quot;px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20&quot;&gt;QUANTUM 5-PLANE&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;p class=&quot;text-xs text-slate-400 mt-0.5 font-sans&quot;&gt;
+          Zero-allocation binary state fabric multiplexing Edge AI tokens, hypermedia DOM, 60fps telemetry, pre-cognition &amp; swarm mesh.
+        &lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;!-- Active Telemetry Badge --&gt;
+    &lt;div class=&quot;flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 font-mono text-xs&quot;&gt;
+      &lt;span class=&quot;w-2 h-2 rounded-full bg-emerald-400 animate-pulse&quot;&gt;&lt;/span&gt;
+      &lt;span class=&quot;text-slate-400&quot;&gt;Binary Frames:&lt;/span&gt;
+      &lt;span id=&quot;hy-telemetry-frames&quot; class=&quot;text-teal-400 font-bold&quot;&gt;0&lt;/span&gt;
+      &lt;span class=&quot;text-slate-600&quot;&gt;|&lt;/span&gt;
+      &lt;span class=&quot;text-slate-400&quot;&gt;Planes:&lt;/span&gt;
+      &lt;span class=&quot;text-purple-400 font-bold&quot;&gt;5 Active&lt;/span&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;!-- ZONE 2: SIMULATOR STAGE (5-PLANE DASHBOARD) --&gt;
+  &lt;div class=&quot;p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 bg-slate-900/60&quot;&gt;
+
+    &lt;!-- LEFT COLUMN: CONTROLS &amp; DISPATCHERS --&gt;
+    &lt;div class=&quot;lg:col-span-5 flex flex-col space-y-4&quot;&gt;
+      &lt;div class=&quot;p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3&quot;&gt;
+        &lt;div class=&quot;flex items-center justify-between&quot;&gt;
+          &lt;span class=&quot;text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5&quot;&gt;
+            &lt;span&gt;⚡&lt;/span&gt; Quantum Plane Dispatcher
+          &lt;/span&gt;
+          &lt;span class=&quot;text-[10px] font-mono text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded border border-teal-500/20&quot;&gt;Binary 16B Wire&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;p class=&quot;text-xs text-slate-400 leading-relaxed&quot;&gt;
+          Trigger binary quantum frames across 5 distinct architectural compute planes:
+        &lt;/p&gt;
+
+        &lt;!-- Plane 0: Edge AI Neural Stream --&gt;
+        &lt;button onclick=&quot;simulateNeuralStream()&quot;
+                class=&quot;w-full py-2.5 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center justify-between transition-all shadow-md&quot;&gt;
+          &lt;span class=&quot;flex items-center gap-2&quot;&gt;
+            &lt;span&gt;🧠&lt;/span&gt;
+            &lt;span&gt;Plane 0: Stream Edge AI Tokens&lt;/span&gt;
+          &lt;/span&gt;
+          &lt;span class=&quot;font-mono text-[10px] bg-indigo-800/60 px-1.5 py-0.5 rounded&quot;&gt;TENSOR [0x00]&lt;/span&gt;
+        &lt;/button&gt;
+
+        &lt;!-- Plane 1: Hypermedia Sub-Millisecond Morph --&gt;
+        &lt;button onclick=&quot;simulateHypermediaMorph()&quot;
+                class=&quot;w-full py-2.5 px-3 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-bold text-xs flex items-center justify-between transition-all shadow-md&quot;&gt;
+          &lt;span class=&quot;flex items-center gap-2&quot;&gt;
+            &lt;span&gt;🩻&lt;/span&gt;
+            &lt;span&gt;Plane 1: Atomic Hypermedia Morph&lt;/span&gt;
+          &lt;/span&gt;
+          &lt;span class=&quot;font-mono text-[10px] bg-teal-800/60 px-1.5 py-0.5 rounded&quot;&gt;HYPERMEDIA [0x01]&lt;/span&gt;
+        &lt;/button&gt;
+
+        &lt;!-- Plane 2: Continuous 60fps Telemetry Vector --&gt;
+        &lt;button onclick=&quot;toggleTelemetryStream()&quot; id=&quot;btn-telemetry&quot;
+                class=&quot;w-full py-2.5 px-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs flex items-center justify-between transition-all shadow-md&quot;&gt;
+          &lt;span class=&quot;flex items-center gap-2&quot;&gt;
+            &lt;span&gt;📊&lt;/span&gt;
+            &lt;span id=&quot;telemetry-btn-text&quot;&gt;Plane 2: Start 60fps Telemetry&lt;/span&gt;
+          &lt;/span&gt;
+          &lt;span class=&quot;font-mono text-[10px] bg-cyan-800/60 px-1.5 py-0.5 rounded&quot;&gt;TELEMETRY [0x02]&lt;/span&gt;
+        &lt;/button&gt;
+
+        &lt;!-- Plane 3: Speculative Pre-Cognition --&gt;
+        &lt;button onclick=&quot;simulatePrecognition()&quot;
+                class=&quot;w-full py-2.5 px-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs flex items-center justify-between transition-all shadow-md&quot;&gt;
+          &lt;span class=&quot;flex items-center gap-2&quot;&gt;
+            &lt;span&gt;🔮&lt;/span&gt;
+            &lt;span&gt;Plane 3: Pre-Cache Speculative State&lt;/span&gt;
+          &lt;/span&gt;
+          &lt;span class=&quot;font-mono text-[10px] bg-amber-800/60 px-1.5 py-0.5 rounded&quot;&gt;PRECOG [0x03]&lt;/span&gt;
+        &lt;/button&gt;
+
+        &lt;!-- Plane 4: Swarm Cluster Gossip --&gt;
+        &lt;button onclick=&quot;simulateSwarmGossip()&quot;
+                class=&quot;w-full py-2.5 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center justify-between transition-all shadow-md&quot;&gt;
+          &lt;span class=&quot;flex items-center gap-2&quot;&gt;
+            &lt;span&gt;🌐&lt;/span&gt;
+            &lt;span&gt;Plane 4: Swarm Mesh Peer Gossip&lt;/span&gt;
+          &lt;/span&gt;
+          &lt;span class=&quot;font-mono text-[10px] bg-purple-800/60 px-1.5 py-0.5 rounded&quot;&gt;SWARM [0x04]&lt;/span&gt;
+        &lt;/button&gt;
+      &lt;/div&gt;
+
+      &lt;!-- Binary Frame Header Spec Card --&gt;
+      &lt;div class=&quot;p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2 font-mono text-[11px]&quot;&gt;
+        &lt;div class=&quot;text-xs font-sans font-bold text-slate-300 uppercase tracking-wider mb-1&quot;&gt;HyperFrame Fixed 16-Byte Header&lt;/div&gt;
+        &lt;div class=&quot;text-teal-400&quot;&gt;[0..1] 'HY' (Magic 0x48 0x59)&lt;/div&gt;
+        &lt;div class=&quot;text-slate-400&quot;&gt;[2] Ver: 0x01 | [3] Plane: 0x00..0x04&lt;/div&gt;
+        &lt;div class=&quot;text-slate-400&quot;&gt;[4] Flags: 0x01 (Datagram) | 0x02 (Reliable)&lt;/div&gt;
+        &lt;div class=&quot;text-slate-400&quot;&gt;[6..7] ChannelId (uint16) | [8..11] Seq (uint32)&lt;/div&gt;
+        &lt;div class=&quot;text-purple-400&quot;&gt;[12..15] PayloadLength (uint32)&lt;/div&gt;
+        &lt;div class=&quot;text-slate-500&quot;&gt;[16..N] Zero-Copy Raw Memory Slice&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;!-- RIGHT COLUMN: LIVE QUANTUM PLANE RECEIVERS --&gt;
+    &lt;div class=&quot;lg:col-span-7 flex flex-col space-y-4&quot;&gt;
+      
+      &lt;!-- Plane 0 Sink: Edge AI Neural Stream --&gt;
+      &lt;div class=&quot;p-3.5 rounded-xl border border-indigo-500/30 bg-slate-950 transition-all&quot;&gt;
+        &lt;div class=&quot;flex items-center justify-between text-xs mb-1.5&quot;&gt;
+          &lt;div class=&quot;flex items-center gap-2&quot;&gt;
+            &lt;span class=&quot;text-indigo-400&quot;&gt;🧠&lt;/span&gt;
+            &lt;strong class=&quot;text-slate-200&quot;&gt;Plane 0: Edge AI Neural Reasoning Stream&lt;/strong&gt;
+          &lt;/div&gt;
+          &lt;span class=&quot;text-[10px] font-mono text-indigo-400&quot;&gt;hy-ai-stream=&quot;101&quot;&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div id=&quot;neural-ai-output&quot;
+             class=&quot;p-3 rounded-lg bg-slate-900 border border-indigo-900/50 font-mono text-xs text-indigo-200 min-h-[48px] flex items-center leading-relaxed&quot;&gt;
+          &lt;span class=&quot;italic text-slate-500&quot;&gt;Ready to receive token stream...&lt;/span&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;!-- Plane 1 Sink: Atomic Hypermedia Morph --&gt;
+      &lt;div class=&quot;p-3.5 rounded-xl border border-teal-500/30 bg-slate-950 transition-all&quot;&gt;
+        &lt;div class=&quot;flex items-center justify-between text-xs mb-1.5&quot;&gt;
+          &lt;div class=&quot;flex items-center gap-2&quot;&gt;
+            &lt;span class=&quot;text-teal-400&quot;&gt;🩻&lt;/span&gt;
+            &lt;strong class=&quot;text-slate-200&quot;&gt;Plane 1: Sub-Millisecond Hypermedia Morph&lt;/strong&gt;
+          &lt;/div&gt;
+          &lt;span class=&quot;text-[10px] font-mono text-teal-400&quot;&gt;hy-hook=&quot;pacs:morph&quot;&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div id=&quot;hypermedia-target-card&quot;
+             class=&quot;p-3 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400 flex items-center justify-between&quot;&gt;
+          &lt;span class=&quot;italic&quot;&gt;PACS Series awaiting scan slice morph...&lt;/span&gt;
+          &lt;span class=&quot;w-2 h-2 rounded-full bg-slate-600 animate-pulse&quot;&gt;&lt;/span&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;!-- Plane 2 Sink: 60fps Telemetry Canvas --&gt;
+      &lt;div class=&quot;p-3.5 rounded-xl border border-cyan-500/30 bg-slate-950 transition-all&quot;&gt;
+        &lt;div class=&quot;flex items-center justify-between text-xs mb-1.5&quot;&gt;
+          &lt;div class=&quot;flex items-center gap-2&quot;&gt;
+            &lt;span class=&quot;text-cyan-400&quot;&gt;📊&lt;/span&gt;
+            &lt;strong class=&quot;text-slate-200&quot;&gt;Plane 2: 60fps Binary Vector Telemetry (Packed Float32Array)&lt;/strong&gt;
+          &lt;/div&gt;
+          &lt;span class=&quot;text-[10px] font-mono text-cyan-400&quot; id=&quot;fps-counter&quot;&gt;0 fps • 0 GC&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;canvas id=&quot;telemetry-canvas&quot; width=&quot;560&quot; height=&quot;70&quot; class=&quot;w-full h-[70px] bg-slate-900 rounded-lg border border-slate-800&quot;&gt;&lt;/canvas&gt;
+      &lt;/div&gt;
+
+      &lt;!-- Plane 3 Sink: Speculative Pre-Cognition --&gt;
+      &lt;div class=&quot;p-3.5 rounded-xl border border-amber-500/30 bg-slate-950 transition-all&quot;&gt;
+        &lt;div class=&quot;flex items-center justify-between text-xs mb-1.5&quot;&gt;
+          &lt;div class=&quot;flex items-center gap-2&quot;&gt;
+            &lt;span class=&quot;text-amber-400&quot;&gt;🔮&lt;/span&gt;
+            &lt;strong class=&quot;text-slate-200&quot;&gt;Plane 3: Speculative Pre-Cognition (0.0ms Latency)&lt;/strong&gt;
+          &lt;/div&gt;
+          &lt;span class=&quot;text-[10px] font-mono text-amber-400&quot; id=&quot;speculative-status&quot;&gt;Cache: Empty&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;flex items-center gap-3&quot;&gt;
+          &lt;div id=&quot;speculative-commit-target&quot;
+               class=&quot;flex-1 p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400&quot;&gt;
+            Hover button on left to pre-cache; hover here to instantly activate!
+          &lt;/div&gt;
+          &lt;button id=&quot;btn-commit-spec&quot; onclick=&quot;commitSpeculativeNow()&quot;
+                  class=&quot;px-3 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow&quot;&gt;
+            Commit 0ms →
+          &lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;!-- Plane 4 Sink: Swarm Cluster Mesh --&gt;
+      &lt;div class=&quot;p-3.5 rounded-xl border border-purple-500/30 bg-slate-950 transition-all&quot;&gt;
+        &lt;div class=&quot;flex items-center justify-between text-xs mb-1.5&quot;&gt;
+          &lt;div class=&quot;flex items-center gap-2&quot;&gt;
+            &lt;span class=&quot;text-purple-400&quot;&gt;🌐&lt;/span&gt;
+            &lt;strong class=&quot;text-slate-200&quot;&gt;Plane 4: Swarm Mesh Topology &amp; Vector Clocks&lt;/strong&gt;
+          &lt;/div&gt;
+          &lt;span class=&quot;text-[10px] font-mono text-purple-400&quot; id=&quot;swarm-node-count&quot;&gt;0 Nodes&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div id=&quot;swarm-nodes-list&quot; class=&quot;flex flex-wrap gap-2 text-xs font-mono&quot;&gt;
+          &lt;span class=&quot;text-slate-500 italic p-1&quot;&gt;No peer nodes discovered yet. Click Plane 4 above.&lt;/span&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+    &lt;/div&gt;
+
+  &lt;/div&gt;
+
+  &lt;!-- ZONE 3: DIAGNOSTIC LOG FOOTER --&gt;
+  &lt;div class=&quot;px-5 py-3 bg-slate-950 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-slate-400&quot;&gt;
+    &lt;div class=&quot;flex items-center gap-2&quot;&gt;
+      &lt;span class=&quot;text-teal-400 font-bold&quot;&gt;@diag hyperhooks:&lt;/span&gt;
+      &lt;span id=&quot;hy-diag-status&quot; class=&quot;text-slate-300&quot;&gt;Quantum State Fabric Active • 5 Planes Armed&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;flex items-center gap-3 text-[10px]&quot;&gt;
+      &lt;span class=&quot;text-emerald-400&quot;&gt;● Zero-Copy TypedArray Engine: ARMED&lt;/span&gt;
+      &lt;span class=&quot;text-slate-500&quot;&gt;•&lt;/span&gt;
+      &lt;span class=&quot;text-indigo-400&quot;&gt;Edge AI Tensor Stream: READY&lt;/span&gt;
+      &lt;span class=&quot;text-slate-500&quot;&gt;•&lt;/span&gt;
+      &lt;span class=&quot;text-teal-400&quot;&gt;CSP Level 3 Verified&lt;/span&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;!-- Embedded Interactive Simulator Scripts --&gt;
+&lt;script&gt;
+  let frameCounter = 0;
+  let telemetryInterval = null;
+  let telemetryAngle = 0;
+
+  function updateDiag(msg) {
+    frameCounter++;
+    const countEl = document.getElementById('hy-telemetry-frames');
+    const statusEl = document.getElementById('hy-diag-status');
+    if (countEl) countEl.textContent = frameCounter;
+    if (statusEl) statusEl.textContent = msg;
+  }
+
+  // 1. Simulate Plane 0: Edge AI Neural Token Stream
+  window.simulateNeuralStream = function() {
+    if (typeof HyperFrameCodec === 'undefined' || typeof HyHook === 'undefined') return;
+
+    const outputEl = document.getElementById('neural-ai-output');
+    if (outputEl) outputEl.innerHTML = '';
+
+    const tokens = [
+      &quot;Analyzing &quot;, &quot;DICOM &quot;, &quot;volume... &quot;, 
+      &quot;Identified &quot;, &quot;nodule &quot;, &quot;in &quot;, &quot;Right &quot;, &quot;Upper &quot;, &quot;Lobe &quot;, 
+      &quot;[RECIST: &quot;, &quot;14.2mm]. &quot;, &quot;Confidence: &quot;, &quot;98.7%.&quot;
+    ];
+
+    let i = 0;
+    const interval = setInterval(() =&gt; {
+      if (i &gt;= tokens.length) {
+        clearInterval(interval);
+        const eosFrame = HyperFrameCodec.encodeTensor(101, &quot;&quot;, true, i);
+        HyHook.routeBinaryFrame(eosFrame);
+        updateDiag(&quot;Plane 0: Neural stream EOS reached.&quot;);
+        return;
+      }
+
+      const frame = HyperFrameCodec.encodeTensor(101, tokens[i], false, i);
+      HyHook.routeBinaryFrame(frame);
+
+      if (outputEl) {
+        outputEl.insertAdjacentText('beforeend', tokens[i]);
+      }
+      i++;
+      updateDiag(&quot;Plane 0: Streamed AI token (&quot; + i + &quot;/&quot; + tokens.length + &quot;)&quot;);
+    }, 90);
+  };
+
+  // 2. Simulate Plane 1: Atomic Hypermedia Morph
+  window.simulateHypermediaMorph = function() {
+    if (typeof HyperFrameCodec === 'undefined' || typeof HyHook === 'undefined') return;
+
+    const html = `
+      &lt;div class=&quot;flex items-center justify-between w-full p-2 bg-teal-950/60 rounded border border-teal-500/40 text-teal-200 animate-fadeIn&quot;&gt;
+        &lt;div class=&quot;flex items-center gap-2&quot;&gt;
+          &lt;span class=&quot;text-lg&quot;&gt;🩻&lt;/span&gt;
+          &lt;div&gt;
+            &lt;strong class=&quot;text-white text-xs block&quot;&gt;CT Chest Axial (0.625mm High-Res)&lt;/strong&gt;
+            &lt;span class=&quot;text-[10px] text-teal-300&quot;&gt;Target Series #8820 • 640 Slices • Zero-Eval Swapped&lt;/span&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;span class=&quot;px-2 py-0.5 rounded text-[10px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30&quot;&gt;
+          SUB-MS MORPH
+        &lt;/span&gt;
+      &lt;/div&gt;
+    `;
+
+    const frame = HyperFrameCodec.encodeHypermedia(201, '#hypermedia-target-card', 'innerHTML', html, 1);
+    HyHook.routeBinaryFrame(frame);
+    updateDiag(&quot;Plane 1: Atomic Hypermedia Morph completed on #hypermedia-target-card&quot;);
+  };
+
+  // 3. Simulate Plane 2: Continuous 60fps Telemetry Vector
+  window.toggleTelemetryStream = function() {
+    if (telemetryInterval) {
+      clearInterval(telemetryInterval);
+      telemetryInterval = null;
+      document.getElementById('telemetry-btn-text').textContent = 'Plane 2: Start 60fps Telemetry';
+      document.getElementById('fps-counter').textContent = 'Paused';
+      return;
+    }
+
+    const canvas = document.getElementById('telemetry-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    document.getElementById('telemetry-btn-text').textContent = 'Plane 2: Stop 60fps Telemetry';
+    document.getElementById('fps-counter').textContent = '60 fps • 0 GC';
+
+    let lastTime = performance.now();
+    let frames = 0;
+
+    HyHook.registerTelemetryRenderer(301, (floats) =&gt; {
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.strokeStyle = '#06b6d4';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      const step = canvas.width / floats.length;
+      for (let i = 0; i &lt; floats.length; i++) {
+        const val = floats[i];
+        const y = (canvas.height / 2) + val * 25;
+        if (i === 0) ctx.moveTo(0, y);
+        else ctx.lineTo(i * step, y);
+      }
+      ctx.stroke();
+
+      frames++;
+      const now = performance.now();
+      if (now - lastTime &gt;= 1000) {
+        document.getElementById('fps-counter').textContent = frames + ' fps • 0 GC Alloc';
+        frames = 0;
+        lastTime = now;
+      }
+    });
+
+    telemetryInterval = setInterval(() =&gt; {
+      telemetryAngle += 0.15;
+      const points = 32;
+      const floats = new Float32Array(points);
+      for (let i = 0; i &lt; points; i++) {
+        floats[i] = Math.sin(telemetryAngle + i * 0.3) * Math.cos(telemetryAngle * 0.5);
+      }
+
+      const frame = HyperFrameCodec.encodeTelemetry(301, floats);
+      HyHook.routeBinaryFrame(frame);
+      updateDiag(&quot;Plane 2: Dispatched 60fps packed Float32Array frame (32 floats)&quot;);
+    }, 16);
+  };
+
+  // 4. Simulate Plane 3: Speculative Pre-Cognition
+  window.simulatePrecognition = function() {
+    if (typeof HyperFrameCodec === 'undefined' || typeof HyHook === 'undefined') return;
+
+    const preRenderedHTML = `
+      &lt;div class=&quot;flex items-center justify-between w-full p-2 bg-amber-950/60 rounded border border-amber-500/40 text-amber-200 animate-fadeIn&quot;&gt;
+        &lt;div class=&quot;flex items-center gap-2&quot;&gt;
+          &lt;span&gt;🔮&lt;/span&gt;
+          &lt;div&gt;
+            &lt;strong class=&quot;text-white text-xs block&quot;&gt;Pre-Materialized Patient Analytics&lt;/strong&gt;
+            &lt;span class=&quot;text-[10px] text-amber-300&quot;&gt;Speculative State Active • 0.0ms Activation&lt;/span&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;span class=&quot;text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300&quot;&gt;CONF: 94.2%&lt;/span&gt;
+      &lt;/div&gt;
+    `;
+
+    const frame = HyperFrameCodec.encodePrecognition(401, 'spec_patient_analytics', 0.942, preRenderedHTML);
+    HyHook.routeBinaryFrame(frame);
+
+    const statusEl = document.getElementById('speculative-status');
+    if (statusEl) statusEl.textContent = 'Pre-Cached (Conf: 94%)';
+    updateDiag(&quot;Plane 3: Pre-Cached speculative state 'spec_patient_analytics'&quot;);
+  };
+
+  window.commitSpeculativeNow = function() {
+    if (typeof HyHook === 'undefined') return;
+    const committed = HyHook.commitSpeculation('spec_patient_analytics', '#speculative-commit-target', 'innerHTML');
+    if (committed) {
+      document.getElementById('speculative-status').textContent = 'Committed in 0.0ms!';
+      updateDiag(&quot;Plane 3: Speculative branch committed into DOM in 0.0ms.&quot;);
+    } else {
+      alert(&quot;Please pre-cache speculative state first by clicking 'Plane 3: Pre-Cache Speculative State'!&quot;);
+    }
+  };
+
+  // 5. Simulate Plane 4: Swarm Cluster Gossip
+  let swarmClock = 100;
+  window.simulateSwarmGossip = function() {
+    if (typeof HyperFrameCodec === 'undefined' || typeof HyHook === 'undefined') return;
+
+    const nodes = ['edge-gateway-pacs', 'cluster-gpu-node-01', 'mobile-npu-client'];
+    const chosenNode = nodes[Math.floor(Math.random() * nodes.length)];
+    swarmClock += 15;
+
+    const frame = HyperFrameCodec.encodeSwarm(501, chosenNode, swarmClock, '{&quot;state&quot;:&quot;synced&quot;}');
+    HyHook.routeBinaryFrame(frame);
+
+    const activeNodes = HyHook.getSwarmNodes();
+    const countEl = document.getElementById('swarm-node-count');
+    if (countEl) countEl.textContent = activeNodes.length + ' Nodes';
+
+    const listEl = document.getElementById('swarm-nodes-list');
+    if (listEl) {
+      listEl.innerHTML = activeNodes.map(n =&gt; `
+        &lt;span class=&quot;px-2.5 py-1 rounded bg-purple-950/80 border border-purple-500/40 text-purple-200&quot;&gt;
+          ● &lt;strong&gt;${n.nodeId}&lt;/strong&gt; (v-clock: ${n.vectorClock})
+        &lt;/span&gt;
+      `).join('');
+    }
+
+    updateDiag(&quot;Plane 4: Swarm Gossip synced node '&quot; + chosenNode + &quot;' (v-clock: &quot; + swarmClock + &quot;)&quot;);
+  };
+&lt;/script&gt;
+</code></pre></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

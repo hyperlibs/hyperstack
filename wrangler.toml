@@ -1,4 +1,4 @@
-name = "htmxui"
+name = "hyperstack"
 main = "worker.ts"
 compatibility_date = "2026-09-01"
 

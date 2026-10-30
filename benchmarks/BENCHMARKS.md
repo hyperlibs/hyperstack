@@ -1,6 +1,6 @@
-# 📊 HTMXUI Performance Benchmarks & Methodology
+# 📊 Hyperstack Performance Benchmarks & Methodology
 
-Official performance benchmarks for HTMXUI client engines measured across dataset sizes from 1,000 to 100,000 items.
+Official performance benchmarks for Hyperstack client engines measured across dataset sizes from 1,000 to 100,000 items.
 
 ---
 
@@ -15,7 +15,7 @@ Tested on Chromium 130 (Apple M2 & Intel Core i7-12700K baseline):
 | **50,000 rows** | 8 columns | `8.7 ms` | **60 FPS** | `12.5 MB` | `32 nodes` (windowed) |
 | **100,000 rows** | 8 columns | `14.1 ms` | **60 FPS** | `23.8 MB` | `32 nodes` (windowed) |
 
-> **Key Architectural Takeaway:** Because HTMXUI dynamically recycles top/bottom spacer elements via `requestAnimationFrame`, the actual number of live DOM nodes remains strictly constant (**32 nodes**) regardless of whether there are 1,000 or 100,000 rows in memory.
+> **Key Architectural Takeaway:** Because Hyperstack dynamically recycles top/bottom spacer elements via `requestAnimationFrame`, the actual number of live DOM nodes remains strictly constant (**32 nodes**) regardless of whether there are 1,000 or 100,000 rows in memory.
 
 ---
 
@@ -40,7 +40,7 @@ Total minified client runtime footprint comparison against standard enterprise s
 |---|---|---|
 | **React 19 + AG Grid Community + Redux Toolkit** | `~210 KB` | Heavy VDOM reconciliation |
 | **Vue 3 + TanStack Table + Pinia** | `~125 KB` | VDOM reconciliation |
-| **HTMXUI Full Enterprise Suite (All 9 Engines)** | **`34.2 KB`** | **Zero VDOM (Direct DOM Proxies)** |
+| **Hyperstack Full Enterprise Suite (All 9 Engines)** | **`34.2 KB`** | **Zero VDOM (Direct DOM Proxies)** |
 
 ---
 

@@ -27,7 +27,7 @@
       });
   };
 
-  // src/htmx-form.ts
+  // hyperstack/src/htmx-form.ts
   var exports_htmx_form = {};
   __export(exports_htmx_form, {
     validateInput: () => validateInput,

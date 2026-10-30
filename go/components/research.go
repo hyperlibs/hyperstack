@@ -132,10 +132,10 @@ func BlockPathologyLab(p BlockPathologyLabProps) Component {
         <!-- SVG Microscopic Field -->
         <svg class="absolute inset-0 w-full h-full opacity-90" viewBox="0 0 400 400">
           <defs>
-            <radialGradient id="heGradGo" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#4a154b" stop-opacity="0.85" />
-              <stop offset="70%" stop-color="#2a0d33" stop-opacity="0.95" />
-              <stop offset="100%" stop-color="#120517" stop-opacity="1" />
+            <radialGradient id="heGradGo" cx="50%%" cy="50%%" r="50%%">
+              <stop offset="0%%" stop-color="#4a154b" stop-opacity="0.85" />
+              <stop offset="70%%" stop-color="#2a0d33" stop-opacity="0.95" />
+              <stop offset="100%%" stop-color="#120517" stop-opacity="1" />
             </radialGradient>
           </defs>
           <rect width="400" height="400" fill="url(#heGradGo)" />

@@ -11,7 +11,7 @@ import { ColumnStore } from '../src/htmx-flash';
 import { CalcEngine } from '../src/htmx-calc';
 
 console.log('===============================================================');
-console.log('  HTMXUI AUTOMATED PERFORMANCE & BENCHMARK SUITE');
+console.log('  Hyperstack AUTOMATED PERFORMANCE & BENCHMARK SUITE');
 console.log('===============================================================\n');
 
 // 1. Bundle Size & Gzip Analysis
@@ -28,7 +28,9 @@ const engines = [
   'htmx-offline.js',
   'htmx-a11y.js',
   'htmx-devtools.js',
-  'htmx-sim.js'
+  'htmx-sim.js',
+  'htmx-canvas.js',
+  'appz.js'
 ];
 
 let totalRaw = 0;
@@ -41,11 +43,11 @@ engines.forEach(file => {
     const gz = gzipSync(raw);
     totalRaw += raw.length;
     totalGzip += gz.length;
-    console.log('  - ' + file.padEnd(20) + ': ' + (raw.length / 1024).toFixed(2).padStart(6) + ' KB raw | ' + (gz.length / 1024).toFixed(2).padStart(6) + ' KB gzip');
+    console.log('  - ' + file.padEnd(20) + ': ' + (raw.length / 1024).toFixed(2).padStart(6) + ' KB raw | ' + (gz.length / 1024).toFixed(2).padStart(6) + ' KB gzip | ' + raw.length + ' B raw / ' + gz.length + ' B gzip');
   }
 });
 console.log('---------------------------------------------------------------');
-console.log('  TOTAL 11-ENGINE SUITE: ' + (totalRaw / 1024).toFixed(2).padStart(6) + ' KB raw | ' + (totalGzip / 1024).toFixed(2).padStart(6) + ' KB gzip');
+console.log('  TOTAL 13-ENGINE SUITE: ' + (totalRaw / 1024).toFixed(2).padStart(6) + ' KB raw | ' + (totalGzip / 1024).toFixed(2).padStart(6) + ' KB gzip');
 console.log('  (Comparison: react-dom alone is ~130KB raw / ~42KB gzip)\n');
 
 // 2. Zero-Eval Safe Parser Throughput

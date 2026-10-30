@@ -33,7 +33,8 @@ const COMPONENTS = [
   "smart-lighting-dimmer","smart-pos-cashier","smart-relay-switchboard","smart-rotary-volume",
   "smart-smart-lock","smart-solar-power-flow","smart-step-activity-rings","smart-thermostat-dual-zone",
   "smart-tire-pressure-tpms","smart-turn-by-turn-nav","smart-uv-index-dial","smart-weather-hero",
-  "smart-wind-compass"
+  "smart-wind-compass",
+  "hy-hook"
 ];
 
 function formatName(slug: string): string {
@@ -70,7 +71,7 @@ function buildComponentPage(slug: string): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${name} — HTMX PRO</title>
+  <title>${name} — Hyperstack</title>
   <script src="/vendor/htmx.min.js"></script>
   <script src="/htmx-bolt.js"></script>
   <script src="/htmx-flash.js"></script>
@@ -97,7 +98,7 @@ function buildComponentPage(slug: string): string {
       <div class="flex h-14 items-center border-b border-border px-4">
         <a href="/" class="flex items-center gap-2">
           <svg class="h-5 w-5 text-primary" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
-          <span class="font-bold text-lg tracking-tight">HTMX PRO</span>
+          <span class="font-bold text-lg tracking-tight">Hyperstack</span>
         </a>
       </div>
       <div class="flex-1 p-3 overflow-y-auto">${sidebar}</div>
@@ -108,12 +109,12 @@ function buildComponentPage(slug: string): string {
           <h1 class="font-semibold text-base">${name}</h1>
           <a href="/demo/" class="text-xs bg-primary/10 text-primary font-medium px-2.5 py-1 rounded-full hover:bg-primary/20 transition-colors">Live Demos Hub</a>
         </div>
-        <a href="https://github.com/hyperlibs/htmxpro" target="_blank" class="text-xs text-muted-foreground hover:text-foreground">GitHub ↗</a>
+        <a href="https://github.com/hyperlibs/hyperstack" target="_blank" class="text-xs text-muted-foreground hover:text-foreground">GitHub ↗</a>
       </header>
       <div class="flex-1 p-8 max-w-5xl mx-auto w-full space-y-8">
         <div class="space-y-2">
           <h1 class="text-3xl font-extrabold tracking-tight">${name}</h1>
-          <p class="text-muted-foreground text-sm">Interactive Shadcn-quality hypermedia component for HTMX PRO.</p>
+          <p class="text-muted-foreground text-sm">Interactive Shadcn-quality hypermedia component for Hyperstack.</p>
         </div>
         <div class="space-y-4">
           <h2 class="text-xl font-bold tracking-tight">Interactive Preview</h2>
@@ -138,7 +139,7 @@ function writePage(relPath: string, content: string) {
   fs.writeFileSync(fullPath, content, "utf8");
 }
 
-console.log("Building static HTMX PRO site for Cloudflare Pages...");
+console.log("Building static Hyperstack site for Cloudflare Pages...");
 
 // 1. Root Landing Page (No automatic redirect)
 const landingHtml = fs.readFileSync(path.join(__dirname, "..", "views", "landing.html"), "utf8");
@@ -185,12 +186,18 @@ writePage("dicom/index.html", dicomHtml);
 writePage("docs/index.html", `<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=/docs/components/introduction/"></head><body><script>location.href='/docs/components/introduction/';</script></body></html>`);
 
 // 5. Mock Invoices API for ERP
+// Deterministic by design: an unseeded PRNG plus Date.now() made every `bun run build`
+// produce a different dist/api/erp-invoices.json, so the committed build output could
+// never be reproduced or diffed.
+let invoiceSeed = 1337;
+const nextRandom = () => ((invoiceSeed = (invoiceSeed * 1664525 + 1013904223) % 4294967296) / 4294967296);
+const INVOICE_EPOCH = Date.UTC(2026, 0, 1);
 const invoices = Array.from({ length: 500 }, (_, i) => ({
   id: `INV-${100000 + i}`,
   customer: ["Acme Corp", "Globex LLC", "Initech", "Umbrella Co", "Stark Industries", "Wayne Enterprises", "Cyberdyne", "Soylent Corp"][i % 8],
-  amount: (Math.random() * 5000 + 100).toFixed(2),
+  amount: (nextRandom() * 5000 + 100).toFixed(2),
   status: ["Paid", "Pending", "Overdue", "Draft", "Processing"][i % 5],
-  date: new Date(Date.now() - (i * 86400000)).toISOString().split("T")[0]
+  date: new Date(INVOICE_EPOCH - (i * 86400000)).toISOString().split("T")[0]
 }));
 writePage("api/erp-invoices.json", JSON.stringify(invoices));
 
@@ -210,6 +217,13 @@ function copyDir(src: string, dest: string) {
   }
 }
 
+// llms.txt is maintained once at the repo root and copied into the served/public
+// location here, so the two copies can never drift apart (they had).
+const llmsSrc = path.join(__dirname, "..", "llms.txt");
+if (fs.existsSync(llmsSrc)) {
+  fs.copyFileSync(llmsSrc, path.join(__dirname, "..", "public", "llms.txt"));
+}
+
 copyDir(path.join(__dirname, "..", "public"), DIST_DIR);
 
 // Copy styles.css to root of dist
@@ -218,13 +232,10 @@ if (fs.existsSync(path.join(__dirname, "..", "public", "styles", "output.css")))
 }
 
 // 7. Schema files
-const schemaSrc = fs.existsSync(path.join(__dirname, "..", "schema", "htmxpro.json"))
-  ? path.join(__dirname, "..", "schema", "htmxpro.json")
-  : path.join(__dirname, "..", "schema", "htmxui.json");
+const schemaSrc = path.join(__dirname, "..", "schema", "hyperstack.json");
 if (fs.existsSync(schemaSrc)) {
   const schemaContent = fs.readFileSync(schemaSrc, "utf8");
-  writePage("schema/htmxpro.json", schemaContent);
-  writePage("schema/htmxui.json", schemaContent);
+  writePage("schema/hyperstack.json", schemaContent);
 }
 
 console.log("✅ Static build complete! Output generated in dist/");

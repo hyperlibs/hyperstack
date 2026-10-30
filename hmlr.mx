@@ -8,7 +8,7 @@
   architecture: Common Language Runtime & WebExtension Suite
 
 @type PanelType = signals* | audit | spatial | diagnostics
-@type TargetEngine = htmxui* | htmfx | hmlr_wasm | legacy_js
+@type TargetEngine = hyperstack* | htmfx | hmlr_wasm | legacy_js
 @type Severity = info* | warning | error | critical
 
 @model ExtensionPanel
@@ -32,8 +32,8 @@ Replaces generic Lighthouse auditing with hypermedia velocity metrics, inspects 
 
 ## Extension DevTools Panels | @model ExtensionPanel
 | id           | title                        | panel_type   | target       | active |
-| panel-signals| ⚡ Reactive Signal Graph      | signals      | htmxui       | true   |
-| panel-audit  | 🚀 Hypermedia Velocity Audit | audit        | htmxui       | true   |
+| panel-signals| ⚡ Reactive Signal Graph      | signals      | hyperstack       | true   |
+| panel-audit  | 🚀 Hypermedia Velocity Audit | audit        | hyperstack       | true   |
 | panel-spatial| 🪐 3D Spatial & Physics HUD  | spatial      | htmfx        | true   |
 | panel-diag   | 🤖 Agentic .mx Telemetry     | diagnostics  | hmlr_wasm    | true   |
 
@@ -49,7 +49,7 @@ Replaces generic Lighthouse auditing with hypermedia velocity metrics, inspects 
 ```text
 extension/
 ├── manifest.json              # WebExtension Manifest V3 (Chrome, Edge, Firefox)
-├── background.ts              # Service worker auto-detecting htmx, htmxUI & htmFX
+├── background.ts              # Service worker auto-detecting htmx, Hyperstack & htmFX
 ├── content_script.ts          # Zero-overhead bridge inspecting DOM, signals, and viewports
 └── devtools/
     ├── devtools.html          # DevTools Tab Container
@@ -66,7 +66,7 @@ extension/
   "manifest_version": 3,
   "name": "HMLR — HyperMedia Language Runtime & Spatial DevTools",
   "version": "1.0.0",
-  "description": "Native DevTools inspector and velocity auditor for htmxUI, htmFX, and .mx/.fx runtimes.",
+  "description": "Native DevTools inspector and velocity auditor for Hyperstack, htmFX, and .mx/.fx runtimes.",
   "devtools_page": "devtools/devtools.html",
   "background": {
     "service_worker": "background.js"

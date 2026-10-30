@@ -1,4 +1,4 @@
-# HTMX PRO — Agentic Builder & Maintainer Directives
+# HYPERSTACK — Agentic Builder & Maintainer Directives
 
 > **CRITICAL REPOSITORY DIRECTIVE**: All AI agents, automated coders, and maintainers working on this codebase MUST strictly follow these rules without exception.
 
@@ -16,7 +16,7 @@
 ### 🚫 ZERO React / Virtual DOM / Heavy SPA Bloat
 - No React, Vue, Angular, Svelte, or Virtual DOM libraries.
 - The server is the source of truth; HTML is the medium of state transfer.
-- State is managed either server-side via HTMX partials or client-side using **HTMX PRO Micro-Engines** (`htmx-bolt.js`, `htmx-flash.js`, `appz.js`).
+- State is managed either server-side via HTMX partials or client-side using **Hyperstack Micro-Engines** (`htmx-bolt.js`, `htmx-flash.js`, `appz.js`).
 
 ---
 
@@ -26,11 +26,11 @@ When building features, mobile systems, or UI components, adhere strictly to thi
 
 ```
 ┌────────────────────────────────────────────────────────┐
-│ 50% HTMX PRO │ 20% Golang │ 15% Flutter │ 15% Kotlin  │
+│ 50% Hyperstack │ 20% Golang │ 15% Flutter │ 15% Kotlin  │
 └────────────────────────────────────────────────────────┘
 ```
 
-1. **50% HTMX PRO (Hypermedia & Reactive HTML)**:
+1. **50% Hyperstack (Hypermedia & Reactive HTML)**:
    - Declarative HTML attributes (`hx-get`, `hx-post`, `hx-ext="reactive"`, `hx-state`, `hx-action`, `hx-model`, `hx-show`, `hx-class`).
    - Copy-paste atomic components styled with standard Tailwind CSS variables.
 2. **20% Golang (Server Engine & 1:1 Component DSL)**:
@@ -48,7 +48,7 @@ When building features, mobile systems, or UI components, adhere strictly to thi
 | File Type | Source Rule | Distribution Rule |
 |---|---|---|
 | **Client Engines** | **100% Strict TypeScript** in `src/*.ts` | Compiled via `bun build` to `public/*.js` (IIFE). |
-| **Backend & DSL** | **100% Go** in `go/components/*.go`, `server.go` | Native Go binary (`htmxpro-server.exe`). |
+| **Backend & DSL** | **100% Go** in `go/components/*.go`, `server.go` | Native Go binary (`hyperstack-server.exe`). |
 | **Dev Server** | **100% TypeScript** in `server.ts` | Executed directly via `bun run server.ts`. |
 | **HTML Templates** | Semantic HTML in `views/components/*.html` | Injected into layouts or rendered via Go/Bun. |
 | **Raw `.js` in Source** | ❌ **FORBIDDEN** | Never create loose `.js` files in root or `src/`. |
@@ -107,6 +107,6 @@ All servers (`server.ts` and `server.go`) **MUST normalize pathnames by trimming
 Before reporting any task as completed:
 1. **Build all engines**: Run `bun run build:engines` (all 13 engines must compile cleanly).
 2. **Run all test suites**: Run `bun test tests/` (must achieve **100% pass rate**).
-3. **Verify Go compilation**: Run `go build -o htmxpro-server.exe server.go`.
+3. **Verify Go compilation**: Run `go build -o hyperstack-server.exe server.go`.
 4. **Test live endpoints**: Never assume localhost works; test with `bun -e "fetch(...)"` or automated HTTP checks.
 5. **Sync repository**: Commit with conventional commit messages and push to `master` and `main`.

@@ -1,4 +1,4 @@
-package htmxpro
+package hyperstack
 
 import (
 	"encoding/json"
@@ -9,16 +9,16 @@ import (
 	"time"
 )
 
-// Context wraps http.ResponseWriter and *http.Request with HTMX PRO-specific hypermedia utilities.
+// Context wraps http.ResponseWriter and *http.Request with Hyperstack hypermedia utilities.
 type Context struct {
 	Response http.ResponseWriter
 	Request  *http.Request
 }
 
-// HandlerFunc defines the signature for HTMX PRO route handlers.
+// HandlerFunc defines the signature for Hyperstack route handlers.
 type HandlerFunc func(c *Context) error
 
-// App represents the lightweight HTMX PRO Go web application.
+// App represents the lightweight Hyperstack Go web application.
 type App struct {
 	mux      *http.ServeMux
 	routes   map[string]map[string]HandlerFunc
@@ -26,7 +26,7 @@ type App struct {
 	mu       sync.RWMutex
 }
 
-// New creates a new HTMX PRO App instance.
+// New creates a new Hyperstack App instance.
 func New() *App {
 	return &App{
 		mux:      http.NewServeMux(),
@@ -84,13 +84,13 @@ func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // Listen starts the HTTP server on the specified address.
 func (a *App) Listen(addr string) error {
-	fmt.Printf("🚀 HTMXUI Go Server listening on http://localhost%s\n", addr)
+	fmt.Printf("🚀 Hyperstack Go Server listening on http://localhost%s\n", addr)
 	return http.ListenAndServe(addr, a.mux)
 }
 
 // --- Request Inspection Helpers ---
 
-// IsHtmx returns true if the incoming request was sent by HTMXUI.
+// IsHtmx returns true if the incoming request was sent by htmx.
 func (c *Context) IsHtmx() bool {
 	return c.Request.Header.Get("HX-Request") == "true"
 }

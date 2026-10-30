@@ -1,28 +1,33 @@
-# HTMX PRO — Hyper Reactive Lean Framework Suite for Humans and AI Agents
-> A hyperreactive, lean hypermedia-first application suite. Sub-48KB total footprint, zero Virtual DOM, zero NPM build step for logic.
+# Hyperstack — Hyper Reactive Lean Framework Suite for Humans and AI Agents
+> A hyperreactive, lean hypermedia-first application suite. ~71 KB gzipped for all 13 micro-engines, zero Virtual DOM, zero NPM build step for logic.
 
 ## 🏛️ Core Philosophy
 1. **Hypermedia First**: HTML is the primary medium over the wire; the server remains the authoritative source of truth.
-2. **Deterministic & Agent-Native**: Machine-readable grammar (`/schema/htmxpro.json`), numbered error codes (`HTMX PRO-BOLT-001..050`) with actionable fixes, and zero hallucination risk.
+2. **Deterministic & Agent-Native**: Machine-readable grammar (`/schema/hyperstack.json`), numbered error codes (`Hyperstack-BOLT-001..050`) with actionable fixes, and zero hallucination risk.
 3. **Hyperreactive**: Fine-grained reactive signals, in-memory fuzzy search, 2D viewport virtualization, topological DAG formula calculations, and 60fps FLIP animations.
 4. **Zero NPM Logic Runtime**: No React, no ReactDOM, no Redux/Zustand boilerplate, no hydration mismatches. Works with any backend (Python, Go, Rust, PHP, Bun, Node, Elixir).
 
 ---
 
-## ⚡ The 10 Micro-Engines
+## ⚡ The 13 Micro-Engines
+
+> Sizes are the exact gzipped bytes of the shipped bundles (see `docs/BENCHMARKS.md`); `tests/benchmarks.test.ts` fails if this table drifts.
 
 | Engine | Bundle | Size | Primary Capabilities |
 |---|---|---|---|
-| **HxBolt** | `htmx-bolt.js` | ~2.5KB | Signal-based reactive state (`hx-state`), bindings (`hx-text`, `hx-show`, `hx-class`, `hx-style`), 2D sparse matrix (`HxBolt.matrix`), 60fps RAF stream throttle (`hx-stream-batch`). |
-| **HxFlash** | `htmx-flash.js` | ~2.1KB | 0ms in-memory fuzzy search (`hx-flash-search`), multi-column filters (`hx-flash-filter`), TypedArray ColumnStore (`HxFlash.createColumnStore`). |
-| **HxForm** | `htmx-form.js` | ~2.2KB | Declarative validation pipes (`hx-validate`), multi-step wizard (`hx-wizard`), cascading fields (`hx-depends`), cell transactions (`cellTransaction`). |
-| **HxVibe** | `htmx-vibe.js` | ~1.8KB | 60fps FLIP layout animation (`hx-vibe-flip`), 3D card tilt (`hx-vibe-card`), magnetic cursor snapping (`hx-vibe-magnetic`), physics shockwave (`hx-vpx-blast`). |
-| **HxA11y** | `htmx-a11y.js` | ~1.4KB | WAI-ARIA focus trapping (`hx-trap-focus`), roving tabindex (`hx-roving`), 2D matrix navigation (`hx-matrix-nav`, `Shift+Arrow` range selection). |
-| **HxVirtual** | `htmx-virtual.js` | ~2.0KB | 1D & 2D bi-directional viewport windowing (`hx-virtual`, `hx-virtual-2d`), pinned sticky left/right columns (`hx-pinned-left`), 100k+ row recycling. |
-| **HxGrid** | `htmx-grid.js` | ~3.2KB | Enterprise Data Grid (`<div hx-grid>`), interactive column resize handles, drag-and-drop column reordering, bulk actions, CSV export. |
-| **HxCalc** | `htmx-calc.js` | ~2.1KB | Zero-dependency reactive formula engine with topological sorting DAG (Kahn's algorithm), cycle detection (`#CYCLE!`), coordinate resolver (`A1` $\leftrightarrow$ `(0, 0)`). |
-| **HxOffline** | `htmx-offline.js` | ~1.6KB | IndexedDB offline mutation queue, optimistic local persistence, automatic sync on reconnect, 409 conflict resolution. |
-| **HxDevTools**| `htmx-devtools.js`| ~1.2KB | In-browser visualizer (`HTMX PRO.devtools`), reactive signal inspector, mutation timeline profiler. |
+| **HxBolt** | `htmx-bolt.js` | 23.20KB | Signal-based reactive state (`hx-state`), bindings (`hx-text`, `hx-show`, `hx-class`, `hx-style`), 2D sparse matrix (`HxBolt.matrix`), 60fps RAF stream throttle (`hx-stream-batch`). |
+| **HxFlash** | `htmx-flash.js` | 4.25KB | 0ms in-memory fuzzy search (`hx-flash-search`), multi-column filters (`hx-flash-filter`), TypedArray ColumnStore (`HxFlash.createColumnStore`). |
+| **HxForm** | `htmx-form.js` | 4.41KB | Declarative validation pipes (`hx-validate`), multi-step wizard (`hx-wizard`), cascading fields (`hx-depends`), cell transactions (`cellTransaction`). |
+| **HxVibe** | `htmx-vibe.js` | 3.26KB | 60fps FLIP layout animation (`hx-vibe-flip`), 3D card tilt (`hx-vibe-card`), magnetic cursor snapping (`hx-vibe-magnetic`), physics shockwave (`hx-vpx-blast`). |
+| **HxA11y** | `htmx-a11y.js` | 3.05KB | WAI-ARIA focus trapping (`hx-trap-focus`), roving tabindex (`hx-roving`), 2D matrix navigation (`hx-matrix-nav`, `Shift+Arrow` range selection). |
+| **HxVirtual** | `htmx-virtual.js` | 3.27KB | 1D & 2D bi-directional viewport windowing (`hx-virtual`, `hx-virtual-2d`), pinned sticky left/right columns (`hx-pinned-left`), 100k+ row recycling. |
+| **HxGrid** | `htmx-grid.js` | 5.17KB | Enterprise Data Grid (`<div hx-grid>`), interactive column resize handles, drag-and-drop column reordering, bulk actions, CSV export. |
+| **HxCalc** | `htmx-calc.js` | 3.18KB | Zero-dependency reactive formula engine with topological sorting DAG (Kahn's algorithm), cycle detection (`#CYCLE!`), coordinate resolver (`A1` $\leftrightarrow$ `(0, 0)`). |
+| **HxOffline** | `htmx-offline.js` | 2.32KB | IndexedDB offline mutation queue, optimistic local persistence, automatic sync on reconnect, 409 conflict resolution. |
+| **HxDevTools**| `htmx-devtools.js`| 2.04KB | In-browser visualizer (`Hyperstack.devtools`), reactive signal inspector, mutation timeline profiler. |
+| **HxSim** | `htmx-sim.js` | 6.00KB | Kinetic particle physics, Boids flocking, N-body orbital dynamics, elastic momentum, Conway Life. |
+| **HxCanvas** | `htmx-canvas.js` | 2.15KB | Layer-indexed spatial node graph (`hx-canvas`), draggable nodes, automatic connector routing between nodes. |
+| **Appz** | `appz.js` | 8.94KB | Mobile & spatial OS shell: `<app-shellui>`, `<app-bar>`, `<app-seg>`, `<app-layer level="0..9">`, `<app-navbar>`, bottom sheets, joystick HUD, haptics, coroutine channels (`AppzChan`). |
 
 ---
 
@@ -76,12 +81,12 @@
 ---
 
 ## 🚨 Deterministic Error Codes for AI Self-Repair
-- `HTMX PRO-BOLT-001`: Invalid JSON syntax in `hx-state` $\rightarrow$ Fix: Verify JSON quotes or use `<script type="application/json" hx-state>`.
-- `HTMX PRO-BOLT-002`: Circular dependency in `hx-computed` $\rightarrow$ Fix: Remove self-referencing properties.
-- `HTMX PRO-BOLT-003`: Invalid `hx-for` syntax $\rightarrow$ Fix: Use `item in items` or `(item, index) in items` on `<template>` tag.
-- `HTMX PRO-BOLT-004`: Undefined property or global store $\rightarrow$ Fix: Register via `HxBolt.store('name', initial)` or declare in local `hx-state`.
-- `HTMX PRO-BOLT-005`: Attribute typo detected $\rightarrow$ Fix: Check suggestion in warning (e.g. did you mean `hx-show` instead of `hx-showw`?).
-- `HTMX PRO-CALC-002`: Circular reference `#CYCLE!` in formula $\rightarrow$ Fix: Break cyclic cell dependency.
+- `Hyperstack-BOLT-001`: Invalid JSON syntax in `hx-state` $\rightarrow$ Fix: Verify JSON quotes or use `<script type="application/json" hx-state>`.
+- `Hyperstack-BOLT-002`: Circular dependency in `hx-computed` $\rightarrow$ Fix: Remove self-referencing properties.
+- `Hyperstack-BOLT-003`: Invalid `hx-for` syntax $\rightarrow$ Fix: Use `item in items` or `(item, index) in items` on `<template>` tag.
+- `Hyperstack-BOLT-004`: Undefined property or global store $\rightarrow$ Fix: Register via `HxBolt.store('name', initial)` or declare in local `hx-state`.
+- `Hyperstack-BOLT-005`: Attribute typo detected $\rightarrow$ Fix: Check suggestion in warning (e.g. did you mean `hx-show` instead of `hx-showw`?).
+- `Hyperstack-CALC-002`: Circular reference `#CYCLE!` in formula $\rightarrow$ Fix: Break cyclic cell dependency.
 
 ---
 
@@ -92,7 +97,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  <script src="https://unpkg.com/htmx.org@4.0.0/dist/htmx.min.js"></script>
   <script src="/htmx-bolt.js"></script>
   <script src="/htmx-flash.js"></script>
   <script src="/htmx-vibe.js"></script>
@@ -104,7 +109,7 @@
   <div class="max-w-md p-6 border rounded-xl bg-card shadow-sm space-y-4"
        hx-state='{ "count": 0, "starred": false }'>
     
-    <h2 class="text-xl font-bold">HTMX PRO Reactive Card</h2>
+    <h2 class="text-xl font-bold">Hyperstack Reactive Card</h2>
     <p class="text-sm text-muted-foreground">Count: <span hx-text="count" class="font-mono font-bold">0</span></p>
 
     <div class="flex gap-2">

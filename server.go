@@ -41,6 +41,7 @@ var componentsList = []string{
 	"smart-smart-lock", "smart-solar-power-flow", "smart-step-activity-rings", "smart-thermostat-dual-zone",
 	"smart-tire-pressure-tpms", "smart-turn-by-turn-nav", "smart-uv-index-dial", "smart-weather-hero",
 	"smart-wind-compass",
+	"hy-hook",
 }
 
 func formatName(slug string) string {
@@ -100,7 +101,7 @@ func buildComponentPage(slug string) string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>%s — HTMX PRO (Go Engine)</title>
+  <title>%s — Hyperstack (Go Engine)</title>
   <script src="/vendor/htmx.min.js"></script>
   <script src="/htmx-bolt.js"></script>
   <script src="/htmx-flash.js"></script>
@@ -124,7 +125,7 @@ func buildComponentPage(slug string) string {
       <div class="flex h-14 items-center border-b border-border px-4">
         <a href="/" class="flex items-center gap-2">
           <svg class="h-5 w-5 text-primary" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
-          <span class="font-bold text-lg tracking-tight">HTMX PRO</span>
+          <span class="font-bold text-lg tracking-tight">Hyperstack</span>
         </a>
       </div>
       <div class="flex-1 p-3 overflow-y-auto">%s</div>
@@ -135,12 +136,12 @@ func buildComponentPage(slug string) string {
           <h1 class="font-semibold text-base">%s</h1>
           <a href="/demo" class="text-xs bg-primary/10 text-primary font-medium px-2.5 py-1 rounded-full hover:bg-primary/20 transition-colors">Live Demos Hub</a>
         </div>
-        <a href="https://github.com/hyperlibs/htmxpro" target="_blank" class="text-xs text-muted-foreground hover:text-foreground">GitHub ↗</a>
+        <a href="https://github.com/hyperlibs/hyperstack" target="_blank" class="text-xs text-muted-foreground hover:text-foreground">GitHub ↗</a>
       </header>
       <div class="flex-1 p-8 max-w-5xl mx-auto w-full space-y-8">
         <div class="space-y-2">
           <h1 class="text-3xl font-extrabold tracking-tight">%s</h1>
-          <p class="text-muted-foreground text-sm">Interactive Shadcn-quality hypermedia component for HTMX PRO.</p>
+          <p class="text-muted-foreground text-sm">Interactive Shadcn-quality hypermedia component for Hyperstack.</p>
         </div>
         <div class="rounded-xl border border-border bg-card p-6 shadow-sm overflow-hidden">
           %s
@@ -282,7 +283,7 @@ func main() {
 		http.NotFound(w, r)
 	})
 
-	log.Printf("🚀 HTMX PRO Pure Go Server running at http://localhost:%s", port)
+	log.Printf("🚀 Hyperstack Pure Go Server running at http://localhost:%s", port)
 	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatalf("Server failed: %v", err)
 	}

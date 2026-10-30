@@ -27,7 +27,7 @@
       });
   };
 
-  // src/htmx-vibe.ts
+  // hyperstack/src/htmx-vibe.ts
   var exports_htmx_vibe = {};
   __export(exports_htmx_vibe, {
     triggerBlast: () => triggerBlast,
@@ -282,8 +282,8 @@
   };
   if (typeof window !== "undefined") {
     window.HxVibe = HxVibe;
-    if (typeof window.HTMXUI !== "undefined") {
-      window.HTMXUI.vibe = HxVibe;
+    if (typeof window.Hyperstack !== "undefined") {
+      window.Hyperstack.vibe = HxVibe;
     }
     if (typeof window.htmx !== "undefined") {
       window.htmx.defineExtension("vibe", {

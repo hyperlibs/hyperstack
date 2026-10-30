@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('HTMXUI Live Demos & HyperAdmin Full Verification Suite', () => {
+test.describe('Hyperstack Live Demos & HyperAdmin Full Verification Suite', () => {
   const BASE_URL = 'http://localhost:3000';
 
   test.beforeEach(async ({ page }) => {
@@ -89,7 +89,7 @@ test.describe('HTMXUI Live Demos & HyperAdmin Full Verification Suite', () => {
     const profileNavBtn = page.getByRole('button', { name: /Profile/ });
     await profileNavBtn.click();
     await expect(page.locator('h1:has-text("David Admin")')).toBeVisible();
-    await expect(page.locator('text=Principal Systems Architect & HTMXUI Core')).toBeVisible();
+    await expect(page.locator('text=Principal Systems Architect & Hyperstack Core')).toBeVisible();
 
     // --- 5. Forms & Elements ---
     const formsNavBtn = page.getByRole('button', { name: /Forms & Elements/ });

@@ -27,7 +27,7 @@
       });
   };
 
-  // src/htmx-bolt.ts
+  // hyperstack/src/htmx-bolt.ts
   var exports_htmx_bolt = {};
   __export(exports_htmx_bolt, {
     validateStruct: () => validateStruct,
@@ -75,83 +75,83 @@
     version: "1.0.0"
   };
   var ERROR_CATALOG = {
-    "HTMXUI-BOLT-001": {
+    "HYPERSTACK-BOLT-001": {
       title: 'Invalid JSON syntax in <script type="application/json" hx-state> or hx-state attribute.',
       fix: 'Verify JSON formatting. Ensure all keys and strings use valid double quotes, or use a <script type="application/json" hx-state> child element.'
     },
-    "HTMXUI-BOLT-002": {
+    "HYPERSTACK-BOLT-002": {
       title: "Circular dependency or recursion detected in hx-computed property.",
       fix: "Check expressions in hx-computed to ensure property A does not depend directly or indirectly on itself."
     },
-    "HTMXUI-BOLT-003": {
+    "HYPERSTACK-BOLT-003": {
       title: "Invalid hx-for syntax.",
       fix: 'Expected format: "item in items" or "(item, index) in items". Ensure hx-for is placed directly on a <template> tag.'
     },
-    "HTMXUI-BOLT-004": {
+    "HYPERSTACK-BOLT-004": {
       title: "Referenced undefined property or global store.",
       fix: 'Ensure the property exists in local hx-state or the store was registered via HxBolt.store("name", initialValue).'
     },
-    "HTMXUI-BOLT-005": {
+    "HYPERSTACK-BOLT-005": {
       title: "Unrecognized hx-* attribute detected (potential AI hallucination or typo).",
-      fix: "Check the attribute spelling against the official HTMX PRO schema in /schema/htmxpro.json."
+      fix: "Check the attribute spelling against the official Hyperstack schema in /schema/hyperstack.json."
     },
-    "HTMXUI-BOLT-006": {
+    "HYPERSTACK-BOLT-006": {
       title: "CSP EvalError blocked dynamic evaluation. Automatic fallback engaged.",
-      fix: "Set HTMXUI.config.strictCSP = true to bypass new Function completely, or ensure expression matches safe parser grammar."
+      fix: "Set Hyperstack.config.strictCSP = true to bypass new Function completely, or ensure expression matches safe parser grammar."
     },
-    "HTMXUI-AUTH-001": {
+    "HYPERSTACK-AUTH-001": {
       title: "Unauthorized role access attempt (RBAC enforcement blocked element).",
       fix: "Grant required user role via HxBolt.auth({ roles: [...] }) or server HX-Auth-Roles header."
     },
-    "HTMXUI-AUTH-002": {
+    "HYPERSTACK-AUTH-002": {
       title: "Missing required security permission (RBAC enforcement blocked element).",
       fix: "Grant required permission via HxBolt.auth({ permissions: [...] }) or server HX-Auth-Permissions header."
     },
-    "HTMXUI-CALC-001": {
+    "HYPERSTACK-CALC-001": {
       title: "Cycle or unbounded dependency detected in formula calculation graph.",
       fix: "Review spreadsheet formulas to ensure topological ordering DAG is acyclic without recursive self-references."
     },
-    "HTMXUI-FORM-001": {
+    "HYPERSTACK-FORM-001": {
       title: "Invalid form validation pattern or missing constraint handler.",
       fix: "Verify regex syntax in hx-validate pattern or ensure named custom validator is registered."
     },
-    "HTMXUI-VIBE-001": {
+    "HYPERSTACK-VIBE-001": {
       title: "Invalid spring physics parameters (mass, stiffness, damping <= 0).",
       fix: "Ensure stiffness > 0, mass > 0, and damping >= 0 for stable harmonic oscillator convergence."
     },
-    "HTMXUI-FLASH-001": {
+    "HYPERSTACK-FLASH-001": {
       title: "IndexedDB or Columnar Store schema synchronization error.",
       fix: "Verify search field descriptors and ensure typed buffer allocations match column types."
     },
-    "HTMXUI-A11Y-001": {
+    "HYPERSTACK-A11Y-001": {
       title: "Missing accessible name (aria-label/aria-labelledby) or roving tabindex boundary violation.",
       fix: "Add descriptive aria-label to interactive element or wrap roving children in container with hx-roving."
     },
-    "HTMXUI-VIRTUAL-001": {
+    "HYPERSTACK-VIRTUAL-001": {
       title: "Invalid or negative viewport/item dimensions in virtual scroller.",
       fix: "Ensure hx-virtual-height, item height, and container clientHeight are positive non-zero numbers."
     },
-    "HTMXUI-GRID-001": {
+    "HYPERSTACK-GRID-001": {
       title: "Column definition type mismatch or missing accessor in enterprise data grid.",
       fix: "Verify column defs array matches data record keys and column renderer types."
     },
-    "HTMXUI-OFFLINE-001": {
+    "HYPERSTACK-OFFLINE-001": {
       title: "Mutation replay queue persistence or sync conflict.",
       fix: "Inspect IndexedDB mutation queue and ensure server endpoint accepts batch replay schema."
     },
-    "HTMXUI-DEVTOOLS-001": {
+    "HYPERSTACK-DEVTOOLS-001": {
       title: "DevTools telemetry bridge disconnected or invalid state inspection payload.",
       fix: "Ensure HxDevTools.mount() is active and inspect target element contains valid reactive proxy."
     },
-    "HTMXUI-SPATIAL-001": {
+    "HYPERSTACK-SPATIAL-001": {
       title: "Depth layer overflow or missing 3D transform-style context.",
       fix: "Verify container has perspective and transform-style: preserve-3d configured."
     },
-    "HTMXUI-CHAN-001": {
+    "HYPERSTACK-CHAN-001": {
       title: "Channel message transmission error or unregistered receiver.",
       fix: "Ensure channel exists via HxBolt.chan(name) or hx-chan-recv is mounted in the DOM."
     },
-    "HTMXUI-STRUCT-001": {
+    "HYPERSTACK-STRUCT-001": {
       title: "State struct schema contract violation.",
       fix: "Ensure properties in hx-state match types declared in hx-struct schema."
     }
@@ -164,7 +164,7 @@
     diagnosticHistory.length = 0;
   }
   function formatDiag(code, detail, el = null) {
-    const meta = ERROR_CATALOG[code] || { title: "Unknown runtime error", fix: "Consult /schema/htmxpro.json" };
+    const meta = ERROR_CATALOG[code] || { title: "Unknown runtime error", fix: "Consult /schema/hyperstack.json" };
     const tag = el ? `<${el.tagName.toLowerCase()}${el.id ? "#" + el.id : ""}${el.className ? "." + el.className.split(" ").slice(0, 2).join(".") : ""}>` : "[Element]";
     return `[@diag ${code}] ${meta.title}
   Target: ${tag}
@@ -172,7 +172,7 @@
   Fix: ${meta.fix}`;
   }
   function reportError(code, detail, el = null) {
-    const meta = ERROR_CATALOG[code] || { title: "Unknown runtime error", fix: "Consult /schema/htmxpro.json" };
+    const meta = ERROR_CATALOG[code] || { title: "Unknown runtime error", fix: "Consult /schema/hyperstack.json" };
     const message = formatDiag(code, detail, el);
     const diagRecord = {
       code,
@@ -361,7 +361,7 @@
             }
           }
           const suggestion = closest ? ` Did you mean '${closest}'?` : "";
-          reportError("HTMXUI-BOLT-005", `Element has unknown attribute '${name}'.${suggestion}`, el);
+          reportError("HYPERSTACK-BOLT-005", `Element has unknown attribute '${name}'.${suggestion}`, el);
         }
       }
     }
@@ -728,10 +728,10 @@
     toast(message, type = "info") {
       if (typeof document !== "undefined") {
         document.body.dispatchEvent(new CustomEvent("htmx:toast", { detail: { message, type } }));
-        let container = document.getElementById("htmxui-toast-container");
+        let container = document.getElementById("hyperstack-toast-container");
         if (!container) {
           container = document.createElement("div");
-          container.id = "htmxui-toast-container";
+          container.id = "hyperstack-toast-container";
           container.className = "fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none";
           document.body.appendChild(container);
         }
@@ -947,7 +947,7 @@
     if (!isAuthorized) {
       const reasonType = !roleAllowed ? "role" : "permission";
       const reasonReq = !roleAllowed ? roleAttr : permAttr;
-      const diagCode = !roleAllowed ? "HTMXUI-AUTH-001" : "HTMXUI-AUTH-002";
+      const diagCode = !roleAllowed ? "HYPERSTACK-AUTH-001" : "HYPERSTACK-AUTH-002";
       reportError(diagCode, `RBAC authorization blocked access to element requiring ${reasonType} "${reasonReq}".`, el);
       const eventDetail = {
         el,
@@ -1712,7 +1712,7 @@
       }
     } catch (safeErr) {
       if (config.strictCSP) {
-        reportError("HTMXUI-BOLT-006", `Zero-eval evaluation error: ${safeErr.message}`, extraScope.$el);
+        reportError("HYPERSTACK-BOLT-006", `Zero-eval evaluation error: ${safeErr.message}`, extraScope.$el);
         return;
       }
     }
@@ -1771,7 +1771,7 @@
       return safeExecuteAction(expr, ctx, fxScope);
     } catch (safeErr) {
       if (config.strictCSP) {
-        reportError("HTMXUI-BOLT-006", `Zero-eval action error: ${safeErr.message}`, extraScope.$el);
+        reportError("HYPERSTACK-BOLT-006", `Zero-eval action error: ${safeErr.message}`, extraScope.$el);
         return;
       }
     }
@@ -1784,7 +1784,7 @@
       const fn = new Function(...scopeKeys, `with(this) { ${expr}; }`);
       return fn.apply(ctx, scopeValues);
     } catch (err) {
-      reportError("HTMXUI-BOLT-004", `Action execution error in "${expr}": ${err.message}`, extraScope.$el);
+      reportError("HYPERSTACK-BOLT-004", `Action execution error in "${expr}": ${err.message}`, extraScope.$el);
     }
   }
   function runWithEffect(effectFn) {
@@ -1889,7 +1889,7 @@
         try {
           initialData = safeEvaluate(stateScript.textContent.trim(), {}) || {};
         } catch (err) {
-          reportError("HTMXUI-BOLT-001", `Failed to parse <script hx-state> content: ${err.message}`, rootEl);
+          reportError("HYPERSTACK-BOLT-001", `Failed to parse <script hx-state> content: ${err.message}`, rootEl);
         }
       }
     } else {
@@ -1901,7 +1901,7 @@
           try {
             initialData = safeEvaluate(stateAttr, {}) || {};
           } catch (e) {
-            reportError("HTMXUI-BOLT-001", `Invalid hx-state attribute expression: ${stateAttr}`, rootEl);
+            reportError("HYPERSTACK-BOLT-001", `Invalid hx-state attribute expression: ${stateAttr}`, rootEl);
           }
         }
       }
@@ -1926,7 +1926,7 @@
           });
         }
       } catch (e) {
-        reportError("HTMXUI-BOLT-002", `Invalid hx-computed definition: ${computedAttr}`, rootEl);
+        reportError("HYPERSTACK-BOLT-002", `Invalid hx-computed definition: ${computedAttr}`, rootEl);
       }
     }
     rootEl.querySelectorAll("[hx-effect]").forEach((el) => {
@@ -1991,7 +1991,7 @@
       const forExpr = template.getAttribute("hx-for");
       const match = forExpr.match(/^\s*(?:\(?\s*(\w+)\s*(?:,\s*(\w+))?\s*\)?)\s+in\s+(.+)\s*$/);
       if (!match) {
-        reportError("HTMXUI-BOLT-003", `Invalid hx-for expression "${forExpr}". Must be "item in items" or "(item, idx) in items".`, template);
+        reportError("HYPERSTACK-BOLT-003", `Invalid hx-for expression "${forExpr}". Must be "item in items" or "(item, idx) in items".`, template);
         return;
       }
       const itemVar = match[1];
@@ -2314,7 +2314,7 @@
             }
           });
         } catch (err) {
-          console.error(`[htmxui:directive ${dirName}]`, err);
+          console.error(`[hyperstack:directive ${dirName}]`, err);
         }
       });
     });
@@ -2573,8 +2573,8 @@
           }
         });
         if (typeof window !== "undefined") {
-          window.dispatchEvent(new CustomEvent(`htmxui:channel:${name}`, { detail: data }));
-          window.dispatchEvent(new CustomEvent("htmxui:channel", { detail: { channel: name, data } }));
+          window.dispatchEvent(new CustomEvent(`hyperstack:channel:${name}`, { detail: data }));
+          window.dispatchEvent(new CustomEvent("hyperstack:channel", { detail: { channel: name, data } }));
         }
       },
       recv(callback) {
@@ -2666,7 +2666,7 @@
       }
     }
     if (errors.length > 0) {
-      reportError("HTMXUI-STRUCT-001", `Struct schema validation failure: ${errors.join("; ")}`);
+      reportError("HYPERSTACK-STRUCT-001", `Struct schema validation failure: ${errors.join("; ")}`);
     }
     return { valid: errors.length === 0, errors };
   }
@@ -2895,7 +2895,7 @@
       setupObserver();
     };
     window.HxBolt = HxBolt;
-    window.HTMXUI = {
+    window.Hyperstack = {
       config,
       errors: ERROR_CATALOG,
       bolt: HxBolt,
@@ -2914,7 +2914,6 @@
         return engine;
       }
     };
-    window.HTMXPRO = window.HTMXUI;
     document.addEventListener("hxStateUpdate", function(evt) {
       const detail = evt.detail;
       if (detail && detail.target && detail.state) {

@@ -36,9 +36,11 @@ jobs:
       - name: Build minified CSS
         run: bun run build:css
 
+      - name: Build static site pages
+        run: bun run scripts/build-static.ts
+
       - name: Verify distribution bundle checksums
-        shell: bash
-        run: sha256sum -c CHECKSUMS.sha256
+        run: bun run scripts/verify-checksums.ts
 
       - name: Run unit test suite
         run: bun test
@@ -52,3 +54,27 @@ jobs:
             echo "Bundle size exceeded threshold!"
             exit 1
           fi
+
+  go:
+    name: Go vet, build & test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: stable
+
+      - name: Vet & build stdlib-only native server
+        run: |
+          go vet server.go
+          go build -o hyperstack-server server.go
+
+      - name: Vet & test component DSL module
+        working-directory: go
+        run: |
+          go vet ./...
+          go test ./...

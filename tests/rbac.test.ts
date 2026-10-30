@@ -113,7 +113,7 @@ describe('Bank-Grade Role-Based Access Control (RBAC) & Authorization Suite', ()
 
     // Check security diagnostics
     expect(diagnosticHistory.length).toBeGreaterThan(0);
-    expect(diagnosticHistory[0].code).toBe('HTMXUI-AUTH-001');
+    expect(diagnosticHistory[0].code).toBe('HYPERSTACK-AUTH-001');
 
     // Escalate role -> Should unhide
     HxBolt.setRoles(['compliance']);

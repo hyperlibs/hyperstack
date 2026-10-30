@@ -1,4 +1,4 @@
-# 📜 Changelog — `htmxUI`
+# 📜 Changelog — `Hyperstack`
 
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🌟 Initial Production Release (The Hypermedia Platform for Go, Rust, Python & .NET)
 
-`htmxUI` v0.1.0 provides a complete, hyperreactive, node-free hypermedia platform designed for backend developers.
+`Hyperstack` v0.1.0 provides a complete, hyperreactive, node-free hypermedia platform designed for backend developers.
 
 ### 🚀 10 Modular Core Micro-Engines (~48KB total)
 - **`HxBolt` (`htmx-bolt.js`)**: Signal-based reactive state proxy, microtask batching scheduler, typo guard, and 120 FPS high-frequency ticker.
@@ -27,4 +27,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🌐 Protocols & Integrations
 - **HyperStream Micro-Delta Protocol**: Server-driven delta parsing (`Δrow:col:val:flashClass`) over SSE or WebSockets with 60 FPS RAF batching.
 - **Autonomous Spatial Bridge (`HxSpatial`)**: Directs `[hx-3d]`, `[3denv]`, `[3datmos]`, `[3dfx]`, and `<hx-viewport>` elements to `htmFX` with `@diag FX-0404` fallback.
-- **Canonical Schema & Machine Discovery**: Published `llms.txt` and `schema/htmxui.json` covering all component grammar and attributes.
+- **Canonical Schema & Machine Discovery**: Published `llms.txt` and `schema/hyperstack.json` covering all component grammar and attributes.

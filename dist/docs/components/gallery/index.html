@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gallery — HTMX PRO</title>
+  <title>Gallery — Hyperstack</title>
   <script src="/vendor/htmx.min.js"></script>
   <script src="/htmx-bolt.js"></script>
   <script src="/htmx-flash.js"></script>
@@ -30,7 +30,7 @@
       <div class="flex h-14 items-center border-b border-border px-4">
         <a href="/" class="flex items-center gap-2">
           <svg class="h-5 w-5 text-primary" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
-          <span class="font-bold text-lg tracking-tight">HTMX PRO</span>
+          <span class="font-bold text-lg tracking-tight">Hyperstack</span>
         </a>
       </div>
       <div class="flex-1 p-3 overflow-y-auto"><div class="mb-6"><h4 class="mb-2 px-3 text-sm font-semibold tracking-tight">Getting Started</h4><div class="space-y-1"><a href="/docs/components/introduction/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Introduction</a>
@@ -191,7 +191,8 @@
 <a href="/docs/components/smart-turn-by-turn-nav/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Turn By Turn Nav</a>
 <a href="/docs/components/smart-uv-index-dial/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Uv Index Dial</a>
 <a href="/docs/components/smart-weather-hero/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Weather Hero</a>
-<a href="/docs/components/smart-wind-compass/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Wind Compass</a></div></div></div>
+<a href="/docs/components/smart-wind-compass/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Wind Compass</a>
+<a href="/docs/components/hy-hook/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Hy Hook</a></div></div></div>
     </aside>
     <main class="flex-1 flex flex-col min-w-0">
       <header class="h-14 border-b border-border flex items-center justify-between px-6 bg-card sticky top-0 z-30">
@@ -199,12 +200,12 @@
           <h1 class="font-semibold text-base">Gallery</h1>
           <a href="/demo/" class="text-xs bg-primary/10 text-primary font-medium px-2.5 py-1 rounded-full hover:bg-primary/20 transition-colors">Live Demos Hub</a>
         </div>
-        <a href="https://github.com/hyperlibs/htmxpro" target="_blank" class="text-xs text-muted-foreground hover:text-foreground">GitHub ↗</a>
+        <a href="https://github.com/hyperlibs/hyperstack" target="_blank" class="text-xs text-muted-foreground hover:text-foreground">GitHub ↗</a>
       </header>
       <div class="flex-1 p-8 max-w-5xl mx-auto w-full space-y-8">
         <div class="space-y-2">
           <h1 class="text-3xl font-extrabold tracking-tight">Gallery</h1>
-          <p class="text-muted-foreground text-sm">Interactive Shadcn-quality hypermedia component for HTMX PRO.</p>
+          <p class="text-muted-foreground text-sm">Interactive Shadcn-quality hypermedia component for Hyperstack.</p>
         </div>
         <div class="space-y-4">
           <h2 class="text-xl font-bold tracking-tight">Interactive Preview</h2>
@@ -431,7 +432,7 @@
       Copy and paste this standard 6-slot gallery strip directly into your layout or template.
     </p>
 
-    <div class="code-block"><code><pre>&lt;!-- HTMX PRO 6-Slot Gallery Strip --&gt;
+    <div class="code-block"><code><pre>&lt;!-- Hyperstack 6-Slot Gallery Strip --&gt;
 &lt;div class="border-2 border-dashed border-border/80 rounded-xl p-3 bg-muted/20"&gt;
   &lt;div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3"&gt;
     &lt;!-- Repeating Gallery Slot Item --&gt;
@@ -453,7 +454,7 @@
   <!-- Go DSL Usage -->
   <div class="space-y-4 pt-6 border-t border-border">
     <h2 class="text-xl font-bold tracking-tight">Go DSL Usage</h2>
-    <div class="code-block"><code><pre>import "github.com/hyperlibs/HTMX PRO/go/components"
+    <div class="code-block"><code><pre>import "github.com/hyperlibs/hyperstack/go/components"
 
 // Server-rendered 6-Slot Gallery
 gallery := components.Gallery(components.GalleryProps{
@@ -690,7 +691,7 @@ gallery := components.Gallery(components.GalleryProps{
       Copy and paste this standard 6-slot gallery strip directly into your layout or template.
     &lt;/p&gt;
 
-    &lt;div class=&quot;code-block&quot;&gt;&lt;code&gt;&lt;pre&gt;&amp;lt;!-- HTMX PRO 6-Slot Gallery Strip --&amp;gt;
+    &lt;div class=&quot;code-block&quot;&gt;&lt;code&gt;&lt;pre&gt;&amp;lt;!-- Hyperstack 6-Slot Gallery Strip --&amp;gt;
 &amp;lt;div class=&quot;border-2 border-dashed border-border/80 rounded-xl p-3 bg-muted/20&quot;&amp;gt;
   &amp;lt;div class=&quot;grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3&quot;&amp;gt;
     &amp;lt;!-- Repeating Gallery Slot Item --&amp;gt;
@@ -712,7 +713,7 @@ gallery := components.Gallery(components.GalleryProps{
   &lt;!-- Go DSL Usage --&gt;
   &lt;div class=&quot;space-y-4 pt-6 border-t border-border&quot;&gt;
     &lt;h2 class=&quot;text-xl font-bold tracking-tight&quot;&gt;Go DSL Usage&lt;/h2&gt;
-    &lt;div class=&quot;code-block&quot;&gt;&lt;code&gt;&lt;pre&gt;import &quot;github.com/hyperlibs/HTMX PRO/go/components&quot;
+    &lt;div class=&quot;code-block&quot;&gt;&lt;code&gt;&lt;pre&gt;import &quot;github.com/hyperlibs/hyperstack/go/components&quot;
 
 // Server-rendered 6-Slot Gallery
 gallery := components.Gallery(components.GalleryProps{

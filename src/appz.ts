@@ -1,5 +1,5 @@
 /**
- * APPZ.TS — A to Z Mobile, Tablet & Spatial IoT Operating System Engine for HTMX PRO
+ * APPZ.TS — A to Z Mobile, Tablet & Spatial IoT Operating System Engine for Hyperstack
  * 
  * 4-Layer Operating System Architecture with Dedicated @diag Telemetry:
  * ┌────────────────────────────────────────────────────────┐
@@ -762,7 +762,7 @@ export function applySegmentLayerStyles(el: HTMLElement): void {
 }
 
 // -----------------------------------------------------------------------------
-// 50% HTMX PRO: Declarative Custom Elements & Kinetic Touch Physics
+// Declarative Custom Elements & Kinetic Touch Physics
 // -----------------------------------------------------------------------------
 
 export class AppzEngine {

@@ -1,18 +1,18 @@
 # Security Policy & Enterprise Threat Model
 
-HTMXUI is engineered for high-security, regulated, and bank-grade web applications. This document details our Content Security Policy (CSP) Level 3 architecture, declarative Role-Based Access Control (RBAC) model, memory safety guarantees, and vulnerability reporting procedures.
+Hyperstack is engineered for high-security, regulated, and bank-grade web applications. This document details our Content Security Policy (CSP) Level 3 architecture, declarative Role-Based Access Control (RBAC) model, memory safety guarantees, and vulnerability reporting procedures.
 
 ---
 
 ## 1. Strict Zero-`eval` Architecture (CSP Level 3 Compliance)
 
-Unlike legacy reactive libraries that rely on `new Function(...)` or `eval()`, HTMXUI runs in **Strict Zero-Eval mode by default (`strictCSP: true`)**:
+Unlike legacy reactive libraries that rely on `new Function(...)` or `eval()`, Hyperstack runs in **Strict Zero-Eval mode by default (`strictCSP: true`)**:
 
 ```http
 Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'self';
 ```
 
-- **No `unsafe-eval` Required**: HTMXUI executes all reactive attributes (`hx-state`, `hx-action`, `hx-text`, `hx-show`, `hx-class`, `hx-computed`) through a hand-crafted, recursive-descent AST parser.
+- **No `unsafe-eval` Required**: Hyperstack executes all reactive attributes (`hx-state`, `hx-action`, `hx-text`, `hx-show`, `hx-class`, `hx-computed`) through a hand-crafted, recursive-descent AST parser.
 - **AST Sandboxing**: The parser strictly rejects dangerous global access (`window`, `document`, `globalThis`, `eval`, `Function`, `constructor`, `__proto__`).
 - **No Dynamic Compilation**: Expressions and arrow closures (`reduce`, `map`, `filter`) are parsed into safe closure trees and evaluated against isolated proxy scopes.
 
@@ -20,7 +20,7 @@ Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'
 
 ## 2. Bank-Grade Role-Based Access Control (RBAC) & Authorization
 
-HTMXUI provides first-class, client-side authorization directives (`hx-role` and `hx-can`) with reactive signal enforcement:
+Hyperstack provides first-class, client-side authorization directives (`hx-role` and `hx-can`) with reactive signal enforcement:
 
 ### Directives Specification
 | Directive | Syntax Example | Behavior |
@@ -39,13 +39,13 @@ HTMXUI provides first-class, client-side authorization directives (`hx-role` and
 ### Security Audit Telemetry
 When an unauthorized element interaction is attempted or blocked:
 1. Dispatches `htmx:auth-denied` CustomEvent on `window` and target element with `{ el, required, type, userRoles, userPermissions }`.
-2. Emits structured diagnostic records `@diag HTMXUI-AUTH-001` (role violation) and `@diag HTMXUI-AUTH-002` (permission violation) in `diagnosticHistory`.
+2. Emits structured diagnostic records `@diag Hyperstack-AUTH-001` (role violation) and `@diag Hyperstack-AUTH-002` (permission violation) in `diagnosticHistory`.
 
 ---
 
 ## 3. Server-Driven Security Synchronization
 
-HTMXUI supports hypermedia security synchronization via HTTP headers:
+Hyperstack supports hypermedia security synchronization via HTTP headers:
 - `HX-Auth-Roles: admin, compliance, trader`
 - `HX-Auth-Permissions: trade:execute, account:read, wire:approve`
 
@@ -62,7 +62,7 @@ When these headers are received on any HTMX response, `HxBolt.auth` automaticall
 
 ## 5. Vulnerability Reporting & Disclosure Policy
 
-We take security vulnerabilities seriously. If you discover a security issue or vulnerability in HTMXUI, please report it privately:
+We take security vulnerabilities seriously. If you discover a security issue or vulnerability in Hyperstack, please report it privately:
 
 - **Security Team Email**: `security@hypermedia.tools` (or open a private security advisory on GitHub).
 - **PGP Key ID**: `4A8E 91B2 C3F0 7D45`
