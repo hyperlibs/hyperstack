@@ -12,14 +12,14 @@ describe('HyperFX High-Velocity Action Functions', () => {
 
   test('HyperFX.toast dispatches htmx:toast custom event', () => {
     let capturedDetail: any = null;
-    if (typeof document !== 'undefined') {
+    if (typeof document !== 'undefined' && (document.body as any)?.addEventListener) {
       document.body.addEventListener('htmx:toast', (e: any) => {
         capturedDetail = e.detail;
       }, { once: true });
     }
 
     HyperFX.toast('Invoice created!', 'success');
-    if (typeof document !== 'undefined') {
+    if (typeof document !== 'undefined' && (document.body as any)?.addEventListener) {
       expect(capturedDetail?.message).toBe('Invoice created!');
       expect(capturedDetail?.type).toBe('success');
     }

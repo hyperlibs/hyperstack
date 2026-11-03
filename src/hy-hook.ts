@@ -546,7 +546,7 @@ export class HyperHookEngine {
 
         if (evt.html && typeof document !== 'undefined') {
           let targetEl = sub.element;
-          if (sub.target) {
+          if (sub.target && typeof document.querySelector === 'function') {
             const queried = document.querySelector(sub.target) as HTMLElement;
             if (queried) targetEl = queried;
           }
@@ -558,7 +558,7 @@ export class HyperHookEngine {
       }
     });
 
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
       window.dispatchEvent(new CustomEvent('hy-hook:received', { detail: { event: evt, matchCount } }));
     }
 
@@ -586,16 +586,18 @@ export class HyperHookEngine {
           handled = true;
         }
 
-        if (typeof document !== 'undefined') {
+        if (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function') {
           const targets = document.querySelectorAll<HTMLElement>(`[hy-ai-stream="${frame.channelId}"], [hy-ai-stream="#${frame.channelId}"]`);
           targets.forEach(el => {
             el.insertAdjacentText('beforeend', token);
             handled = true;
           });
 
-          window.dispatchEvent(new CustomEvent('hy-hook:tensor', {
-            detail: { channelId: frame.channelId, token, isEos }
-          }));
+          if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+            window.dispatchEvent(new CustomEvent('hy-hook:tensor', {
+              detail: { channelId: frame.channelId, token, isEos }
+            }));
+          }
         }
         break;
       }
@@ -603,15 +605,17 @@ export class HyperHookEngine {
       // Plane 1: Hypermedia Sub-Millisecond Morph
       case HyperPlane.HYPERMEDIA: {
         const { target, swap, html } = HyperFrameCodec.decodeHypermedia(frame.payload);
-        if (typeof document !== 'undefined' && target) {
+        if (typeof document !== 'undefined' && typeof document.querySelector === 'function' && target) {
           const el = document.querySelector<HTMLElement>(target);
           if (el) {
             this.applySwap(el, html, swap);
             handled = true;
           }
-          window.dispatchEvent(new CustomEvent('hy-hook:hypermedia', {
-            detail: { channelId: frame.channelId, target, swap, html }
-          }));
+          if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+            window.dispatchEvent(new CustomEvent('hy-hook:hypermedia', {
+              detail: { channelId: frame.channelId, target, swap, html }
+            }));
+          }
         }
         break;
       }
@@ -697,15 +701,17 @@ export class HyperHookEngine {
     const cached = this.speculativeCache.get(key);
     if (!cached) return false;
 
-    if (typeof document !== 'undefined') {
+    if (typeof document !== 'undefined' && typeof document.querySelector === 'function') {
       const selector = targetSelector || `#${key}`;
       const targetEl = document.querySelector<HTMLElement>(selector);
       if (targetEl) {
         this.applySwap(targetEl, cached.html, swap);
       }
-      window.dispatchEvent(new CustomEvent('hy-hook:speculative-committed', {
-        detail: { key, cached, targetSelector }
-      }));
+      if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+        window.dispatchEvent(new CustomEvent('hy-hook:speculative-committed', {
+          detail: { key, cached, targetSelector }
+        }));
+      }
     }
 
     this.speculativeCache.delete(key);
@@ -734,7 +740,7 @@ export class HyperHookEngine {
   }
 
   private routeRawHtml(html: string): void {
-    if (typeof document === 'undefined') return;
+    if (typeof document === 'undefined' || typeof document.createElement !== 'function') return;
     const temp = document.createElement('div');
     temp.innerHTML = html.trim();
     const firstEl = temp.firstElementChild as HTMLElement;
@@ -786,7 +792,7 @@ export class HyperHookEngine {
         break;
     }
 
-    if (typeof document !== 'undefined') {
+    if (typeof document !== 'undefined' && typeof document.dispatchEvent === 'function') {
       document.dispatchEvent(new CustomEvent('hy-hook:after-swap', {
         detail: { target, strategy }
       }));
@@ -794,7 +800,7 @@ export class HyperHookEngine {
   }
 
   private processOOB(html: string): void {
-    if (typeof document === 'undefined') return;
+    if (typeof document === 'undefined' || typeof document.createElement !== 'function') return;
     const parser = document.createElement('div');
     parser.innerHTML = html.trim();
 
@@ -802,7 +808,7 @@ export class HyperHookEngine {
     oobElements.forEach(oobEl => {
       const id = oobEl.getAttribute('id');
       if (id) {
-        const existing = document.getElementById(id);
+        const existing = typeof document.getElementById === 'function' ? document.getElementById(id) : null;
         if (existing) {
           const mode = oobEl.getAttribute('hy-swap-oob') || oobEl.getAttribute('hx-swap-oob');
           const strategy: HySwapStrategy = (mode === 'true' || mode === 'outerHTML') ? 'outerHTML' : (mode as HySwapStrategy) || 'outerHTML';
@@ -812,11 +818,12 @@ export class HyperHookEngine {
     });
   }
 
-  scan(root: Document | HTMLElement = document): void {
-    if (typeof document === 'undefined') return;
+  scan(root?: Document | HTMLElement): void {
+    const docRoot = (root || (typeof document !== 'undefined' ? document : null)) as (Document | HTMLElement | null);
+    if (!docRoot || typeof (docRoot as any).querySelectorAll !== 'function') return;
 
     // 1. Process hy-hook (Server Webhook Consumer)
-    root.querySelectorAll<HTMLElement>('[hy-hook]').forEach(el => {
+    docRoot.querySelectorAll<HTMLElement>('[hy-hook]').forEach(el => {
       if (el.hasAttribute('data-hy-bound')) return;
       el.setAttribute('data-hy-bound', 'true');
 
@@ -839,7 +846,7 @@ export class HyperHookEngine {
     });
 
     // 2. Process hy-hook-listen (Cross-Tab / Local Broadcast Listener)
-    root.querySelectorAll<HTMLElement>('[hy-hook-listen]').forEach(el => {
+    docRoot.querySelectorAll<HTMLElement>('[hy-hook-listen]').forEach(el => {
       if (el.hasAttribute('data-hy-listen-bound')) return;
       el.setAttribute('data-hy-listen-bound', 'true');
 
@@ -862,7 +869,7 @@ export class HyperHookEngine {
     });
 
     // 3. Process hy-hook-emit (Button / Action Webhook Emitter)
-    root.querySelectorAll<HTMLElement>('[hy-hook-emit]').forEach(el => {
+    docRoot.querySelectorAll<HTMLElement>('[hy-hook-emit]').forEach(el => {
       if (el.hasAttribute('data-hy-emit-bound')) return;
       el.setAttribute('data-hy-emit-bound', 'true');
 
@@ -891,7 +898,7 @@ export class HyperHookEngine {
     });
 
     // 4. Process hy-speculate-trigger (Speculative Pre-Cognition Commit Trigger)
-    root.querySelectorAll<HTMLElement>('[hy-speculate-key]').forEach(el => {
+    docRoot.querySelectorAll<HTMLElement>('[hy-speculate-key]').forEach(el => {
       if (el.hasAttribute('data-hy-speculate-bound')) return;
       el.setAttribute('data-hy-speculate-bound', 'true');
 
@@ -936,18 +943,18 @@ export class HyperHookEngine {
 export const HyHook = new HyperHookEngine();
 
 // Auto-initialize when DOM is ready
-if (typeof document !== 'undefined') {
-  if (document.readyState === 'loading') {
+if (typeof document !== 'undefined' && document.readyState) {
+  if (document.readyState === 'loading' && typeof document.addEventListener === 'function') {
     document.addEventListener('DOMContentLoaded', () => HyHook.scan());
   } else {
     HyHook.scan();
   }
 
-  if ('MutationObserver' in window) {
+  if (typeof window !== 'undefined' && 'MutationObserver' in window && document.body) {
     const observer = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
         mutation.addedNodes.forEach(node => {
-          if (node.nodeType === Node.ELEMENT_NODE) {
+          if (node.nodeType === 1) { // Node.ELEMENT_NODE
             HyHook.scan(node as HTMLElement);
           }
         });

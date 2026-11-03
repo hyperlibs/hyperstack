@@ -27,7 +27,7 @@
       });
   };
 
-  // src/hy-hook.ts
+  // ../htmxpro/src/hy-hook.ts
   var exports_hy_hook = {};
   __export(exports_hy_hook, {
     HyperPlane: () => HyperPlane,
@@ -448,7 +448,7 @@
           }
           if (evt.html && typeof document !== "undefined") {
             let targetEl = sub.element;
-            if (sub.target) {
+            if (sub.target && typeof document.querySelector === "function") {
               const queried = document.querySelector(sub.target);
               if (queried)
                 targetEl = queried;
@@ -459,7 +459,7 @@
           }
         }
       });
-      if (typeof window !== "undefined") {
+      if (typeof window !== "undefined" && typeof window.dispatchEvent === "function") {
         window.dispatchEvent(new CustomEvent("hy-hook:received", { detail: { event: evt, matchCount } }));
       }
       return matchCount;
@@ -477,29 +477,33 @@
             listener(token, isEos);
             handled = true;
           }
-          if (typeof document !== "undefined") {
+          if (typeof document !== "undefined" && typeof document.querySelectorAll === "function") {
             const targets = document.querySelectorAll(`[hy-ai-stream="${frame.channelId}"], [hy-ai-stream="#${frame.channelId}"]`);
             targets.forEach((el) => {
               el.insertAdjacentText("beforeend", token);
               handled = true;
             });
-            window.dispatchEvent(new CustomEvent("hy-hook:tensor", {
-              detail: { channelId: frame.channelId, token, isEos }
-            }));
+            if (typeof window !== "undefined" && typeof window.dispatchEvent === "function") {
+              window.dispatchEvent(new CustomEvent("hy-hook:tensor", {
+                detail: { channelId: frame.channelId, token, isEos }
+              }));
+            }
           }
           break;
         }
         case 1 /* HYPERMEDIA */: {
           const { target, swap, html } = HyperFrameCodec.decodeHypermedia(frame.payload);
-          if (typeof document !== "undefined" && target) {
+          if (typeof document !== "undefined" && typeof document.querySelector === "function" && target) {
             const el = document.querySelector(target);
             if (el) {
               this.applySwap(el, html, swap);
               handled = true;
             }
-            window.dispatchEvent(new CustomEvent("hy-hook:hypermedia", {
-              detail: { channelId: frame.channelId, target, swap, html }
-            }));
+            if (typeof window !== "undefined" && typeof window.dispatchEvent === "function") {
+              window.dispatchEvent(new CustomEvent("hy-hook:hypermedia", {
+                detail: { channelId: frame.channelId, target, swap, html }
+              }));
+            }
           }
           break;
         }
@@ -568,15 +572,17 @@
       const cached = this.speculativeCache.get(key);
       if (!cached)
         return false;
-      if (typeof document !== "undefined") {
+      if (typeof document !== "undefined" && typeof document.querySelector === "function") {
         const selector = targetSelector || `#${key}`;
         const targetEl = document.querySelector(selector);
         if (targetEl) {
           this.applySwap(targetEl, cached.html, swap);
         }
-        window.dispatchEvent(new CustomEvent("hy-hook:speculative-committed", {
-          detail: { key, cached, targetSelector }
-        }));
+        if (typeof window !== "undefined" && typeof window.dispatchEvent === "function") {
+          window.dispatchEvent(new CustomEvent("hy-hook:speculative-committed", {
+            detail: { key, cached, targetSelector }
+          }));
+        }
       }
       this.speculativeCache.delete(key);
       return true;
@@ -601,7 +607,7 @@
       });
     }
     routeRawHtml(html) {
-      if (typeof document === "undefined")
+      if (typeof document === "undefined" || typeof document.createElement !== "function")
         return;
       const temp = document.createElement("div");
       temp.innerHTML = html.trim();
@@ -650,14 +656,14 @@
         case "none":
           break;
       }
-      if (typeof document !== "undefined") {
+      if (typeof document !== "undefined" && typeof document.dispatchEvent === "function") {
         document.dispatchEvent(new CustomEvent("hy-hook:after-swap", {
           detail: { target, strategy }
         }));
       }
     }
     processOOB(html) {
-      if (typeof document === "undefined")
+      if (typeof document === "undefined" || typeof document.createElement !== "function")
         return;
       const parser = document.createElement("div");
       parser.innerHTML = html.trim();
@@ -665,7 +671,7 @@
       oobElements.forEach((oobEl) => {
         const id = oobEl.getAttribute("id");
         if (id) {
-          const existing = document.getElementById(id);
+          const existing = typeof document.getElementById === "function" ? document.getElementById(id) : null;
           if (existing) {
             const mode = oobEl.getAttribute("hy-swap-oob") || oobEl.getAttribute("hx-swap-oob");
             const strategy = mode === "true" || mode === "outerHTML" ? "outerHTML" : mode || "outerHTML";
@@ -674,10 +680,11 @@
         }
       });
     }
-    scan(root = document) {
-      if (typeof document === "undefined")
+    scan(root) {
+      const docRoot = root || (typeof document !== "undefined" ? document : null);
+      if (!docRoot || typeof docRoot.querySelectorAll !== "function")
         return;
-      root.querySelectorAll("[hy-hook]").forEach((el) => {
+      docRoot.querySelectorAll("[hy-hook]").forEach((el) => {
         if (el.hasAttribute("data-hy-bound"))
           return;
         el.setAttribute("data-hy-bound", "true");
@@ -697,7 +704,7 @@
           });
         }
       });
-      root.querySelectorAll("[hy-hook-listen]").forEach((el) => {
+      docRoot.querySelectorAll("[hy-hook-listen]").forEach((el) => {
         if (el.hasAttribute("data-hy-listen-bound"))
           return;
         el.setAttribute("data-hy-listen-bound", "true");
@@ -717,7 +724,7 @@
           });
         }
       });
-      root.querySelectorAll("[hy-hook-emit]").forEach((el) => {
+      docRoot.querySelectorAll("[hy-hook-emit]").forEach((el) => {
         if (el.hasAttribute("data-hy-emit-bound"))
           return;
         el.setAttribute("data-hy-emit-bound", "true");
@@ -744,7 +751,7 @@
           }
         });
       });
-      root.querySelectorAll("[hy-speculate-key]").forEach((el) => {
+      docRoot.querySelectorAll("[hy-speculate-key]").forEach((el) => {
         if (el.hasAttribute("data-hy-speculate-bound"))
           return;
         el.setAttribute("data-hy-speculate-bound", "true");
@@ -782,17 +789,17 @@
     }
   }
   var HyHook = new HyperHookEngine;
-  if (typeof document !== "undefined") {
-    if (document.readyState === "loading") {
+  if (typeof document !== "undefined" && document.readyState) {
+    if (document.readyState === "loading" && typeof document.addEventListener === "function") {
       document.addEventListener("DOMContentLoaded", () => HyHook.scan());
     } else {
       HyHook.scan();
     }
-    if ("MutationObserver" in window) {
+    if (typeof window !== "undefined" && "MutationObserver" in window && document.body) {
       const observer = new MutationObserver((mutations) => {
         for (const mutation of mutations) {
           mutation.addedNodes.forEach((node) => {
-            if (node.nodeType === Node.ELEMENT_NODE) {
+            if (node.nodeType === 1) {
               HyHook.scan(node);
             }
           });
