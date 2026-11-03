@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pgx Hud — Hyperstack</title>
+  <script src="/vendor/htmx.min.js"></script>
+  <script src="/htmx-bolt.js"></script>
+  <script src="/htmx-flash.js"></script>
+  <script src="/htmx-form.js"></script>
+  <script src="/htmx-vibe.js"></script>
+  <script src="/htmx-a11y.js"></script>
+  <script src="/htmx-virtual.js"></script>
+  <script src="/htmx-grid.js"></script>
+  <script src="/htmx-offline.js"></script>
+  <script src="/htmx-devtools.js"></script>
+  <script src="/htmx-calc.js"></script>
+  <script src="/htmx-sim.js"></script>
+  <script src="/appz.js"></script>
+  <script src="/htmx-canvas.js"></script>
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    .code-block { background: #1e293b; color: #e2e8f0; border-radius: 0.5rem; padding: 1rem; overflow-x: auto; font-size: 0.8rem; line-height: 1.6; }
+    .code-block code { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace; }
+  </style>
+</head>
+<body class="bg-background text-foreground antialiased min-h-screen">
+  <div class="flex min-h-screen">
+    <aside id="doc-sidebar" class="hidden lg:flex w-60 flex-col border-r border-border bg-card overflow-y-auto sticky top-0 h-screen">
+      <div class="flex h-14 items-center border-b border-border px-4">
+        <a href="/" class="flex items-center gap-2">
+          <svg class="h-5 w-5 text-primary" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+          <span class="font-bold text-lg tracking-tight">Hyperstack</span>
+        </a>
+      </div>
+      <div class="flex-1 p-3 overflow-y-auto"><div class="mb-6"><h4 class="mb-2 px-3 text-sm font-semibold tracking-tight">Getting Started</h4><div class="space-y-1"><a href="/docs/components/introduction/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Introduction</a>
+<a href="/docs/components/installation/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Installation</a>
+<a href="/docs/components/rosetta-stone/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Rosetta Stone</a>
+<a href="/docs/components/common-ai-hallucinations/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Common Ai Hallucinations</a>
+<a href="/docs/components/directives-guide/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Directives Guide</a></div></div><div><h4 class="mb-2 px-3 text-sm font-semibold tracking-tight">Components</h4><div class="space-y-1"><a href="/docs/components/accordion/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Accordion</a>
+<a href="/docs/components/alert/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Alert</a>
+<a href="/docs/components/alert-dialog/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Alert Dialog</a>
+<a href="/docs/components/aspect-ratio/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Aspect Ratio</a>
+<a href="/docs/components/avatar/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Avatar</a>
+<a href="/docs/components/avatar-group/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Avatar Group</a>
+<a href="/docs/components/badge/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Badge</a>
+<a href="/docs/components/banner/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Banner</a>
+<a href="/docs/components/breadcrumb/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Breadcrumb</a>
+<a href="/docs/components/button/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Button</a>
+<a href="/docs/components/button-group/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Button Group</a>
+<a href="/docs/components/calendar/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Calendar</a>
+<a href="/docs/components/card/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Card</a>
+<a href="/docs/components/carousel/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Carousel</a>
+<a href="/docs/components/checkbox/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Checkbox</a>
+<a href="/docs/components/checkbox-group/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Checkbox Group</a>
+<a href="/docs/components/chip/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Chip</a>
+<a href="/docs/components/collapsible/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Collapsible</a>
+<a href="/docs/components/color-picker/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Color Picker</a>
+<a href="/docs/components/combobox/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Combobox</a>
+<a href="/docs/components/command/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Command</a>
+<a href="/docs/components/container/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Container</a>
+<a href="/docs/components/context-menu/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Context Menu</a>
+<a href="/docs/components/data-table/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Data Table</a>
+<a href="/docs/components/date-picker/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Date Picker</a>
+<a href="/docs/components/dialog/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Dialog</a>
+<a href="/docs/components/divider/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Divider</a>
+<a href="/docs/components/drawer/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Drawer</a>
+<a href="/docs/components/dropdown-menu/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Dropdown Menu</a>
+<a href="/docs/components/empty-state/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Empty State</a>
+<a href="/docs/components/error-message/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Error Message</a>
+<a href="/docs/components/file-upload/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">File Upload</a>
+<a href="/docs/components/flash-search/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Flash Search</a>
+<a href="/docs/components/form/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Form</a>
+<a href="/docs/components/gallery/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Gallery</a>
+<a href="/docs/components/hover-card/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Hover Card</a>
+<a href="/docs/components/hypertext-editor/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Hypertext Editor</a>
+<a href="/docs/components/icon/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Icon</a>
+<a href="/docs/components/image/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Image</a>
+<a href="/docs/components/indicator/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Indicator</a>
+<a href="/docs/components/input/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Input</a>
+<a href="/docs/components/input-otp/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Input Otp</a>
+<a href="/docs/components/kbd/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Kbd</a>
+<a href="/docs/components/label/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Label</a>
+<a href="/docs/components/layout-block/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Layout Block</a>
+<a href="/docs/components/layout-canvas/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Layout Canvas</a>
+<a href="/docs/components/layout-grid/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Layout Grid</a>
+<a href="/docs/components/layout-page/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Layout Page</a>
+<a href="/docs/components/layout-print/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Layout Print</a>
+<a href="/docs/components/layout-scaffold/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Layout Scaffold</a>
+<a href="/docs/components/layout-web/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Layout Web</a>
+<a href="/docs/components/layout-mweb/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Layout Mweb</a>
+<a href="/docs/components/layout-mapp/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Layout Mapp</a>
+<a href="/docs/components/link/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Link</a>
+<a href="/docs/components/list/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">List</a>
+<a href="/docs/components/list-item/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">List Item</a>
+<a href="/docs/components/loading-spinner/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Loading Spinner</a>
+<a href="/docs/components/masonry-grid/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Masonry Grid</a>
+<a href="/docs/components/menubar/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Menubar</a>
+<a href="/docs/components/message-bubble/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Message Bubble</a>
+<a href="/docs/components/navigation-menu/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Navigation Menu</a>
+<a href="/docs/components/notification/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Notification</a>
+<a href="/docs/components/number-input/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Number Input</a>
+<a href="/docs/components/page-header/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Page Header</a>
+<a href="/docs/components/pagination/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Pagination</a>
+<a href="/docs/components/panel/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Panel</a>
+<a href="/docs/components/password-input/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Password Input</a>
+<a href="/docs/components/pin-input/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Pin Input</a>
+<a href="/docs/components/popover/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Popover</a>
+<a href="/docs/components/profile-badge/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Profile Badge</a>
+<a href="/docs/components/progress/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Progress</a>
+<a href="/docs/components/progress-bar/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Progress Bar</a>
+<a href="/docs/components/pulse/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Pulse</a>
+<a href="/docs/components/radio-button/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Radio Button</a>
+<a href="/docs/components/radio-group/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Radio Group</a>
+<a href="/docs/components/rating/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Rating</a>
+<a href="/docs/components/resizable/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Resizable</a>
+<a href="/docs/components/ribbon/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Ribbon</a>
+<a href="/docs/components/scroll-area/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Scroll Area</a>
+<a href="/docs/components/search-input/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Search Input</a>
+<a href="/docs/components/select/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Select</a>
+<a href="/docs/components/separator/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Separator</a>
+<a href="/docs/components/sheet/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Sheet</a>
+<a href="/docs/components/sidebar/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Sidebar</a>
+<a href="/docs/components/skeleton/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Skeleton</a>
+<a href="/docs/components/slider/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Slider</a>
+<a href="/docs/components/slider-range/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Slider Range</a>
+<a href="/docs/components/snackbar/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Snackbar</a>
+<a href="/docs/components/splitter/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Splitter</a>
+<a href="/docs/components/stat-card/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Stat Card</a>
+<a href="/docs/components/stepper/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Stepper</a>
+<a href="/docs/components/submenu/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Submenu</a>
+<a href="/docs/components/switch/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Switch</a>
+<a href="/docs/components/table/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Table</a>
+<a href="/docs/components/tabs/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Tabs</a>
+<a href="/docs/components/tag/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Tag</a>
+<a href="/docs/components/text/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Text</a>
+<a href="/docs/components/textarea/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Textarea</a>
+<a href="/docs/components/timeline/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Timeline</a>
+<a href="/docs/components/time-picker/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Time Picker</a>
+<a href="/docs/components/toast/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Toast</a>
+<a href="/docs/components/toggle/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Toggle</a>
+<a href="/docs/components/toggle-group/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Toggle Group</a>
+<a href="/docs/components/toggle-switch/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Toggle Switch</a>
+<a href="/docs/components/toolbar/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Toolbar</a>
+<a href="/docs/components/tooltip/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Tooltip</a>
+<a href="/docs/components/tree-view/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Tree View</a>
+<a href="/docs/components/user-card/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">User Card</a>
+<a href="/docs/components/video-player/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Video Player</a>
+<a href="/docs/components/watermark/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Watermark</a>
+<a href="/docs/components/wizard/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Wizard</a>
+<a href="/docs/components/hx-wizard/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Hx Wizard</a>
+<a href="/docs/components/date-range-picker/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Date Range Picker</a>
+<a href="/docs/components/hx-grid/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Hx Grid</a>
+<a href="/docs/components/hx-virtual/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Hx Virtual</a>
+<a href="/docs/components/hx-offline/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Hx Offline</a>
+<a href="/docs/components/hollywood-webfx/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Hollywood Webfx</a>
+<a href="/docs/components/simulation/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Simulation</a>
+<a href="/docs/components/block-pathology-lab/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Block Pathology Lab</a>
+<a href="/docs/components/block-radiology-dicom/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Block Radiology Dicom</a>
+<a href="/docs/components/block-biology-atlas/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Block Biology Atlas</a>
+<a href="/docs/components/block-crispr-studio/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Block Crispr Studio</a>
+<a href="/docs/components/block-genomic-map/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Block Genomic Map</a>
+<a href="/docs/components/block-civil-architect/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Block Civil Architect</a>
+<a href="/docs/components/block-marine-navigation/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Block Marine Navigation</a>
+<a href="/docs/components/block-agriculture-precision/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Block Agriculture Precision</a>
+<a href="/docs/components/block-energy-scada/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Block Energy Scada</a>
+<a href="/docs/components/block-pcb-semiconductor/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Block Pcb Semiconductor</a>
+<a href="/docs/components/appz-gauge/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Appz Gauge</a>
+<a href="/docs/components/appz-keypad/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Appz Keypad</a>
+<a href="/docs/components/appz-statusbar/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Appz Statusbar</a>
+<a href="/docs/components/appz-swipeout/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Appz Swipeout</a>
+<a href="/docs/components/appz-thermostat/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Appz Thermostat</a>
+<a href="/docs/components/sortable-item/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Sortable Item</a>
+<a href="/docs/components/smart-air-quality-pill/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Air Quality Pill</a>
+<a href="/docs/components/smart-ambient-aod-clock/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Ambient Aod Clock</a>
+<a href="/docs/components/smart-car-cockpit-hud/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Car Cockpit Hud</a>
+<a href="/docs/components/smart-conveyor-belt/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Conveyor Belt</a>
+<a href="/docs/components/smart-drive-mode/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Drive Mode</a>
+<a href="/docs/components/smart-ev-battery-range/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Ev Battery Range</a>
+<a href="/docs/components/smart-forecast-daily/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Forecast Daily</a>
+<a href="/docs/components/smart-heart-rate/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Heart Rate</a>
+<a href="/docs/components/smart-lighting-dimmer/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Lighting Dimmer</a>
+<a href="/docs/components/smart-pos-cashier/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Pos Cashier</a>
+<a href="/docs/components/smart-relay-switchboard/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Relay Switchboard</a>
+<a href="/docs/components/smart-rotary-volume/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Rotary Volume</a>
+<a href="/docs/components/smart-smart-lock/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Smart Lock</a>
+<a href="/docs/components/smart-solar-power-flow/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Solar Power Flow</a>
+<a href="/docs/components/smart-step-activity-rings/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Step Activity Rings</a>
+<a href="/docs/components/smart-thermostat-dual-zone/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Thermostat Dual Zone</a>
+<a href="/docs/components/smart-tire-pressure-tpms/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Tire Pressure Tpms</a>
+<a href="/docs/components/smart-turn-by-turn-nav/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Turn By Turn Nav</a>
+<a href="/docs/components/smart-uv-index-dial/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Uv Index Dial</a>
+<a href="/docs/components/smart-weather-hero/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Weather Hero</a>
+<a href="/docs/components/smart-wind-compass/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Smart Wind Compass</a>
+<a href="/docs/components/hy-hook/" class="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">Hy Hook</a>
+<a href="/docs/components/pgx-hud/" class="block rounded-md px-3 py-1.5 text-sm bg-accent font-medium text-accent-foreground transition-colors">Pgx Hud</a></div></div></div>
+    </aside>
+    <main class="flex-1 flex flex-col min-w-0">
+      <header class="h-14 border-b border-border flex items-center justify-between px-6 bg-card sticky top-0 z-30">
+        <div class="flex items-center gap-4">
+          <h1 class="font-semibold text-base">Pgx Hud</h1>
+          <a href="/demo/" class="text-xs bg-primary/10 text-primary font-medium px-2.5 py-1 rounded-full hover:bg-primary/20 transition-colors">Live Demos Hub</a>
+        </div>
+        <a href="https://github.com/hyperlibs/hyperstack" target="_blank" class="text-xs text-muted-foreground hover:text-foreground">GitHub ↗</a>
+      </header>
+      <div class="flex-1 p-8 max-w-5xl mx-auto w-full space-y-8">
+        <div class="space-y-2">
+          <h1 class="text-3xl font-extrabold tracking-tight">Pgx Hud</h1>
+          <p class="text-muted-foreground text-sm">Interactive Shadcn-quality hypermedia component for Hyperstack.</p>
+        </div>
+        <div class="space-y-4">
+          <h2 class="text-xl font-bold tracking-tight">Interactive Preview</h2>
+          <div class="rounded-xl border border-border p-8 bg-card shadow-sm flex items-center justify-center min-h-[160px]">
+            <div class="w-full max-w-xl flex flex-col items-center gap-4"><!-- =========================================================================
+     PGX-HUD: EPHEMERAL POSTGRESQL & AGENT SANDBOX HUD
+     Lightweight Rust Runtime Visualization: 1,000 Isolated Databases,
+     6.2ms Copy-on-Write Minting, Automatic TTL Janitor & Resource Limits.
+     ========================================================================= -->
+<div class="rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden flex flex-col select-none text-slate-100"
+     id="pgx-hud-container"
+     hx-ext="reactive"
+     hx-state='{
+       "rssMb": 136,
+       "totalDbs": 1003,
+       "ephemeralDbs": 998,
+       "spares": 8,
+       "connections": 42,
+       "selectedTpl": "app",
+       "mintCount": 38,
+       "recentBranch": "tdb_app__agent-alpha",
+       "branches": [
+         { "name": "tdb_app__agent-01", "tpl": "app", "ttl": "1h 54m", "size": "13.6 MB", "status": "Active" },
+         { "name": "tdb_app__agent-02", "tpl": "app", "ttl": "1h 58m", "size": "14.1 MB", "status": "Active" },
+         { "name": "tdb_crm__pr-402", "tpl": "crm", "ttl": "45m", "size": "15.2 MB", "status": "Active" },
+         { "name": "tdb_biotech__bench", "tpl": "biotech", "ttl": "12m", "size": "18.0 MB", "status": "Expiring" }
+       ]
+     }'>
+
+  <!-- ZONE 1: HEADER -->
+  <div class="px-5 py-4 bg-slate-950 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-blue-400 font-black text-xl shadow-md">
+        🐘
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h2 class="text-base font-black text-white tracking-tight flex items-center gap-2">
+            <span>PGX Ephemeral Runtime HUD</span>
+            <span class="text-[10px] font-mono text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-full border border-blue-500/20">Rust Engine v0.1</span>
+          </h2>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">PG 18.6 PROTOCOL</span>
+        </div>
+        <p class="text-xs text-slate-400 mt-0.5 font-sans">
+          One runtime holding thousands of isolated Postgres databases. 6.2ms warm mint, copy-on-write ZFS storage, zero Docker.
+        </p>
+      </div>
+    </div>
+
+    <!-- Active Telemetry Badges -->
+    <div class="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 font-mono text-xs">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span class="text-slate-400">Runtime RSS:</span>
+      <span class="text-blue-400 font-bold" hx-text="$state.rssMb + ' MB'">136 MB</span>
+      <span class="text-slate-600">|</span>
+      <span class="text-slate-400">Total DBs:</span>
+      <span class="text-emerald-400 font-bold" hx-text="$state.totalDbs">1,003</span>
+      <span class="text-slate-600">|</span>
+      <span class="text-slate-400">Mint P50:</span>
+      <span class="text-purple-400 font-bold">6.2 ms</span>
+    </div>
+  </div>
+
+  <!-- ZONE 2: METRIC CARDS -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-5 bg-slate-900/40 border-b border-slate-800">
+    <div class="p-3.5 rounded-2xl bg-slate-950 border border-slate-800">
+      <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Memory Density</div>
+      <div class="text-xl font-black text-blue-400 mt-1 flex items-baseline gap-1">
+        <span>~70 KB</span>
+        <span class="text-[10px] font-normal text-slate-500">/ idle database</span>
+      </div>
+      <div class="text-[10px] text-slate-400 mt-1">vs 16.6 MB standard Postgres</div>
+    </div>
+
+    <div class="p-3.5 rounded-2xl bg-slate-950 border border-slate-800">
+      <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Active Ephemeral DBs</div>
+      <div class="text-xl font-black text-emerald-400 mt-1 flex items-baseline gap-1">
+        <span hx-text="$state.ephemeralDbs">998</span>
+        <span class="text-[10px] font-normal text-slate-500">sandboxes</span>
+      </div>
+      <div class="text-[10px] text-slate-400 mt-1">Automatic janitor TTL expiry</div>
+    </div>
+
+    <div class="p-3.5 rounded-2xl bg-slate-950 border border-slate-800">
+      <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Spare Pool</div>
+      <div class="text-xl font-black text-purple-400 mt-1 flex items-baseline gap-1">
+        <span hx-text="$state.spares">8</span>
+        <span class="text-[10px] font-normal text-slate-500">pre-created</span>
+      </div>
+      <div class="text-[10px] text-slate-400 mt-1">Instant 6ms mint-on-connect</div>
+    </div>
+
+    <div class="p-3.5 rounded-2xl bg-slate-950 border border-slate-800">
+      <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Copy-on-Write</div>
+      <div class="text-xl font-black text-amber-400 mt-1 flex items-baseline gap-1">
+        <span>+13.6 MB</span>
+        <span class="text-[10px] font-normal text-slate-500">new blocks</span>
+      </div>
+      <div class="text-[10px] text-slate-400 mt-1">10 GB base template in 674ms</div>
+    </div>
+  </div>
+
+  <!-- ZONE 3: AGENT MINT CONTROLLER & LIVE BRANCH TABLE -->
+  <div class="p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 bg-slate-900/60">
+
+    <!-- LEFT: MINT INTERACTIVE CONTROLLER -->
+    <div class="lg:col-span-5 flex flex-col space-y-4">
+      <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+            <span>⚡</span> Mint-on-Connect Simulator
+          </span>
+          <span class="text-[10px] font-mono text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">Zero Docker</span>
+        </div>
+
+        <p class="text-xs text-slate-400 leading-relaxed font-sans">
+          Connect with database pattern <code class="text-blue-300 font-mono">tdb_&lt;template&gt;__&lt;agent_id&gt;</code>. PGX clones the template in 6.2ms without provisioning scripts.
+        </p>
+
+        <div class="space-y-2">
+          <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Golden Template</label>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button"
+                    class="px-2.5 py-1.5 rounded-xl border text-xs font-mono font-medium transition-all"
+                    hx-class="$state.selectedTpl === 'app' ? 'bg-blue-600/30 text-blue-300 border-blue-500' : 'bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-700'"
+                    hx-action="$state.selectedTpl = 'app'">
+              app (31MB)
+            </button>
+            <button type="button"
+                    class="px-2.5 py-1.5 rounded-xl border text-xs font-mono font-medium transition-all"
+                    hx-class="$state.selectedTpl === 'crm' ? 'bg-blue-600/30 text-blue-300 border-blue-500' : 'bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-700'"
+                    hx-action="$state.selectedTpl = 'crm'">
+              crm (250MB)
+            </button>
+            <button type="button"
+                    class="px-2.5 py-1.5 rounded-xl border text-xs font-mono font-medium transition-all"
+                    hx-class="$state.selectedTpl === 'biotech' ? 'bg-blue-600/30 text-blue-300 border-blue-500' : 'bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-700'"
+                    hx-action="$state.selectedTpl = 'biotech'">
+              biotech (10GB)
+            </button>
+          </div>
+        </div>
+
+        <!-- Action Button -->
+        <button type="button"
+                id="btn-mint-branch"
+                class="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-500/20 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                hx-action="$state.mintCount++; $state.ephemeralDbs++; $state.totalDbs++; const id = 'agent-' + Math.floor(Math.random() * 900 + 100); const branch = 'tdb_' + $state.selectedTpl + '__' + id; $state.recentBranch = branch; $state.branches.unshift({ name: branch, tpl: $state.selectedTpl, ttl: '2h 00m', size: '13.6 MB', status: 'Active' }); HyperFX.toast('Minted ' + branch + ' in 6.2ms!', 'success');">
+          <span>🚀</span> Mint Ephemeral Sandbox (6.2ms)
+        </button>
+
+        <!-- Connection String Output -->
+        <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+          <div class="text-[10px] text-slate-500 font-mono">DATABASE_URL (Ready for Agent)</div>
+          <div class="text-xs font-mono text-teal-300 truncate"
+               hx-text="'postgres://postgres:5432/' + $state.recentBranch + '?sslmode=disable'">
+            postgres://postgres:5432/tdb_app__agent-alpha?sslmode=disable
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: LIVE EPHEMERAL BRANCHES TABLE -->
+    <div class="lg:col-span-7 flex flex-col space-y-4">
+      <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col h-full space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+            <span>📦</span> Active Ephemeral Branches
+          </span>
+          <span class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Janitor: 8 Spares</span>
+        </div>
+
+        <div class="overflow-x-auto flex-1">
+          <table class="w-full text-left font-mono text-xs">
+            <thead>
+              <tr class="border-b border-slate-800 text-slate-500 text-[10px] uppercase">
+                <th class="pb-2">Database Name</th>
+                <th class="pb-2">Template</th>
+                <th class="pb-2">Delta Size</th>
+                <th class="pb-2">TTL Left</th>
+                <th class="pb-2 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60" id="pgx-branch-table-body">
+              <tr class="hover:bg-slate-900/50 transition-colors">
+                <td class="py-2.5 text-blue-300 font-bold">tdb_app__agent-01</td>
+                <td class="py-2.5 text-slate-400">app</td>
+                <td class="py-2.5 text-slate-300">13.6 MB</td>
+                <td class="py-2.5 text-emerald-400">1h 54m</td>
+                <td class="py-2.5 text-right">
+                  <span class="px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-300 hover:text-white cursor-pointer"
+                        hx-action="HyperFX.toast('Dropped database tdb_app__agent-01', 'info')">Drop</span>
+                </td>
+              </tr>
+              <tr class="hover:bg-slate-900/50 transition-colors">
+                <td class="py-2.5 text-blue-300 font-bold">tdb_app__agent-02</td>
+                <td class="py-2.5 text-slate-400">app</td>
+                <td class="py-2.5 text-slate-300">14.1 MB</td>
+                <td class="py-2.5 text-emerald-400">1h 58m</td>
+                <td class="py-2.5 text-right">
+                  <span class="px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-300 hover:text-white cursor-pointer">Drop</span>
+                </td>
+              </tr>
+              <tr class="hover:bg-slate-900/50 transition-colors">
+                <td class="py-2.5 text-blue-300 font-bold">tdb_crm__pr-402</td>
+                <td class="py-2.5 text-slate-400">crm</td>
+                <td class="py-2.5 text-slate-300">15.2 MB</td>
+                <td class="py-2.5 text-amber-400">45m</td>
+                <td class="py-2.5 text-right">
+                  <span class="px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-300 hover:text-white cursor-pointer">Drop</span>
+                </td>
+              </tr>
+              <tr class="hover:bg-slate-900/50 transition-colors">
+                <td class="py-2.5 text-blue-300 font-bold">tdb_biotech__bench</td>
+                <td class="py-2.5 text-slate-400">biotech</td>
+                <td class="py-2.5 text-slate-300">18.0 MB</td>
+                <td class="py-2.5 text-rose-400">12m</td>
+                <td class="py-2.5 text-right">
+                  <span class="px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-300 hover:text-white cursor-pointer">Drop</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800/80 text-[11px] text-slate-400 flex items-center justify-between">
+          <span class="flex items-center gap-1.5">
+            <span class="text-blue-400 font-bold">Tip:</span> AI agent processes automatically inherit <code class="text-slate-300">DATABASE_URL</code> via PGX Skill.
+          </span>
+          <span class="text-[10px] text-slate-500 font-mono">pgrust_runtime_status()</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+</div>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <h2 class="text-xl font-bold tracking-tight">HTML Source</h2>
+          <div class="code-block"><pre><code>&lt;!-- =========================================================================
+     PGX-HUD: EPHEMERAL POSTGRESQL &amp; AGENT SANDBOX HUD
+     Lightweight Rust Runtime Visualization: 1,000 Isolated Databases,
+     6.2ms Copy-on-Write Minting, Automatic TTL Janitor &amp; Resource Limits.
+     ========================================================================= --&gt;
+&lt;div class=&quot;rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden flex flex-col select-none text-slate-100&quot;
+     id=&quot;pgx-hud-container&quot;
+     hx-ext=&quot;reactive&quot;
+     hx-state='{
+       &quot;rssMb&quot;: 136,
+       &quot;totalDbs&quot;: 1003,
+       &quot;ephemeralDbs&quot;: 998,
+       &quot;spares&quot;: 8,
+       &quot;connections&quot;: 42,
+       &quot;selectedTpl&quot;: &quot;app&quot;,
+       &quot;mintCount&quot;: 38,
+       &quot;recentBranch&quot;: &quot;tdb_app__agent-alpha&quot;,
+       &quot;branches&quot;: [
+         { &quot;name&quot;: &quot;tdb_app__agent-01&quot;, &quot;tpl&quot;: &quot;app&quot;, &quot;ttl&quot;: &quot;1h 54m&quot;, &quot;size&quot;: &quot;13.6 MB&quot;, &quot;status&quot;: &quot;Active&quot; },
+         { &quot;name&quot;: &quot;tdb_app__agent-02&quot;, &quot;tpl&quot;: &quot;app&quot;, &quot;ttl&quot;: &quot;1h 58m&quot;, &quot;size&quot;: &quot;14.1 MB&quot;, &quot;status&quot;: &quot;Active&quot; },
+         { &quot;name&quot;: &quot;tdb_crm__pr-402&quot;, &quot;tpl&quot;: &quot;crm&quot;, &quot;ttl&quot;: &quot;45m&quot;, &quot;size&quot;: &quot;15.2 MB&quot;, &quot;status&quot;: &quot;Active&quot; },
+         { &quot;name&quot;: &quot;tdb_biotech__bench&quot;, &quot;tpl&quot;: &quot;biotech&quot;, &quot;ttl&quot;: &quot;12m&quot;, &quot;size&quot;: &quot;18.0 MB&quot;, &quot;status&quot;: &quot;Expiring&quot; }
+       ]
+     }'&gt;
+
+  &lt;!-- ZONE 1: HEADER --&gt;
+  &lt;div class=&quot;px-5 py-4 bg-slate-950 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3&quot;&gt;
+    &lt;div class=&quot;flex items-center gap-3&quot;&gt;
+      &lt;div class=&quot;w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-blue-400 font-black text-xl shadow-md&quot;&gt;
+        🐘
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;div class=&quot;flex items-center gap-2&quot;&gt;
+          &lt;h2 class=&quot;text-base font-black text-white tracking-tight flex items-center gap-2&quot;&gt;
+            &lt;span&gt;PGX Ephemeral Runtime HUD&lt;/span&gt;
+            &lt;span class=&quot;text-[10px] font-mono text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-full border border-blue-500/20&quot;&gt;Rust Engine v0.1&lt;/span&gt;
+          &lt;/h2&gt;
+          &lt;span class=&quot;px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20&quot;&gt;PG 18.6 PROTOCOL&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;p class=&quot;text-xs text-slate-400 mt-0.5 font-sans&quot;&gt;
+          One runtime holding thousands of isolated Postgres databases. 6.2ms warm mint, copy-on-write ZFS storage, zero Docker.
+        &lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;!-- Active Telemetry Badges --&gt;
+    &lt;div class=&quot;flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 font-mono text-xs&quot;&gt;
+      &lt;span class=&quot;w-2 h-2 rounded-full bg-emerald-400 animate-pulse&quot;&gt;&lt;/span&gt;
+      &lt;span class=&quot;text-slate-400&quot;&gt;Runtime RSS:&lt;/span&gt;
+      &lt;span class=&quot;text-blue-400 font-bold&quot; hx-text=&quot;$state.rssMb + ' MB'&quot;&gt;136 MB&lt;/span&gt;
+      &lt;span class=&quot;text-slate-600&quot;&gt;|&lt;/span&gt;
+      &lt;span class=&quot;text-slate-400&quot;&gt;Total DBs:&lt;/span&gt;
+      &lt;span class=&quot;text-emerald-400 font-bold&quot; hx-text=&quot;$state.totalDbs&quot;&gt;1,003&lt;/span&gt;
+      &lt;span class=&quot;text-slate-600&quot;&gt;|&lt;/span&gt;
+      &lt;span class=&quot;text-slate-400&quot;&gt;Mint P50:&lt;/span&gt;
+      &lt;span class=&quot;text-purple-400 font-bold&quot;&gt;6.2 ms&lt;/span&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;!-- ZONE 2: METRIC CARDS --&gt;
+  &lt;div class=&quot;grid grid-cols-2 md:grid-cols-4 gap-4 p-5 bg-slate-900/40 border-b border-slate-800&quot;&gt;
+    &lt;div class=&quot;p-3.5 rounded-2xl bg-slate-950 border border-slate-800&quot;&gt;
+      &lt;div class=&quot;text-[10px] uppercase font-bold text-slate-400 tracking-wider&quot;&gt;Memory Density&lt;/div&gt;
+      &lt;div class=&quot;text-xl font-black text-blue-400 mt-1 flex items-baseline gap-1&quot;&gt;
+        &lt;span&gt;~70 KB&lt;/span&gt;
+        &lt;span class=&quot;text-[10px] font-normal text-slate-500&quot;&gt;/ idle database&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;text-[10px] text-slate-400 mt-1&quot;&gt;vs 16.6 MB standard Postgres&lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;p-3.5 rounded-2xl bg-slate-950 border border-slate-800&quot;&gt;
+      &lt;div class=&quot;text-[10px] uppercase font-bold text-slate-400 tracking-wider&quot;&gt;Active Ephemeral DBs&lt;/div&gt;
+      &lt;div class=&quot;text-xl font-black text-emerald-400 mt-1 flex items-baseline gap-1&quot;&gt;
+        &lt;span hx-text=&quot;$state.ephemeralDbs&quot;&gt;998&lt;/span&gt;
+        &lt;span class=&quot;text-[10px] font-normal text-slate-500&quot;&gt;sandboxes&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;text-[10px] text-slate-400 mt-1&quot;&gt;Automatic janitor TTL expiry&lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;p-3.5 rounded-2xl bg-slate-950 border border-slate-800&quot;&gt;
+      &lt;div class=&quot;text-[10px] uppercase font-bold text-slate-400 tracking-wider&quot;&gt;Spare Pool&lt;/div&gt;
+      &lt;div class=&quot;text-xl font-black text-purple-400 mt-1 flex items-baseline gap-1&quot;&gt;
+        &lt;span hx-text=&quot;$state.spares&quot;&gt;8&lt;/span&gt;
+        &lt;span class=&quot;text-[10px] font-normal text-slate-500&quot;&gt;pre-created&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;text-[10px] text-slate-400 mt-1&quot;&gt;Instant 6ms mint-on-connect&lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;p-3.5 rounded-2xl bg-slate-950 border border-slate-800&quot;&gt;
+      &lt;div class=&quot;text-[10px] uppercase font-bold text-slate-400 tracking-wider&quot;&gt;Copy-on-Write&lt;/div&gt;
+      &lt;div class=&quot;text-xl font-black text-amber-400 mt-1 flex items-baseline gap-1&quot;&gt;
+        &lt;span&gt;+13.6 MB&lt;/span&gt;
+        &lt;span class=&quot;text-[10px] font-normal text-slate-500&quot;&gt;new blocks&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;text-[10px] text-slate-400 mt-1&quot;&gt;10 GB base template in 674ms&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;!-- ZONE 3: AGENT MINT CONTROLLER &amp; LIVE BRANCH TABLE --&gt;
+  &lt;div class=&quot;p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 bg-slate-900/60&quot;&gt;
+
+    &lt;!-- LEFT: MINT INTERACTIVE CONTROLLER --&gt;
+    &lt;div class=&quot;lg:col-span-5 flex flex-col space-y-4&quot;&gt;
+      &lt;div class=&quot;p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3&quot;&gt;
+        &lt;div class=&quot;flex items-center justify-between&quot;&gt;
+          &lt;span class=&quot;text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5&quot;&gt;
+            &lt;span&gt;⚡&lt;/span&gt; Mint-on-Connect Simulator
+          &lt;/span&gt;
+          &lt;span class=&quot;text-[10px] font-mono text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20&quot;&gt;Zero Docker&lt;/span&gt;
+        &lt;/div&gt;
+
+        &lt;p class=&quot;text-xs text-slate-400 leading-relaxed font-sans&quot;&gt;
+          Connect with database pattern &lt;code class=&quot;text-blue-300 font-mono&quot;&gt;tdb_&amp;lt;template&amp;gt;__&amp;lt;agent_id&amp;gt;&lt;/code&gt;. PGX clones the template in 6.2ms without provisioning scripts.
+        &lt;/p&gt;
+
+        &lt;div class=&quot;space-y-2&quot;&gt;
+          &lt;label class=&quot;text-[11px] font-bold text-slate-400 uppercase tracking-wider&quot;&gt;Golden Template&lt;/label&gt;
+          &lt;div class=&quot;grid grid-cols-3 gap-2&quot;&gt;
+            &lt;button type=&quot;button&quot;
+                    class=&quot;px-2.5 py-1.5 rounded-xl border text-xs font-mono font-medium transition-all&quot;
+                    hx-class=&quot;$state.selectedTpl === 'app' ? 'bg-blue-600/30 text-blue-300 border-blue-500' : 'bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-700'&quot;
+                    hx-action=&quot;$state.selectedTpl = 'app'&quot;&gt;
+              app (31MB)
+            &lt;/button&gt;
+            &lt;button type=&quot;button&quot;
+                    class=&quot;px-2.5 py-1.5 rounded-xl border text-xs font-mono font-medium transition-all&quot;
+                    hx-class=&quot;$state.selectedTpl === 'crm' ? 'bg-blue-600/30 text-blue-300 border-blue-500' : 'bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-700'&quot;
+                    hx-action=&quot;$state.selectedTpl = 'crm'&quot;&gt;
+              crm (250MB)
+            &lt;/button&gt;
+            &lt;button type=&quot;button&quot;
+                    class=&quot;px-2.5 py-1.5 rounded-xl border text-xs font-mono font-medium transition-all&quot;
+                    hx-class=&quot;$state.selectedTpl === 'biotech' ? 'bg-blue-600/30 text-blue-300 border-blue-500' : 'bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-700'&quot;
+                    hx-action=&quot;$state.selectedTpl = 'biotech'&quot;&gt;
+              biotech (10GB)
+            &lt;/button&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Action Button --&gt;
+        &lt;button type=&quot;button&quot;
+                id=&quot;btn-mint-branch&quot;
+                class=&quot;w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-500/20 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer&quot;
+                hx-action=&quot;$state.mintCount++; $state.ephemeralDbs++; $state.totalDbs++; const id = 'agent-' + Math.floor(Math.random() * 900 + 100); const branch = 'tdb_' + $state.selectedTpl + '__' + id; $state.recentBranch = branch; $state.branches.unshift({ name: branch, tpl: $state.selectedTpl, ttl: '2h 00m', size: '13.6 MB', status: 'Active' }); HyperFX.toast('Minted ' + branch + ' in 6.2ms!', 'success');&quot;&gt;
+          &lt;span&gt;🚀&lt;/span&gt; Mint Ephemeral Sandbox (6.2ms)
+        &lt;/button&gt;
+
+        &lt;!-- Connection String Output --&gt;
+        &lt;div class=&quot;p-2.5 rounded-xl bg-slate-900 border border-slate-800 space-y-1&quot;&gt;
+          &lt;div class=&quot;text-[10px] text-slate-500 font-mono&quot;&gt;DATABASE_URL (Ready for Agent)&lt;/div&gt;
+          &lt;div class=&quot;text-xs font-mono text-teal-300 truncate&quot;
+               hx-text=&quot;'postgres://postgres:5432/' + $state.recentBranch + '?sslmode=disable'&quot;&gt;
+            postgres://postgres:5432/tdb_app__agent-alpha?sslmode=disable
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;!-- RIGHT: LIVE EPHEMERAL BRANCHES TABLE --&gt;
+    &lt;div class=&quot;lg:col-span-7 flex flex-col space-y-4&quot;&gt;
+      &lt;div class=&quot;p-4 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col h-full space-y-3&quot;&gt;
+        &lt;div class=&quot;flex items-center justify-between&quot;&gt;
+          &lt;span class=&quot;text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5&quot;&gt;
+            &lt;span&gt;📦&lt;/span&gt; Active Ephemeral Branches
+          &lt;/span&gt;
+          &lt;span class=&quot;text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20&quot;&gt;Janitor: 8 Spares&lt;/span&gt;
+        &lt;/div&gt;
+
+        &lt;div class=&quot;overflow-x-auto flex-1&quot;&gt;
+          &lt;table class=&quot;w-full text-left font-mono text-xs&quot;&gt;
+            &lt;thead&gt;
+              &lt;tr class=&quot;border-b border-slate-800 text-slate-500 text-[10px] uppercase&quot;&gt;
+                &lt;th class=&quot;pb-2&quot;&gt;Database Name&lt;/th&gt;
+                &lt;th class=&quot;pb-2&quot;&gt;Template&lt;/th&gt;
+                &lt;th class=&quot;pb-2&quot;&gt;Delta Size&lt;/th&gt;
+                &lt;th class=&quot;pb-2&quot;&gt;TTL Left&lt;/th&gt;
+                &lt;th class=&quot;pb-2 text-right&quot;&gt;Action&lt;/th&gt;
+              &lt;/tr&gt;
+            &lt;/thead&gt;
+            &lt;tbody class=&quot;divide-y divide-slate-800/60&quot; id=&quot;pgx-branch-table-body&quot;&gt;
+              &lt;tr class=&quot;hover:bg-slate-900/50 transition-colors&quot;&gt;
+                &lt;td class=&quot;py-2.5 text-blue-300 font-bold&quot;&gt;tdb_app__agent-01&lt;/td&gt;
+                &lt;td class=&quot;py-2.5 text-slate-400&quot;&gt;app&lt;/td&gt;
+                &lt;td class=&quot;py-2.5 text-slate-300&quot;&gt;13.6 MB&lt;/td&gt;
+                &lt;td class=&quot;py-2.5 text-emerald-400&quot;&gt;1h 54m&lt;/td&gt;
+                &lt;td class=&quot;py-2.5 text-right&quot;&gt;
+                  &lt;span class=&quot;px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-300 hover:text-white cursor-pointer&quot;
+                        hx-action=&quot;HyperFX.toast('Dropped database tdb_app__agent-01', 'info')&quot;&gt;Drop&lt;/span&gt;
+                &lt;/td&gt;
+              &lt;/tr&gt;
+              &lt;tr class=&quot;hover:bg-slate-900/50 transition-colors&quot;&gt;
+                &lt;td class=&quot;py-2.5 text-blue-300 font-bold&quot;&gt;tdb_app__agent-02&lt;/td&gt;
+                &lt;td class=&quot;py-2.5 text-slate-400&quot;&gt;app&lt;/td&gt;
+                &lt;td class=&quot;py-2.5 text-slate-300&quot;&gt;14.1 MB&lt;/td&gt;
+                &lt;td class=&quot;py-2.5 text-emerald-400&quot;&gt;1h 58m&lt;/td&gt;
+                &lt;td class=&quot;py-2.5 text-right&quot;&gt;
+                  &lt;span class=&quot;px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-300 hover:text-white cursor-pointer&quot;&gt;Drop&lt;/span&gt;
+                &lt;/td&gt;
+              &lt;/tr&gt;
+              &lt;tr class=&quot;hover:bg-slate-900/50 transition-colors&quot;&gt;
+                &lt;td class=&quot;py-2.5 text-blue-300 font-bold&quot;&gt;tdb_crm__pr-402&lt;/td&gt;
+                &lt;td class=&quot;py-2.5 text-slate-400&quot;&gt;crm&lt;/td&gt;
+                &lt;td class=&quot;py-2.5 text-slate-300&quot;&gt;15.2 MB&lt;/td&gt;
+                &lt;td class=&quot;py-2.5 text-amber-400&quot;&gt;45m&lt;/td&gt;
+                &lt;td class=&quot;py-2.5 text-right&quot;&gt;
+                  &lt;span class=&quot;px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-300 hover:text-white cursor-pointer&quot;&gt;Drop&lt;/span&gt;
+                &lt;/td&gt;
+              &lt;/tr&gt;
+              &lt;tr class=&quot;hover:bg-slate-900/50 transition-colors&quot;&gt;
+                &lt;td class=&quot;py-2.5 text-blue-300 font-bold&quot;&gt;tdb_biotech__bench&lt;/td&gt;
+                &lt;td class=&quot;py-2.5 text-slate-400&quot;&gt;biotech&lt;/td&gt;
+                &lt;td class=&quot;py-2.5 text-slate-300&quot;&gt;18.0 MB&lt;/td&gt;
+                &lt;td class=&quot;py-2.5 text-rose-400&quot;&gt;12m&lt;/td&gt;
+                &lt;td class=&quot;py-2.5 text-right&quot;&gt;
+                  &lt;span class=&quot;px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-300 hover:text-white cursor-pointer&quot;&gt;Drop&lt;/span&gt;
+                &lt;/td&gt;
+              &lt;/tr&gt;
+            &lt;/tbody&gt;
+          &lt;/table&gt;
+        &lt;/div&gt;
+
+        &lt;div class=&quot;p-2.5 rounded-xl bg-slate-900/80 border border-slate-800/80 text-[11px] text-slate-400 flex items-center justify-between&quot;&gt;
+          &lt;span class=&quot;flex items-center gap-1.5&quot;&gt;
+            &lt;span class=&quot;text-blue-400 font-bold&quot;&gt;Tip:&lt;/span&gt; AI agent processes automatically inherit &lt;code class=&quot;text-slate-300&quot;&gt;DATABASE_URL&lt;/code&gt; via PGX Skill.
+          &lt;/span&gt;
+          &lt;span class=&quot;text-[10px] text-slate-500 font-mono&quot;&gt;pgrust_runtime_status()&lt;/span&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+  &lt;/div&gt;
+
+&lt;/div&gt;
+</code></pre></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

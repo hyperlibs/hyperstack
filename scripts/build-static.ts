@@ -34,7 +34,8 @@ const COMPONENTS = [
   "smart-smart-lock","smart-solar-power-flow","smart-step-activity-rings","smart-thermostat-dual-zone",
   "smart-tire-pressure-tpms","smart-turn-by-turn-nav","smart-uv-index-dial","smart-weather-hero",
   "smart-wind-compass",
-  "hy-hook"
+  "hy-hook",
+  "pgx-hud"
 ];
 
 function formatName(slug: string): string {

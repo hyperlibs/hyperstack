@@ -228,6 +228,32 @@ func main() {
 			return
 		}
 
+		if p == "/api/pgx/status" {
+			status := map[string]interface{}{
+				"memory": map[string]interface{}{
+					"rss_bytes":          142606336,
+					"session_limit_mb":   256,
+					"database_limit_mb":  512,
+					"runtime_limit_mb":   3072,
+				},
+				"connections": 42,
+				"databases": map[string]interface{}{
+					"total":     1003,
+					"ephemeral": 998,
+					"spares":    8,
+					"pinned":    2,
+				},
+				"janitor": map[string]interface{}{
+					"prefix":        "tdb_",
+					"pool_size":     8,
+					"pending_mints": 0,
+				},
+			}
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(status)
+			return
+		}
+
 		if p == "/api/erp-invoices.json" {
 			countStr := r.URL.Query().Get("count")
 			count := 10000

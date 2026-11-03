@@ -23,7 +23,8 @@ const COMPONENTS = [
   "smart-smart-lock","smart-solar-power-flow","smart-step-activity-rings","smart-thermostat-dual-zone",
   "smart-tire-pressure-tpms","smart-turn-by-turn-nav","smart-uv-index-dial","smart-weather-hero",
   "smart-wind-compass",
-  "hy-hook"
+  "hy-hook",
+  "pgx-hud"
 ];
 
 function formatName(slug: string): string {
@@ -480,6 +481,30 @@ const server = Bun.serve({
         date: new Date(Date.now() - (i * 86400000)).toISOString().split('T')[0]
       }));
       return new Response(JSON.stringify(invoices), { headers: { "Content-Type": "application/json" } });
+    }
+
+    if (url.pathname === "/api/pgx/status") {
+      const status = {
+        memory: {
+          rss_bytes: 142606336,
+          session_limit_mb: 256,
+          database_limit_mb: 512,
+          runtime_limit_mb: 3072
+        },
+        connections: 42,
+        databases: {
+          total: 1003,
+          ephemeral: 998,
+          spares: 8,
+          pinned: 2
+        },
+        janitor: {
+          prefix: "tdb_",
+          pool_size: 8,
+          pending_mints: 0
+        }
+      };
+      return new Response(JSON.stringify(status), { headers: { "Content-Type": "application/json" } });
     }
 
     if (url.pathname === "/schema/hyperstack.json") {
