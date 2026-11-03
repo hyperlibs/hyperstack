@@ -1,4 +1,4 @@
-# Hyperstack — The Hypermedia Platform for Go, Rust, Python & .NET
+# Hyperstack — The HTMX Platform for Go, Rust, Python & .NET
 
 <div align="center">
   <p><strong>A hyperreactive, lean, hypermedia-first frontend platform built natively on HTMX 4 for backend engineers and AI agent swarms.</strong></p>
