@@ -726,7 +726,7 @@
       return Promise.resolve(false);
     },
     toast(message, type = "info") {
-      if (typeof document !== "undefined") {
+      if (typeof document !== "undefined" && document.body) {
         document.body.dispatchEvent(new CustomEvent("htmx:toast", { detail: { message, type } }));
         let container = document.getElementById("hyperstack-toast-container");
         if (!container) {

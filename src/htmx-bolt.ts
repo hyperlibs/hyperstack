@@ -656,7 +656,7 @@ export const HyperFX = {
     return Promise.resolve(false);
   },
   toast(message: string, type: 'info' | 'success' | 'warning' | 'error' = 'info'): void {
-    if (typeof document !== 'undefined') {
+    if (typeof document !== 'undefined' && document.body) {
       document.body.dispatchEvent(new CustomEvent('htmx:toast', { detail: { message, type } }));
       
       // Inline visual fallback toast
