@@ -27,7 +27,7 @@
       });
   };
 
-  // hyperstack/src/appz.ts
+  // src/appz.ts
   var exports_appz = {};
   __export(exports_appz, {
     runMasterDiagnostics: () => runMasterDiagnostics,

@@ -27,7 +27,7 @@
       });
   };
 
-  // hyperstack/src/htmx-offline.ts
+  // src/htmx-offline.ts
   var exports_htmx_offline = {};
   __export(exports_htmx_offline, {
     HxOffline: () => HxOffline

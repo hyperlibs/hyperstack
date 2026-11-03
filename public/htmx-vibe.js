@@ -27,7 +27,7 @@
       });
   };
 
-  // hyperstack/src/htmx-vibe.ts
+  // src/htmx-vibe.ts
   var exports_htmx_vibe = {};
   __export(exports_htmx_vibe, {
     triggerBlast: () => triggerBlast,

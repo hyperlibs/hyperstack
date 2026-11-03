@@ -6,8 +6,11 @@ for (const dir of ['public', 'dist']) {
       if (f.endsWith('.js') || f.endsWith('.mjs')) {
         const p = `${dir}/${f}`;
         const content = readFileSync(p, 'utf8');
-        if (content.includes('../htmxpro/')) {
-          writeFileSync(p, content.replaceAll('../htmxpro/', 'hyperstack/'));
+        // Normalize any relative or workspace prefix before src/ to canonical "// src/"
+        // Ensures identical byte-for-byte bundles across Windows junctions, Linux & macOS CI runners.
+        const normalized = content.replace(/\/\/ [^\r\n]*?src\//g, '// src/');
+        if (normalized !== content) {
+          writeFileSync(p, normalized);
         }
       }
     }

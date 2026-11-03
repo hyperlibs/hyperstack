@@ -27,7 +27,7 @@
       });
   };
 
-  // hyperstack/src/htmx-canvas.ts
+  // src/htmx-canvas.ts
   var exports_htmx_canvas = {};
   __export(exports_htmx_canvas, {
     updateCanvasConnections: () => updateCanvasConnections,

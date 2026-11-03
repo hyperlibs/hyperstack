@@ -27,7 +27,7 @@
       });
   };
 
-  // hyperstack/src/hy-hook.ts
+  // src/hy-hook.ts
   var exports_hy_hook = {};
   __export(exports_hy_hook, {
     HyperPlane: () => HyperPlane,
