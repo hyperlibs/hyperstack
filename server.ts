@@ -26,9 +26,7 @@ const COMPONENTS = [
   "hy-hook",
   "pgx-hud",
   "bio-profile",
-  "bio-links",
-  "bio-chat",
-  "bio-tipjar"
+  "bio-links"
 ];
 
 function formatName(slug: string): string {
@@ -468,52 +466,11 @@ const server = Bun.serve({
       return new Response(Bun.file("views/app-bio.html"), { headers: { "Content-Type": "text/html; charset=utf-8" } });
     }
 
-    if (url.pathname === "/api/bio/chat" && req.method === "POST") {
-      const formData = await req.formData().catch(() => new FormData());
-      const msg = (formData.get("message") as string) || "Hello!";
-      const lower = msg.toLowerCase();
-      let reply = "Thanks for asking! That's a great question. You can check out my projects tab above or book a quick 1-on-1 if you'd like to dive deep into your architecture!";
-      if (lower.includes("project")) {
-        reply = "My primary project is Hyperstack — a hyperreactive lean framework suite for HTMX and Go with zero React runtime!";
-      } else if (lower.includes("stack")) {
-        reply = "Our core stack is Golang for backend concurrency + Hyperstack micro-engines (HxBolt, HxFlash, AppzOS). Zero virtual DOM!";
-      } else if (lower.includes("hire") || lower.includes("advisory")) {
-        reply = "I am currently accepting select architectural advisory roles! Feel free to book a 45m slot via the 'Book 1:1' button.";
-      } else if (lower.includes("coffee")) {
-        reply = "I brew with a Fellow Ode Gen 2 grinder and a V60 ceramic dripper! Ethiopia Yirgacheffe natural process is my fuel ☕.";
-      }
-      const nowStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      const html = `
-<div class="flex items-start gap-2.5 max-w-[85%] ml-auto flex-row-reverse animate-fade-in">
-  <div class="w-7 h-7 rounded-full bg-emerald-600 flex items-center justify-center text-white text-xs font-bold shrink-0">You</div>
-  <div class="p-3 rounded-2xl rounded-tr-sm bg-indigo-600 text-white text-xs leading-relaxed shadow-sm">
-    ${escapeHtml(msg)}
-    <div class="text-[9px] text-indigo-200 text-right mt-1 font-mono">${nowStr} ✓✓</div>
-  </div>
-</div>
-<div class="flex items-start gap-2.5 max-w-[88%] animate-fade-in">
-  <div class="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0">A</div>
-  <div class="p-3 rounded-2xl rounded-tl-sm bg-slate-800 border border-slate-700/70 text-xs text-slate-200 leading-relaxed shadow-sm">
-    ${escapeHtml(reply)}
-    <div class="text-[9px] text-slate-400 text-right mt-1 font-mono">${nowStr}</div>
-  </div>
-</div>`;
-      return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8" } });
-    }
-
-    if (url.pathname === "/api/bio/tip") {
-      return new Response(JSON.stringify({ status: "success", message: "Thank you for supporting open-source development! ❤️" }), {
-        headers: { "Content-Type": "application/json" }
-      });
-    }
-
     if (url.pathname === "/api/bio/links") {
       const links = [
         { id: "hyperstack", title: "Hyperstack Framework", url: "https://github.com/hyperlibs/hyperstack", category: "projects", stars: 8420 },
         { id: "hypersheet", title: "Hypersheet Live Cloud", url: "/demo/hypersheet", category: "projects", rows: 100000 },
-        { id: "appzos", title: "AppzOS Mobile Platform", url: "/demo/mobile", category: "projects", modes: 8 },
-        { id: "article-zero-vdom", title: "The Zero-Virtual-DOM Manifesto", url: "#", category: "articles", readTime: "7 min" },
-        { id: "advisory", title: "1-on-1 Architecture Advisory", url: "#", category: "store", price: "$150" }
+        { id: "appzos", title: "AppzOS Mobile Platform", url: "/demo/mobile", category: "projects", modes: 8 }
       ];
       return new Response(JSON.stringify(links), { headers: { "Content-Type": "application/json" } });
     }

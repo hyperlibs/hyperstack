@@ -1,32 +1,26 @@
 import { describe, expect, test } from "bun:test";
 import { existsSync, readFileSync } from "node:fs";
 
-describe("ABC — A Bio Chat Mobile First Application Suite", () => {
+describe("Link in Bio Mobile-First Application Suite (Light Theme)", () => {
   const bioHtmlPath = "views/app-bio.html";
 
   test("1. views/app-bio.html exists and is non-empty", () => {
     expect(existsSync(bioHtmlPath)).toBe(true);
     const html = readFileSync(bioHtmlPath, "utf-8");
-    expect(html.length).toBeGreaterThan(1000);
+    expect(html.length).toBeGreaterThan(500);
   });
 
-  test("2. AppzOS mobile custom elements are present", () => {
+  test("2. Light theme styles and backgrounds are applied", () => {
     const html = readFileSync(bioHtmlPath, "utf-8");
-    expect(html).toContain("<app-shellui");
-    expect(html).toContain('view-mode="Mob-P"');
-    expect(html).toContain("<app-statusbar");
-    expect(html).toContain("<app-bar");
-    expect(html).toContain("<app-navbar");
-    expect(html).toContain("<app-bottom-sheet");
+    expect(html).toContain("bg-slate-50");
+    expect(html).toContain("text-slate-900");
+    expect(html).toContain("bg-white");
   });
 
   test("3. Core Hyperstack runtime micro-engines are loaded", () => {
     const html = readFileSync(bioHtmlPath, "utf-8");
     expect(html).toContain("/vendor/htmx.min.js");
     expect(html).toContain("/htmx-bolt.js");
-    expect(html).toContain("/htmx-flash.js");
-    expect(html).toContain("/appz.js");
-    expect(html).toContain("/htmx-vibe.js");
   });
 
   test("4. Bio Profile Header includes creator details and verified badge", () => {
@@ -34,44 +28,33 @@ describe("ABC — A Bio Chat Mobile First Application Suite", () => {
     expect(html).toContain("Alex Rivera");
     expect(html).toContain("@alex_hyperstack");
     expect(html).toContain("Verified Creator");
-    expect(html).toContain("Open for Advisory");
   });
 
-  test("5. Real-time 0ms search & category filtering are configured", () => {
+  test("5. Curated link items stack exists with destinations", () => {
     const html = readFileSync(bioHtmlPath, "utf-8");
-    expect(html).toContain('placeholder="Search links, articles, projects..."');
-    expect(html).toContain("data-cat-btn=\"projects\"");
-    expect(html).toContain("data-cat-btn=\"articles\"");
-    expect(html).toContain("data-cat-btn=\"media\"");
-    expect(html).toContain("data-cat-btn=\"store\"");
+    expect(html).toContain("Hyperstack Framework");
+    expect(html).toContain("Hypersheet Live Cloud");
+    expect(html).toContain("AppzOS Mobile Platform");
+    expect(html).toContain("Hypermedia Discord");
   });
 
-  test("6. Bio Chat interactive AMA messenger has input form and socket indicators", () => {
+  test("6. One-click share profile action is available", () => {
     const html = readFileSync(bioHtmlPath, "utf-8");
-    expect(html).toContain('id="chat-messages-stream"');
-    expect(html).toContain('id="chat-input-form"');
-    expect(html).toContain("Alex Rivera (AMA)");
-    expect(html).toContain("typing-indicator");
-    expect(html).toContain("Top Projects?");
+    expect(html).toContain("Share Profile");
+    expect(html).toContain("copyBioUrl");
   });
 
-  test("7. Tip Jar has micro-patronage chips and physics shockwave blast", () => {
+  test("7. Uninstructed clutter features are completely removed", () => {
     const html = readFileSync(bioHtmlPath, "utf-8");
-    expect(html).toContain("Fuel the Open Source Journey");
-    expect(html).toContain("tip-btn");
-    expect(html).toContain("selectTip(15)");
-    expect(html).toContain("$blast");
+    expect(html).not.toContain("Fuel the Open Source Journey");
+    expect(html).not.toContain("Alex Rivera (AMA)");
+    expect(html).not.toContain("selectBookingDay");
+    expect(html).not.toContain("toggleAudioPreview");
+    expect(html).not.toContain("<app-bottom-sheet");
   });
 
-  test("8. Spring bottom sheets exist for Booking, Tip Jar and QR Share", () => {
-    const html = readFileSync(bioHtmlPath, "utf-8");
-    expect(html).toContain('id="sheet-booking"');
-    expect(html).toContain('id="sheet-tip"');
-    expect(html).toContain('id="sheet-share"');
-  });
-
-  test("9. 1:1 Component HTML partials exist in views/components/", () => {
-    const components = ["bio-profile", "bio-links", "bio-chat", "bio-tipjar"];
+  test("8. 1:1 Component HTML partials exist in views/components/", () => {
+    const components = ["bio-profile", "bio-links"];
     for (const c of components) {
       const p = `views/components/${c}.html`;
       expect(existsSync(p)).toBe(true);
@@ -80,14 +63,14 @@ describe("ABC — A Bio Chat Mobile First Application Suite", () => {
     }
   });
 
-  test("10. Go DSL parity: go/components/bio.go implements 1:1 constructors", () => {
+  test("9. Go DSL parity: go/components/bio.go implements 1:1 constructors", () => {
     const goBioPath = "go/components/bio.go";
     expect(existsSync(goBioPath)).toBe(true);
     const goCode = readFileSync(goBioPath, "utf-8");
     expect(goCode).toContain("func BioProfile(");
     expect(goCode).toContain("func BioLinkCard(");
-    expect(goCode).toContain("func BioChat(");
-    expect(goCode).toContain("func BioTipJar(");
     expect(goCode).toContain("func BioPage(");
+    expect(goCode).not.toContain("func BioChat(");
+    expect(goCode).not.toContain("func BioTipJar(");
   });
 });

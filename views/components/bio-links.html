@@ -1,55 +1,94 @@
 <!-- 
   Component: bio-links.html
-  Configurable State: activeCategory ('all'|'projects'|'articles'|'store'), query (string)
-  Usage: 0ms real-time search & categorized reactive link cards with hx-vibe-card 3D tilt
+  Theme: Light Minimalist
+  Usage: Curated stack of link cards for link-in-bio page
 -->
-<div hx-ext="reactive" hx-state="{ activeCategory: 'all', query: '' }" class="space-y-3">
-  <!-- Search Bar -->
-  <div class="relative mb-3">
-    <input type="text" placeholder="Search links, articles & projects..." 
-           hx-model="query"
-           class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 shadow-inner" />
-    <span class="absolute left-3 top-2.5 text-xs text-slate-500">🔍</span>
-  </div>
+<div hx-ext="reactive" class="space-y-3">
+  <!-- Link 1: Hyperstack Framework -->
+  <a href="https://github.com/hyperlibs/hyperstack" target="_blank" rel="noopener noreferrer" 
+     class="group flex items-center gap-3.5 p-4 rounded-2xl bg-white border border-slate-200 hover:border-indigo-400 hover:shadow-md transition-all active:scale-[0.99] shadow-sm">
+    <div class="w-11 h-11 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-xl shrink-0 text-indigo-600">
+      ⚡
+    </div>
+    <div class="flex-1 min-w-0 text-left">
+      <div class="flex items-center gap-2">
+        <h3 class="font-bold text-sm text-slate-900 group-hover:text-indigo-600 transition-colors truncate">Hyperstack Framework</h3>
+        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">v1.0</span>
+      </div>
+      <p class="text-xs text-slate-500 truncate mt-0.5">HTMX on Steroids • Zero Virtual DOM</p>
+    </div>
+    <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-indigo-600 group-hover:bg-indigo-50 transition-colors shrink-0">
+      ↗
+    </div>
+  </a>
 
-  <!-- Featured Spotlight Link -->
-  <div class="bio-link-card group relative rounded-2xl border border-indigo-500/50 bg-gradient-to-r from-indigo-950/60 via-slate-900 to-indigo-950/60 p-4 shadow-lg shadow-indigo-500/10 transition-all duration-200 active:scale-[0.98]"
-       hx-vibe-card="8">
-    <a href="https://github.com/hyperlibs/hyperstack" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3.5">
-      <div class="w-11 h-11 rounded-xl bg-indigo-600/20 border border-indigo-500/40 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
-        ⚡
+  <!-- Link 2: Hypersheet -->
+  <a href="/demo/hypersheet" target="_blank"
+     class="group flex items-center gap-3.5 p-4 rounded-2xl bg-white border border-slate-200 hover:border-emerald-400 hover:shadow-md transition-all active:scale-[0.99] shadow-sm">
+    <div class="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-xl shrink-0 text-emerald-600">
+      📊
+    </div>
+    <div class="flex-1 min-w-0 text-left">
+      <div class="flex items-center gap-2">
+        <h3 class="font-bold text-sm text-slate-900 group-hover:text-emerald-600 transition-colors truncate">Hypersheet Live Cloud</h3>
+        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Demo</span>
       </div>
-      <div class="flex-1 min-w-0">
-        <div class="flex items-center gap-2 mb-0.5">
-          <h3 class="font-bold text-sm text-white group-hover:text-indigo-400 transition-colors truncate">Hyperstack Framework</h3>
-          <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">v1.0.0</span>
-        </div>
-        <p class="text-xs text-slate-400 line-clamp-1">HTMX on Steroids. Zero-VDOM reactive micro-engines suite.</p>
-        <span class="text-[10px] font-mono text-indigo-400 mt-1 inline-block">★ 8,420 stars</span>
-      </div>
-      <div class="w-8 h-8 rounded-full bg-slate-800/60 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-indigo-600 transition-colors shrink-0">
-        ↗
-      </div>
-    </a>
-  </div>
+      <p class="text-xs text-slate-500 truncate mt-0.5">Zero-NPM Reactive Spreadsheet Core</p>
+    </div>
+    <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-emerald-600 group-hover:bg-emerald-50 transition-colors shrink-0">
+      ↗
+    </div>
+  </a>
 
-  <!-- Standard Link -->
-  <div class="bio-link-card group relative rounded-2xl border border-slate-800 bg-slate-900/90 p-4 transition-all duration-200 hover:border-slate-700 active:scale-[0.98]"
-       hx-vibe-card="8">
-    <a href="/demo/hypersheet" class="flex items-center gap-3.5">
-      <div class="w-11 h-11 rounded-xl bg-slate-800 border border-slate-700/60 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
-        📊
+  <!-- Link 3: AppzOS Mobile Platform -->
+  <a href="/demo/mobile" target="_blank"
+     class="group flex items-center gap-3.5 p-4 rounded-2xl bg-white border border-slate-200 hover:border-purple-400 hover:shadow-md transition-all active:scale-[0.99] shadow-sm">
+    <div class="w-11 h-11 rounded-xl bg-purple-50 border border-purple-100 flex items-center justify-center text-xl shrink-0 text-purple-600">
+      📱
+    </div>
+    <div class="flex-1 min-w-0 text-left">
+      <div class="flex items-center gap-2">
+        <h3 class="font-bold text-sm text-slate-900 group-hover:text-purple-600 transition-colors truncate">AppzOS Mobile Platform</h3>
+        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200">Mobile</span>
       </div>
-      <div class="flex-1 min-w-0">
-        <div class="flex items-center gap-2 mb-0.5">
-          <h3 class="font-bold text-sm text-white group-hover:text-indigo-400 transition-colors truncate">Hypersheet Live Cloud</h3>
-          <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Reactive</span>
-        </div>
-        <p class="text-xs text-slate-400 line-clamp-1">Zero-NPM spreadsheet core with Kahn's DAG formula engine.</p>
+      <p class="text-xs text-slate-500 truncate mt-0.5">8 Viewport Modes • 0–9 Z-Index Layers</p>
+    </div>
+    <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-purple-600 group-hover:bg-purple-50 transition-colors shrink-0">
+      ↗
+    </div>
+  </a>
+
+  <!-- Link 4: Discord Community -->
+  <a href="https://discord.gg/" target="_blank" rel="noopener noreferrer"
+     class="group flex items-center gap-3.5 p-4 rounded-2xl bg-white border border-slate-200 hover:border-indigo-400 hover:shadow-md transition-all active:scale-[0.99] shadow-sm">
+    <div class="w-11 h-11 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-xl shrink-0 text-indigo-600">
+      💬
+    </div>
+    <div class="flex-1 min-w-0 text-left">
+      <div class="flex items-center gap-2">
+        <h3 class="font-bold text-sm text-slate-900 group-hover:text-indigo-600 transition-colors truncate">Hypermedia Discord</h3>
       </div>
-      <div class="w-8 h-8 rounded-full bg-slate-800/60 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-indigo-600 transition-colors shrink-0">
-        ↗
+      <p class="text-xs text-slate-500 truncate mt-0.5">Connect with 3,400+ hyperstack developers</p>
+    </div>
+    <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-indigo-600 group-hover:bg-indigo-50 transition-colors shrink-0">
+      ↗
+    </div>
+  </a>
+
+  <!-- Link 5: Personal Website -->
+  <a href="https://github.com/hyperlibs/hyperstack" target="_blank" rel="noopener noreferrer"
+     class="group flex items-center gap-3.5 p-4 rounded-2xl bg-white border border-slate-200 hover:border-slate-400 hover:shadow-md transition-all active:scale-[0.99] shadow-sm">
+    <div class="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-xl shrink-0 text-slate-700">
+      🌐
+    </div>
+    <div class="flex-1 min-w-0 text-left">
+      <div class="flex items-center gap-2">
+        <h3 class="font-bold text-sm text-slate-900 group-hover:text-slate-700 transition-colors truncate">Personal Website & Blog</h3>
       </div>
-    </a>
-  </div>
+      <p class="text-xs text-slate-500 truncate mt-0.5">Essays on Go, hypermedia, and systems engineering</p>
+    </div>
+    <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-slate-700 group-hover:bg-slate-100 transition-colors shrink-0">
+      ↗
+    </div>
+  </a>
 </div>
