@@ -1,0 +1,57 @@
+<!-- 
+  Component: bio-profile.html
+  Configurable State: themeColor ('primary'|'indigo'|'emerald'), isVerified (boolean), status ('online'|'away')
+  Usage: Mobile-first creator profile card with avatar, social pill links, and action triggers
+-->
+<div hx-ext="reactive" hx-state="{ themeColor: 'indigo', isVerified: true, status: 'online' }" 
+     class="flex flex-col items-center text-center p-6 relative select-none">
+  <!-- Glowing Ambient Aura -->
+  <div class="absolute -top-10 inset-x-8 h-28 bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-pink-500/20 blur-2xl pointer-events-none rounded-full"></div>
+
+  <!-- Creator Avatar with Pulsing Status Indicator -->
+  <div class="relative mb-4 group cursor-pointer" hx-action="$appz.haptic('selection'); $sound('ping')">
+    <div class="w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 shadow-xl shadow-indigo-500/25">
+      <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=280&q=80" 
+           alt="Alex Rivera" class="w-full h-full rounded-full object-cover border-2 border-slate-950" />
+    </div>
+    <div class="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-slate-950 border-2 border-slate-950 flex items-center justify-center">
+      <span class="w-3.5 h-3.5 rounded-full bg-emerald-500 animate-pulse"></span>
+    </div>
+  </div>
+
+  <!-- Verified Title & Tagline -->
+  <div class="flex items-center gap-1.5 justify-center mb-1">
+    <h2 class="text-xl font-black text-white tracking-tight">Alex Rivera</h2>
+    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-500 text-white text-[11px] font-bold shadow-sm" title="Verified Creator">✓</span>
+  </div>
+  <p class="text-xs font-mono font-medium text-indigo-400 mb-2">@alex_hyperstack</p>
+  <p class="text-sm font-semibold text-slate-200 max-w-xs mb-2 leading-snug">Systems Architect & Hypermedia Alchemist</p>
+  <p class="text-xs text-slate-400 max-w-xs mb-3 leading-relaxed">Pioneering hyperreactive zero-VDOM web applications. Creator of Hyperstack & Hypersheet.</p>
+
+  <!-- Location & Availability Pill -->
+  <div class="flex items-center gap-2 mb-4">
+    <span class="inline-flex items-center gap-1 text-[11px] font-medium text-slate-400 bg-slate-900/80 px-2.5 py-1 rounded-full border border-slate-800">
+      <span>📍</span> San Francisco, CA
+    </span>
+    <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+      Open for Advisory
+    </span>
+  </div>
+
+  <!-- Social Icons Strip -->
+  <div class="flex items-center justify-center gap-2 mb-5">
+    <a href="https://github.com/hyperlibs/hyperstack" target="_blank" rel="noopener noreferrer" 
+       class="w-9 h-9 rounded-full bg-slate-800/80 hover:bg-indigo-600 border border-slate-700/60 flex items-center justify-center text-sm text-slate-300 hover:text-white transition-all active:scale-90"
+       title="GitHub">🐙</a>
+    <a href="https://x.com/" target="_blank" rel="noopener noreferrer" 
+       class="w-9 h-9 rounded-full bg-slate-800/80 hover:bg-indigo-600 border border-slate-700/60 flex items-center justify-center text-sm text-slate-300 hover:text-white transition-all active:scale-90"
+       title="X / Twitter">𝕏</a>
+    <a href="https://youtube.com/" target="_blank" rel="noopener noreferrer" 
+       class="w-9 h-9 rounded-full bg-slate-800/80 hover:bg-indigo-600 border border-slate-700/60 flex items-center justify-center text-sm text-slate-300 hover:text-white transition-all active:scale-90"
+       title="YouTube">▶</a>
+    <a href="https://discord.gg/" target="_blank" rel="noopener noreferrer" 
+       class="w-9 h-9 rounded-full bg-slate-800/80 hover:bg-indigo-600 border border-slate-700/60 flex items-center justify-center text-sm text-slate-300 hover:text-white transition-all active:scale-90"
+       title="Discord">💬</a>
+  </div>
+</div>

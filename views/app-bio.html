@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100 antialiased font-sans select-none" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#020617">
+  <title>ABC — A Bio Chat • Mobile First Link-in-Bio</title>
+
+  <!-- Hyperstack Lean Runtimes & Engines -->
+  <script src="/vendor/htmx.min.js"></script>
+  <script src="/htmx-bolt.js"></script>
+  <script src="/htmx-flash.js"></script>
+  <script src="/htmx-form.js"></script>
+  <script src="/htmx-vibe.js"></script>
+  <script src="/appz.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/styles.css">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Safe area and mobile viewport ergonomics */
+    body {
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
+
+    /* Kinetic Device Viewport Frame (Desktop Simulator) */
+    .device-viewport-frame {
+      transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                  height 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-radius 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.12);
+      background: #020617;
+    }
+
+    /* Equalizer audio bar animation */
+    @keyframes eqBar {
+      0%, 100% { height: 4px; }
+      50% { height: 18px; }
+    }
+    .eq-bar-1 { animation: eqBar 0.8s ease-in-out infinite; }
+    .eq-bar-2 { animation: eqBar 0.5s ease-in-out infinite 0.15s; }
+    .eq-bar-3 { animation: eqBar 0.9s ease-in-out infinite 0.3s; }
+    .eq-bar-4 { animation: eqBar 0.6s ease-in-out infinite 0.1s; }
+
+    /* Custom thin scrollbars */
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.2); border-radius: 4px; }
+
+    /* Theme Presets */
+    [data-theme="light"] {
+      --bg-main: #f8fafc;
+      --bg-card: #ffffff;
+      --border-color: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+    }
+  </style>
+</head>
+<body class="min-h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950/20 to-slate-950 text-slate-100 p-0 md:p-6 select-none">
+
+  <!-- Desktop Top Control Bar (Hidden on actual mobile screens) -->
+  <header class="w-full max-w-5xl hidden md:flex items-center justify-between pb-4 border-b border-slate-800/80 mb-4 gap-4">
+    <div class="flex items-center gap-3">
+      <a href="/" class="flex items-center gap-2.5">
+        <span class="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 font-black text-white flex items-center justify-center text-sm shadow-lg shadow-indigo-600/30">⚡</span>
+        <div>
+          <h1 class="font-black text-sm text-white tracking-tight flex items-center gap-2">
+            ABC — A Bio Chat
+            <span class="text-[10px] font-extrabold text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full border border-indigo-500/20">Hyperstack Mobile-First</span>
+          </h1>
+          <p class="text-[10px] text-slate-400">Zero Virtual DOM • Instant Hypermedia Messenger • HxFlash Search</p>
+        </div>
+      </a>
+    </div>
+
+    <!-- Viewport Mode Switcher -->
+    <div class="flex items-center bg-slate-900/90 border border-slate-800 p-1 rounded-2xl gap-1 text-xs font-bold">
+      <button onclick="setSimMode('Mob-P')" id="btn-mode-Mob-P" class="px-3 py-1.5 rounded-xl bg-indigo-600 text-white transition-all">iPhone (Mob-P)</button>
+      <button onclick="setSimMode('Mob-H')" id="btn-mode-Mob-H" class="px-3 py-1.5 rounded-xl bg-slate-800/80 text-slate-400 hover:text-white transition-all">Landscape (Mob-H)</button>
+      <button onclick="setSimMode('Tab-P')" id="btn-mode-Tab-P" class="px-3 py-1.5 rounded-xl bg-slate-800/80 text-slate-400 hover:text-white transition-all">Tablet (Tab-P)</button>
+      <button onclick="setSimMode('Full')" id="btn-mode-Full" class="px-3 py-1.5 rounded-xl bg-slate-800/80 text-slate-400 hover:text-white transition-all">Full View</button>
+    </div>
+
+    <!-- Quick Action / Share -->
+    <div class="flex items-center gap-2">
+      <button onclick="$appz.sheet('#sheet-share'); $appz.haptic('selection'); $sound('ping')" 
+              class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs flex items-center gap-1.5 border border-slate-700/60 shadow-sm">
+        <span>📱</span> QR / Mobile Test
+      </button>
+      <a href="https://github.com/hyperlibs/hyperstack" target="_blank"
+         class="px-3 py-1.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-400 border border-indigo-500/30 font-bold text-xs flex items-center gap-1.5">
+        <span>🐙</span> GitHub
+      </a>
+    </div>
+  </header>
+
+  <!-- Interactive Device Scaler Container -->
+  <main class="w-full flex-1 flex flex-col items-center justify-center">
+    
+    <!-- DEVICE VIEWPORT FRAME -->
+    <div id="device-frame" 
+         class="device-viewport-frame w-full h-full md:w-[390px] md:h-[844px] md:rounded-[48px] md:border-[10px] md:border-slate-900 flex flex-col"
+         data-view-mode="Mob-P">
+
+      <!-- ROOT SHELLUI -->
+      <app-shellui view-mode="Mob-P" mode="mobile" 
+                   class="flex-1 flex flex-col overflow-hidden relative"
+                   hx-state='{
+                     "theme": "dark",
+                     "activeTab": "links",
+                     "searchQuery": "",
+                     "activeCategory": "all",
+                     "audioPlaying": false,
+                     "tipAmount": 15,
+                     "tipTotal": 240,
+                     "isTyping": false,
+                     "stats": { "followers": "42.8k", "views": "1.2M", "clicks": 1842 }
+                   }'>
+
+        <!-- 1. STATUS BAR WITH LIVE CLOCK, DYNAMIC ISLAND & BATTERY -->
+        <app-statusbar class="h-9 bg-slate-950/95 backdrop-blur border-b border-slate-900/80 px-4 flex items-center justify-between shrink-0 z-50 text-[11px] font-semibold text-slate-300">
+          <div class="flex items-center gap-1.5">
+            <span id="live-clock" class="font-black text-white">09:41</span>
+            <span class="text-[9px] text-indigo-400 font-extrabold uppercase tracking-wider">5G</span>
+          </div>
+
+          <!-- Dynamic Island Alert Capsule -->
+          <div class="dynamic-island h-6 px-3 bg-black rounded-full flex items-center gap-1.5 border border-slate-800 text-[10px] font-bold text-slate-300 transition-all cursor-pointer shadow-md hover:border-indigo-500/50"
+               hx-action="$appz.haptic('selection'); $sound('ping'); $toast('Alex is online & active on Bio Chat!', 'info')">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="truncate max-w-[110px]">🟢 Live Bio Chat</span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="text-indigo-400 font-mono text-xs">▅▄▃</span>
+            <div class="flex items-center gap-0.5">
+              <span class="text-[10px] font-bold">98%</span>
+              <span class="text-emerald-400">🔋</span>
+            </div>
+          </div>
+        </app-statusbar>
+
+        <!-- 2. TOP APP BAR -->
+        <app-bar class="h-13 bg-slate-900/90 backdrop-blur border-b border-slate-800/80 px-4 flex items-center justify-between shrink-0 z-40">
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-xs font-black text-white shadow-sm">
+              A
+            </div>
+            <div>
+              <h2 class="font-extrabold text-xs text-white leading-tight">ABC • A Bio Chat</h2>
+              <p class="text-[9px] text-indigo-400 font-mono">@alex_hyperstack</p>
+            </div>
+          </div>
+
+          <!-- Top Actions: Theme Switcher & QR Code -->
+          <div class="flex items-center gap-1.5">
+            <button onclick="cycleTheme()" title="Switch Theme Preset"
+                    class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700/60 flex items-center justify-center text-xs text-slate-300 active:scale-90 transition-all">
+              🎨
+            </button>
+            <button hx-action="$appz.sheet('#sheet-share'); $appz.haptic('selection'); $sound('click')" 
+                    title="Share Profile / QR Code"
+                    class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700/60 flex items-center justify-center text-xs text-slate-300 active:scale-90 transition-all">
+              📤
+            </button>
+          </div>
+        </app-bar>
+
+        <!-- 3. MAIN SCROLLABLE CONTENT VIEWPORT -->
+        <main class="flex-1 overflow-y-auto flex flex-col relative overscroll-contain" id="main-scroll">
+
+          <!-- Layer 0: Ambient Gradient Background Grid -->
+          <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-slate-950 to-slate-950 pointer-events-none -z-10"></div>
+
+          <!-- Layer 1: Bio Profile Header Section -->
+          <section class="p-5 flex flex-col items-center text-center relative">
+            
+            <!-- Creator Avatar with Status Indicator -->
+            <div class="relative mb-3 group cursor-pointer" 
+                 hx-action="$appz.haptic('selection'); $sound('click'); $toast('Alex Rivera: Full-Stack Systems Architect', 'info')">
+              <div class="w-22 h-22 rounded-full p-1 bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 shadow-xl shadow-indigo-500/20">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=280&q=80" 
+                     alt="Alex Rivera" class="w-full h-full rounded-full object-cover border-2 border-slate-950" />
+              </div>
+              <div class="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-slate-950 border-2 border-slate-950 flex items-center justify-center">
+                <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+              </div>
+            </div>
+
+            <!-- Name, Verification & Tagline -->
+            <div class="flex items-center gap-1.5 justify-center mb-0.5">
+              <h1 class="text-lg font-black text-white tracking-tight">Alex Rivera</h1>
+              <span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-blue-500 text-white text-[10px] font-bold shadow-sm" title="Verified Creator">✓</span>
+            </div>
+            <p class="text-[11px] font-mono font-medium text-indigo-400 mb-2">@alex_hyperstack</p>
+            <p class="text-xs font-semibold text-slate-200 max-w-xs mb-1.5 leading-snug">
+              Systems Architect & Hypermedia Alchemist ⚡
+            </p>
+            <p class="text-[11px] text-slate-400 max-w-xs mb-3 leading-relaxed">
+              Zero-VDOM engineering. Creator of Hyperstack & Hypersheet. Crafting high-concurrency systems.
+            </p>
+
+            <!-- Location & Telemetry Pills -->
+            <div class="flex items-center gap-2 mb-3.5 flex-wrap justify-center">
+              <span class="inline-flex items-center gap-1 text-[10px] font-medium text-slate-400 bg-slate-900/90 px-2.5 py-1 rounded-full border border-slate-800">
+                <span>📍</span> San Francisco, CA
+              </span>
+              <span class="inline-flex items-center gap-1.5 text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                Open for Advisory
+              </span>
+            </div>
+
+            <!-- Social Links Row -->
+            <div class="flex items-center justify-center gap-2 mb-4">
+              <a href="https://github.com/hyperlibs/hyperstack" target="_blank" rel="noopener noreferrer" 
+                 class="w-8 h-8 rounded-full bg-slate-800/80 hover:bg-indigo-600 border border-slate-700/60 flex items-center justify-center text-xs text-slate-300 hover:text-white transition-all active:scale-90"
+                 title="GitHub" hx-action="$appz.haptic('selection')">🐙</a>
+              <a href="https://x.com/" target="_blank" rel="noopener noreferrer" 
+                 class="w-8 h-8 rounded-full bg-slate-800/80 hover:bg-indigo-600 border border-slate-700/60 flex items-center justify-center text-xs text-slate-300 hover:text-white transition-all active:scale-90"
+                 title="X / Twitter" hx-action="$appz.haptic('selection')">𝕏</a>
+              <a href="https://youtube.com/" target="_blank" rel="noopener noreferrer" 
+                 class="w-8 h-8 rounded-full bg-slate-800/80 hover:bg-indigo-600 border border-slate-700/60 flex items-center justify-center text-xs text-slate-300 hover:text-white transition-all active:scale-90"
+                 title="YouTube" hx-action="$appz.haptic('selection')">▶</a>
+              <a href="https://discord.gg/" target="_blank" rel="noopener noreferrer" 
+                 class="w-8 h-8 rounded-full bg-slate-800/80 hover:bg-indigo-600 border border-slate-700/60 flex items-center justify-center text-xs text-slate-300 hover:text-white transition-all active:scale-90"
+                 title="Discord" hx-action="$appz.haptic('selection')">💬</a>
+              <a href="mailto:alex@hyperstack.dev" 
+                 class="w-8 h-8 rounded-full bg-slate-800/80 hover:bg-indigo-600 border border-slate-700/60 flex items-center justify-center text-xs text-slate-300 hover:text-white transition-all active:scale-90"
+                 title="Email" hx-action="$appz.haptic('selection')">✉️</a>
+            </div>
+
+            <!-- Quick Action Tabs Shortcut Bar -->
+            <div class="grid grid-cols-4 gap-2 w-full max-w-xs">
+              <button hx-action="activeTab = 'chat'; $appz.haptic('selection'); $sound('click')" 
+                      class="py-2 px-1 rounded-xl bg-indigo-600/90 hover:bg-indigo-600 text-white font-bold text-xs flex flex-col items-center gap-1 shadow-lg shadow-indigo-600/30 active:scale-95 transition-all">
+                <span class="text-sm">💬</span>
+                <span class="text-[10px]">Bio Chat</span>
+              </button>
+              <button hx-action="$appz.sheet('#sheet-tip'); $appz.haptic('selection'); $sound('ping')" 
+                      class="py-2 px-1 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-amber-400 border border-amber-500/20 font-bold text-xs flex flex-col items-center gap-1 active:scale-95 transition-all">
+                <span class="text-sm">☕</span>
+                <span class="text-[10px]">Tip Jar</span>
+              </button>
+              <button hx-action="$appz.sheet('#sheet-booking'); $appz.haptic('selection'); $sound('click')" 
+                      class="py-2 px-1 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-300 font-bold text-xs flex flex-col items-center gap-1 active:scale-95 transition-all">
+                <span class="text-sm">📅</span>
+                <span class="text-[10px]">Book 1:1</span>
+              </button>
+              <button hx-action="$copy(window.location.href); $toast('Bio link copied to clipboard!', 'success'); $sound('click')" 
+                      class="py-2 px-1 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-300 font-bold text-xs flex flex-col items-center gap-1 active:scale-95 transition-all">
+                <span class="text-sm">🔗</span>
+                <span class="text-[10px]">Copy Bio</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- Layer 2: Segment Dynamic Views (Controlled by activeTab) -->
+          <section class="px-4 pb-20 flex-1">
+
+            <!-- ============================================================= -->
+            <!-- TAB 1: LINKS & SHOWCASE (The Core Link-in-Bio) -->
+            <!-- ============================================================= -->
+            <div id="view-links" hx-show="activeTab === 'links'" class="space-y-3.5">
+              
+              <!-- 0ms Flash Search Bar -->
+              <div class="relative">
+                <input type="text" placeholder="Search links, articles, projects..." 
+                       hx-model="searchQuery"
+                       oninput="filterLinks(this.value)"
+                       class="w-full bg-slate-900/90 border border-slate-800 rounded-2xl pl-9 pr-8 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 shadow-inner" />
+                <span class="absolute left-3 top-2.5 text-xs text-slate-500">🔍</span>
+                <button onclick="clearSearch()" class="absolute right-3 top-2.5 text-xs text-slate-500 hover:text-slate-300">✕</button>
+              </div>
+
+              <!-- Category Filter Chips -->
+              <div class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                <button onclick="setCategoryFilter('all')" data-cat-btn="all"
+                        class="cat-chip px-3 py-1 rounded-full text-[10px] font-bold bg-indigo-600 text-white shrink-0 active:scale-95 transition-all">
+                  🌟 All
+                </button>
+                <button onclick="setCategoryFilter('projects')" data-cat-btn="projects"
+                        class="cat-chip px-3 py-1 rounded-full text-[10px] font-bold bg-slate-800 text-slate-400 hover:text-white shrink-0 active:scale-95 transition-all">
+                  🚀 Projects
+                </button>
+                <button onclick="setCategoryFilter('articles')" data-cat-btn="articles"
+                        class="cat-chip px-3 py-1 rounded-full text-[10px] font-bold bg-slate-800 text-slate-400 hover:text-white shrink-0 active:scale-95 transition-all">
+                  📝 Articles
+                </button>
+                <button onclick="setCategoryFilter('media')" data-cat-btn="media"
+                        class="cat-chip px-3 py-1 rounded-full text-[10px] font-bold bg-slate-800 text-slate-400 hover:text-white shrink-0 active:scale-95 transition-all">
+                  🎙️ Podcast
+                </button>
+                <button onclick="setCategoryFilter('store')" data-cat-btn="store"
+                        class="cat-chip px-3 py-1 rounded-full text-[10px] font-bold bg-slate-800 text-slate-400 hover:text-white shrink-0 active:scale-95 transition-all">
+                  🛍️ Store
+                </button>
+              </div>
+
+              <!-- Pinned Spotlight Hero Card: Podcast / Tech Talk with Audio Waveform -->
+              <div class="spotlight-card rounded-2xl border border-indigo-500/50 bg-gradient-to-r from-indigo-950/70 via-slate-900 to-indigo-950/70 p-4 shadow-xl shadow-indigo-500/10 transition-all hover:border-indigo-400"
+                   hx-vibe-card="6">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-[10px] font-extrabold uppercase tracking-widest text-indigo-400 flex items-center gap-1">
+                    <span class="w-2 h-2 rounded-full bg-indigo-400 animate-ping"></span> Featured Audio
+                  </span>
+                  <span class="text-[10px] font-mono text-slate-400">EP #24 • 18 min</span>
+                </div>
+                <h3 class="font-bold text-sm text-white mb-1">Why Hypermedia & Go Beat 200MB Single Page Apps</h3>
+                <p class="text-xs text-slate-400 mb-3 leading-relaxed">
+                  Deep dive into zero-VDOM reactivity, topological formulas, and server-driven micro-engines.
+                </p>
+
+                <!-- Audio Controller Simulation -->
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/80 border border-slate-800/80">
+                  <button onclick="toggleAudioPreview()" id="audio-play-btn"
+                          class="w-9 h-9 rounded-full bg-indigo-600 hover:bg-indigo-500 flex items-center justify-center text-white text-xs font-bold active:scale-90 transition-all shadow-md">
+                    <span id="audio-icon">▶</span>
+                  </button>
+                  
+                  <!-- Animated Equalizer Bars -->
+                  <div class="flex items-center gap-1 h-5 px-3">
+                    <span class="w-1 bg-indigo-400 rounded-full h-2 eq-bar" id="eq-1"></span>
+                    <span class="w-1 bg-indigo-400 rounded-full h-4 eq-bar" id="eq-2"></span>
+                    <span class="w-1 bg-purple-400 rounded-full h-1 eq-bar" id="eq-3"></span>
+                    <span class="w-1 bg-indigo-400 rounded-full h-3 eq-bar" id="eq-4"></span>
+                    <span class="w-1 bg-pink-400 rounded-full h-2 eq-bar" id="eq-5"></span>
+                  </div>
+
+                  <span id="audio-status-label" class="text-[10px] font-mono text-slate-400">Preview (0:45)</span>
+                </div>
+              </div>
+
+              <!-- Stack of Bio Links -->
+              <div id="links-container" class="space-y-3">
+
+                <!-- Link 1: Hyperstack Core Framework -->
+                <div class="bio-link-item group relative rounded-2xl border border-slate-800 bg-slate-900/90 p-4 transition-all duration-200 hover:border-slate-700 active:scale-[0.98]"
+                     data-category="projects" data-search="hyperstack framework htmx go reactive engines">
+                  <a href="https://github.com/hyperlibs/hyperstack" target="_blank" rel="noopener noreferrer"
+                     onclick="registerClick('Hyperstack')" class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
+                      ⚡
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 mb-0.5">
+                        <h4 class="font-bold text-sm text-white group-hover:text-indigo-400 transition-colors truncate">Hyperstack Framework</h4>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">v1.0.0</span>
+                      </div>
+                      <p class="text-xs text-slate-400 line-clamp-1">HTMX on Steroids. Zero React, zero Node runtime suite.</p>
+                      <div class="flex items-center gap-3 mt-1 text-[10px] font-mono text-slate-400">
+                        <span class="text-indigo-400">★ 8,420</span>
+                        <span>48KB bundle</span>
+                        <span>MIT License</span>
+                      </div>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-slate-800/60 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-indigo-600 transition-colors shrink-0">
+                      ↗
+                    </div>
+                  </a>
+                </div>
+
+                <!-- Link 2: Hypersheet Reactive Table -->
+                <div class="bio-link-item group relative rounded-2xl border border-slate-800 bg-slate-900/90 p-4 transition-all duration-200 hover:border-slate-700 active:scale-[0.98]"
+                     data-category="projects" data-search="hypersheet spreadsheet table dag formula">
+                  <a href="/demo/hypersheet" target="_blank" onclick="registerClick('Hypersheet')" class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded-xl bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
+                      📊
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 mb-0.5">
+                        <h4 class="font-bold text-sm text-white group-hover:text-emerald-400 transition-colors truncate">Hypersheet Live Cloud</h4>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Live Demo</span>
+                      </div>
+                      <p class="text-xs text-slate-400 line-clamp-1">Zero-NPM reactive spreadsheet with Kahn's topological DAG.</p>
+                      <div class="flex items-center gap-3 mt-1 text-[10px] font-mono text-slate-400">
+                        <span class="text-emerald-400">100k Rows</span>
+                        <span>0ms Lag</span>
+                      </div>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-slate-800/60 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-emerald-600 transition-colors shrink-0">
+                      ↗
+                    </div>
+                  </a>
+                </div>
+
+                <!-- Link 3: AppzOS Mobile Operating System -->
+                <div class="bio-link-item group relative rounded-2xl border border-slate-800 bg-slate-900/90 p-4 transition-all duration-200 hover:border-slate-700 active:scale-[0.98]"
+                     data-category="projects" data-search="appzos mobile operating system spatial viewport">
+                  <a href="/demo/mobile" target="_blank" onclick="registerClick('AppzOS')" class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
+                      📱
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 mb-0.5">
+                        <h4 class="font-bold text-sm text-white group-hover:text-purple-400 transition-colors truncate">AppzOS Mobile Platform</h4>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">Spatial UI</span>
+                      </div>
+                      <p class="text-xs text-slate-400 line-clamp-1">8 viewport modes, 0-9 layer stacking, coroutines and hardware bridges.</p>
+                      <div class="flex items-center gap-3 mt-1 text-[10px] font-mono text-slate-400">
+                        <span>4-Layer OS</span>
+                        <span>Haptic Engine</span>
+                      </div>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-slate-800/60 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-purple-600 transition-colors shrink-0">
+                      ↗
+                    </div>
+                  </a>
+                </div>
+
+                <!-- Link 4: Article — Zero VDOM -->
+                <div class="bio-link-item group relative rounded-2xl border border-slate-800 bg-slate-900/90 p-4 transition-all duration-200 hover:border-slate-700 active:scale-[0.98]"
+                     data-category="articles" data-search="article essay zero vdom architecture react">
+                  <a href="#" onclick="alertArticle('Zero-VDOM Architectures in 2026'); return false;" class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded-xl bg-amber-600/20 border border-amber-500/30 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
+                      📝
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 mb-0.5">
+                        <h4 class="font-bold text-sm text-white group-hover:text-amber-400 transition-colors truncate">The Zero-Virtual-DOM Manifesto</h4>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">7 min read</span>
+                      </div>
+                      <p class="text-xs text-slate-400 line-clamp-1">Why modern hypermedia and signals render SPAs obsolete.</p>
+                      <div class="flex items-center gap-3 mt-1 text-[10px] font-mono text-slate-400">
+                        <span>14.2k claps</span>
+                        <span>Staff Pick</span>
+                      </div>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-slate-800/60 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-amber-600 transition-colors shrink-0">
+                      ↗
+                    </div>
+                  </a>
+                </div>
+
+                <!-- Link 5: Article — Scaling Go & HTMX -->
+                <div class="bio-link-item group relative rounded-2xl border border-slate-800 bg-slate-900/90 p-4 transition-all duration-200 hover:border-slate-700 active:scale-[0.98]"
+                     data-category="articles" data-search="article golang htmx scaling concurrency benchmark">
+                  <a href="#" onclick="alertArticle('Scaling Golang & HTMX to 1M RPS'); return false;" class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded-xl bg-cyan-600/20 border border-cyan-500/30 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
+                      🚀
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 mb-0.5">
+                        <h4 class="font-bold text-sm text-white group-hover:text-cyan-400 transition-colors truncate">Scaling Golang & HTMX to 1M Concurrency</h4>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">12 min read</span>
+                      </div>
+                      <p class="text-xs text-slate-400 line-clamp-1">Zero-allocation HTML partial streaming with sub-millisecond p99 latency.</p>
+                      <div class="flex items-center gap-3 mt-1 text-[10px] font-mono text-slate-400">
+                        <span>28k views</span>
+                        <span>Go Weekly</span>
+                      </div>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-slate-800/60 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-cyan-600 transition-colors shrink-0">
+                      ↗
+                    </div>
+                  </a>
+                </div>
+
+                <!-- Link 6: 1-on-1 Advisory Session -->
+                <div class="bio-link-item group relative rounded-2xl border border-slate-800 bg-slate-900/90 p-4 transition-all duration-200 hover:border-slate-700 active:scale-[0.98]"
+                     data-category="store" data-search="mentorship advisory consulting 1-on-1 call booking">
+                  <div onclick="$appz.sheet('#sheet-booking'); $appz.haptic('selection'); $sound('click')" 
+                       class="flex items-center gap-3.5 cursor-pointer">
+                    <div class="w-11 h-11 rounded-xl bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
+                      💼
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 mb-0.5">
+                        <h4 class="font-bold text-sm text-white group-hover:text-emerald-400 transition-colors truncate">1-on-1 Architecture Advisory</h4>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">$150 / 45m</span>
+                      </div>
+                      <p class="text-xs text-slate-400 line-clamp-1">Review your architecture, eliminate SPA bloat, optimize Go/HTMX.</p>
+                      <div class="flex items-center gap-3 mt-1 text-[10px] font-mono text-emerald-400">
+                        <span>2 slots left this week</span>
+                      </div>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-slate-800/60 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-emerald-600 transition-colors shrink-0">
+                      📅
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Link 7: Digital Store — Hyperstack Blueprint -->
+                <div class="bio-link-item group relative rounded-2xl border border-slate-800 bg-slate-900/90 p-4 transition-all duration-200 hover:border-slate-700 active:scale-[0.98]"
+                     data-category="store" data-search="blueprint book store pdf templates code">
+                  <div onclick="$toast('Production Blueprint PDF added to cart!', 'success'); $sound('ping')" 
+                       class="flex items-center gap-3.5 cursor-pointer">
+                    <div class="w-11 h-11 rounded-xl bg-pink-600/20 border border-pink-500/30 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
+                      📚
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 mb-0.5">
+                        <h4 class="font-bold text-sm text-white group-hover:text-pink-400 transition-colors truncate">Hyperstack Production Kit</h4>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">$29</span>
+                      </div>
+                      <p class="text-xs text-slate-400 line-clamp-1">Complete production kit: 120 components, Go DSL, Tailwind v4 configs.</p>
+                      <div class="flex items-center gap-3 mt-1 text-[10px] font-mono text-slate-400">
+                        <span>Instant Download</span>
+                        <span>⭐ 4.9/5</span>
+                      </div>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-slate-800/60 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-pink-600 transition-colors shrink-0">
+                      🛒
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ============================================================= -->
+            <!-- TAB 2: A BIO CHAT (Real-Time Messenger & AMA) -->
+            <!-- ============================================================= -->
+            <div id="view-chat" hx-show="activeTab === 'chat'" class="space-y-3">
+              
+              <!-- Messenger Shell -->
+              <div class="flex flex-col h-[510px] rounded-2xl bg-slate-900/95 border border-slate-800 overflow-hidden shadow-2xl relative">
+                
+                <!-- Messenger Top Status Header -->
+                <div class="h-12 px-4 bg-slate-950/90 border-b border-slate-800/80 flex items-center justify-between shrink-0">
+                  <div class="flex items-center gap-2">
+                    <div class="relative">
+                      <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 block"></span>
+                      <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 block absolute inset-0 animate-ping opacity-75"></span>
+                    </div>
+                    <div>
+                      <h3 class="text-xs font-bold text-white leading-none">Alex Rivera (AMA)</h3>
+                      <p class="text-[9px] text-slate-400 font-medium">Bio AI & Direct Messenger</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">● Active</span>
+                  </div>
+                </div>
+
+                <!-- Live Messages Feed -->
+                <div id="chat-messages-stream" class="flex-1 overflow-y-auto p-4 space-y-3.5">
+                  
+                  <!-- Welcome Message from Alex -->
+                  <div class="flex items-start gap-2.5 max-w-[88%]">
+                    <div class="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0">A</div>
+                    <div class="p-3 rounded-2xl rounded-tl-sm bg-slate-800 border border-slate-700/70 text-xs text-slate-200 leading-relaxed shadow-sm">
+                      Hey there! 👋 Welcome to my <strong>Bio Chat</strong>.
+                      <p class="mt-1 text-[11px] text-slate-300">You can ask me questions about our tech stack, hire me for advisory, or explore collaboration ideas!</p>
+                      <div class="text-[9px] text-slate-400 text-right mt-1 font-mono">09:41 AM</div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Animated Typing Indicator (shown when Alex is typing) -->
+                <div id="typing-indicator" class="hidden px-4 py-2 bg-slate-950/60 border-t border-slate-800/40 items-center gap-2 text-[11px] text-slate-400">
+                  <span class="flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce [animation-delay:0.2s]"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce [animation-delay:0.4s]"></span>
+                  </span>
+                  <span>Alex is replying...</span>
+                </div>
+
+                <!-- Quick Conversation Starters -->
+                <div class="px-3 py-2 bg-slate-950/50 border-t border-slate-800/60 flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+                  <button onclick="sendQuickPrompt('What are your top projects right now?')" 
+                          class="px-2.5 py-1 rounded-full bg-slate-800/80 hover:bg-indigo-600 border border-slate-700/60 text-[10px] font-semibold text-slate-300 hover:text-white shrink-0 active:scale-95 transition-all">
+                    🚀 Top Projects?
+                  </button>
+                  <button onclick="sendQuickPrompt('Can I book you for an advisory call?')" 
+                          class="px-2.5 py-1 rounded-full bg-slate-800/80 hover:bg-indigo-600 border border-slate-700/60 text-[10px] font-semibold text-slate-300 hover:text-white shrink-0 active:scale-95 transition-all">
+                    🤝 Book Advisory?
+                  </button>
+                  <button onclick="sendQuickPrompt('Why do you recommend Go and Hyperstack?')" 
+                          class="px-2.5 py-1 rounded-full bg-slate-800/80 hover:bg-indigo-600 border border-slate-700/60 text-[10px] font-semibold text-slate-300 hover:text-white shrink-0 active:scale-95 transition-all">
+                    ⚡ Why Hyperstack?
+                  </button>
+                  <button onclick="sendQuickPrompt('What is your coffee setup?')" 
+                          class="px-2.5 py-1 rounded-full bg-slate-800/80 hover:bg-indigo-600 border border-slate-700/60 text-[10px] font-semibold text-slate-300 hover:text-white shrink-0 active:scale-95 transition-all">
+                    ☕ Coffee Setup?
+                  </button>
+                </div>
+
+                <!-- Messenger Input Form -->
+                <form id="chat-input-form" onsubmit="handleChatSubmit(event)" 
+                      class="p-3 bg-slate-950/95 border-t border-slate-800 flex items-center gap-2">
+                  <input type="text" id="chat-user-input" placeholder="Ask Alex anything..." required autocomplete="off"
+                         class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 shadow-inner" />
+                  <button type="submit" 
+                          class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md shadow-indigo-600/30 active:scale-95 transition-all flex items-center gap-1">
+                    <span>Send</span> <span>➤</span>
+                  </button>
+                </form>
+
+              </div>
+            </div>
+
+            <!-- ============================================================= -->
+            <!-- TAB 3: PORTFOLIO & WORK -->
+            <!-- ============================================================= -->
+            <div id="view-portfolio" hx-show="activeTab === 'portfolio'" class="space-y-3.5">
+              
+              <!-- Metrics Bento Strip -->
+              <div class="grid grid-cols-3 gap-2">
+                <div class="p-3 rounded-2xl bg-slate-900/90 border border-slate-800 text-center">
+                  <div class="text-base font-black text-white">48 KB</div>
+                  <div class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">Core Engine</div>
+                </div>
+                <div class="p-3 rounded-2xl bg-slate-900/90 border border-slate-800 text-center">
+                  <div class="text-base font-black text-emerald-400">0 ms</div>
+                  <div class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">Fuzzy Search</div>
+                </div>
+                <div class="p-3 rounded-2xl bg-slate-900/90 border border-slate-800 text-center">
+                  <div class="text-base font-black text-indigo-400">100%</div>
+                  <div class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">Test Pass Rate</div>
+                </div>
+              </div>
+
+              <!-- Project Showcase Cards -->
+              <div class="rounded-2xl border border-slate-800 bg-slate-900/90 p-4">
+                <div class="flex items-center justify-between mb-2">
+                  <h4 class="font-bold text-sm text-white">High-Frequency Telemetry Dashboard</h4>
+                  <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">Go + HTMX</span>
+                </div>
+                <p class="text-xs text-slate-400 mb-3 leading-relaxed">
+                  Sub-millisecond data visualization rendering 60fps canvas deltas with zero client virtual DOM overhead.
+                </p>
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded">WebSocket</span>
+                  <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded">HxBolt</span>
+                  <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded">Tailwind v4</span>
+                </div>
+              </div>
+
+              <div class="rounded-2xl border border-slate-800 bg-slate-900/90 p-4">
+                <div class="flex items-center justify-between mb-2">
+                  <h4 class="font-bold text-sm text-white">Topological Spreadsheet Engine</h4>
+                  <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Kahn's DAG</span>
+                </div>
+                <p class="text-xs text-slate-400 mb-3 leading-relaxed">
+                  Formula evaluation engine with cycle detection (#CYCLE!), coordinate normalization, and typed column stores.
+                </p>
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded">HxCalc</span>
+                  <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded">HxFlash</span>
+                </div>
+              </div>
+
+              <div class="rounded-2xl border border-slate-800 bg-slate-900/90 p-4">
+                <div class="flex items-center justify-between mb-2">
+                  <h4 class="font-bold text-sm text-white">AppzOS Mobile Shell</h4>
+                  <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">Kotlin + Flutter</span>
+                </div>
+                <p class="text-xs text-slate-400 mb-3 leading-relaxed">
+                  Mobile OS simulator with 8 viewport modes, 0-9 Photoshop Z-layers, and async coroutine channels.
+                </p>
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded">AppzChan</span>
+                  <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded">Haptics</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ============================================================= -->
+            <!-- TAB 4: SUPPORT & TIP JAR -->
+            <!-- ============================================================= -->
+            <div id="view-tip" hx-show="activeTab === 'tip'" class="space-y-4">
+              
+              <div class="p-6 rounded-3xl bg-slate-900/95 border border-slate-800 flex flex-col items-center text-center shadow-2xl relative overflow-hidden">
+                <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-2xl mb-3 text-amber-400 shadow-inner">
+                  ☕
+                </div>
+                <h3 class="font-extrabold text-base text-white mb-1">Fuel the Open Source Journey</h3>
+                <p class="text-xs text-slate-400 max-w-xs mb-4">
+                  Every coffee powers the open-source development of Hyperstack, Hypersheet, and lean web tools.
+                </p>
+
+                <!-- Tip preset chips -->
+                <div class="grid grid-cols-4 gap-2.5 w-full mb-4">
+                  <button onclick="selectTip(3)" id="tip-btn-3"
+                          class="tip-btn p-3 rounded-2xl border border-slate-800 bg-slate-950 flex flex-col items-center justify-center transition-all active:scale-95">
+                    <span class="text-base font-black">$3</span>
+                    <span class="text-[10px] text-slate-400">Espresso</span>
+                  </button>
+                  <button onclick="selectTip(5)" id="tip-btn-5"
+                          class="tip-btn p-3 rounded-2xl border border-slate-800 bg-slate-950 flex flex-col items-center justify-center transition-all active:scale-95">
+                    <span class="text-base font-black">$5</span>
+                    <span class="text-[10px] text-slate-400">Boba</span>
+                  </button>
+                  <button onclick="selectTip(15)" id="tip-btn-15"
+                          class="tip-btn p-3 rounded-2xl border border-amber-500/60 bg-amber-500/20 text-white flex flex-col items-center justify-center transition-all active:scale-95 shadow-md">
+                    <span class="text-base font-black">$15</span>
+                    <span class="text-[10px] text-slate-300">Pizza</span>
+                  </button>
+                  <button onclick="selectTip(50)" id="tip-btn-50"
+                          class="tip-btn p-3 rounded-2xl border border-slate-800 bg-slate-950 flex flex-col items-center justify-center transition-all active:scale-95">
+                    <span class="text-base font-black">$50</span>
+                    <span class="text-[10px] text-slate-400">Sponsor</span>
+                  </button>
+                </div>
+
+                <!-- Custom Note -->
+                <input type="text" id="tip-message-input" placeholder="Add an optional friendly message..."
+                       class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white placeholder:text-slate-500 mb-4 focus:outline-none focus:border-amber-500" />
+
+                <!-- Action Button with Sound & Confetti Shockwave -->
+                <button onclick="processTip()" 
+                        class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 font-black text-xs text-slate-950 tracking-wide shadow-lg shadow-amber-500/25 active:scale-95 transition-all flex items-center justify-center gap-2">
+                  <span>❤️ Send Support (<span id="tip-submit-label">$15</span>)</span>
+                </button>
+
+                <!-- Live Counter -->
+                <div class="mt-4 text-[10px] font-mono text-slate-400 flex items-center gap-1.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                  <span>Total community fuel: <strong class="text-slate-200" id="tip-total-count">$240</strong></span>
+                </div>
+              </div>
+
+            </div>
+
+          </section>
+
+        </main>
+
+        <!-- 4. BOTTOM FLOATING NAVIGATION BAR -->
+        <app-navbar mode="float" behavior="always-visible" 
+                    class="mx-3 mb-3 rounded-2xl bg-slate-900/95 backdrop-blur-lg border border-slate-800/80 shadow-2xl h-15 px-3 flex items-center justify-around shrink-0 z-40">
+          
+          <button onclick="switchTab('links')" id="tab-btn-links"
+                  class="flex flex-col items-center gap-1 text-[10px] font-bold text-indigo-400 transition-colors py-1">
+            <span class="text-base">🔗</span>
+            <span>Links</span>
+          </button>
+
+          <button onclick="switchTab('chat')" id="tab-btn-chat"
+                  class="flex flex-col items-center gap-1 text-[10px] font-bold text-slate-400 hover:text-white transition-colors relative py-1">
+            <span class="text-base">💬</span>
+            <span>Bio Chat</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-500 absolute top-0.5 right-1 animate-pulse"></span>
+          </button>
+
+          <button onclick="switchTab('portfolio')" id="tab-btn-portfolio"
+                  class="flex flex-col items-center gap-1 text-[10px] font-bold text-slate-400 hover:text-white transition-colors py-1">
+            <span class="text-base">💼</span>
+            <span>Portfolio</span>
+          </button>
+
+          <button onclick="switchTab('tip')" id="tab-btn-tip"
+                  class="flex flex-col items-center gap-1 text-[10px] font-bold text-slate-400 hover:text-white transition-colors py-1">
+            <span class="text-base">☕</span>
+            <span>Tip Jar</span>
+          </button>
+
+        </app-navbar>
+
+        <!-- 5. SPRING BOTTOM SHEETS (Layer 9) -->
+
+        <!-- Sheet 1: 1-on-1 Advisory Booking Modal -->
+        <app-bottom-sheet id="sheet-booking" data-open="false"
+                          class="absolute inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex flex-col justify-end transition-all duration-300 opacity-0 pointer-events-none translate-y-full">
+          <div class="bg-slate-900 border-t border-slate-700/80 rounded-t-3xl p-5 space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+              <div class="flex items-center gap-2">
+                <span class="text-lg">📅</span>
+                <h3 class="font-extrabold text-sm text-white">Book 1-on-1 Architecture Call</h3>
+              </div>
+              <button onclick="$appz.sheetClose('#sheet-booking')" class="w-7 h-7 rounded-full bg-slate-800 text-xs text-slate-300 flex items-center justify-center">✕</button>
+            </div>
+            
+            <p class="text-xs text-slate-400">45-minute private technical consultation with Alex Rivera.</p>
+
+            <div>
+              <label class="block text-[11px] font-bold text-slate-300 mb-1.5">Select Preferred Day</label>
+              <div class="grid grid-cols-3 gap-2">
+                <button onclick="selectBookingDay(this, 'Tomorrow')" class="booking-day-btn p-2 rounded-xl border border-indigo-500 bg-indigo-500/20 text-white font-bold text-xs">Tomorrow</button>
+                <button onclick="selectBookingDay(this, 'Thursday')" class="booking-day-btn p-2 rounded-xl border border-slate-800 bg-slate-950 text-slate-400 font-bold text-xs">Thursday</button>
+                <button onclick="selectBookingDay(this, 'Friday')" class="booking-day-btn p-2 rounded-xl border border-slate-800 bg-slate-950 text-slate-400 font-bold text-xs">Friday</button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold text-slate-300 mb-1.5">Select Time Slot (UTC)</label>
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="selectBookingTime(this, '14:00 UTC')" class="booking-time-btn p-2 rounded-xl border border-indigo-500 bg-indigo-500/20 text-white font-mono text-xs">14:00 UTC</button>
+                <button onclick="selectBookingTime(this, '17:30 UTC')" class="booking-time-btn p-2 rounded-xl border border-slate-800 bg-slate-950 text-slate-400 font-mono text-xs">17:30 UTC</button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold text-slate-300 mb-1.5">Your Work Email</label>
+              <input type="email" id="booking-email-input" placeholder="you@company.com" required
+                     class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500" />
+            </div>
+
+            <button onclick="confirmBooking()"
+                    class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-600/30 active:scale-95 transition-all">
+              Confirm Advisory Booking ($150)
+            </button>
+          </div>
+        </app-bottom-sheet>
+
+        <!-- Sheet 2: Tip Jar Quick Sheet -->
+        <app-bottom-sheet id="sheet-tip" data-open="false"
+                          class="absolute inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex flex-col justify-end transition-all duration-300 opacity-0 pointer-events-none translate-y-full">
+          <div class="bg-slate-900 border-t border-slate-700/80 rounded-t-3xl p-5 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+              <div class="flex items-center gap-2">
+                <span class="text-lg">☕</span>
+                <h3 class="font-extrabold text-sm text-white">Quick Tip Jar</h3>
+              </div>
+              <button onclick="$appz.sheetClose('#sheet-tip')" class="w-7 h-7 rounded-full bg-slate-800 text-xs text-slate-300 flex items-center justify-center">✕</button>
+            </div>
+            <p class="text-xs text-slate-400">Support open-source development with a one-tap micro tip.</p>
+            <div class="grid grid-cols-4 gap-2">
+              <button onclick="selectTip(3)" class="p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs font-bold text-white">$3</button>
+              <button onclick="selectTip(5)" class="p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs font-bold text-white">$5</button>
+              <button onclick="selectTip(15)" class="p-2.5 rounded-xl border border-amber-500 bg-amber-500/20 text-xs font-bold text-white">$15</button>
+              <button onclick="selectTip(50)" class="p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs font-bold text-white">$50</button>
+            </div>
+            <button onclick="processTip(); $appz.sheetClose('#sheet-tip')" 
+                    class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 font-extrabold text-xs text-slate-950 active:scale-95 transition-all">
+              Send Support ❤️
+            </button>
+          </div>
+        </app-bottom-sheet>
+
+        <!-- Sheet 3: Profile Share & QR Code -->
+        <app-bottom-sheet id="sheet-share" data-open="false"
+                          class="absolute inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex flex-col justify-end transition-all duration-300 opacity-0 pointer-events-none translate-y-full">
+          <div class="bg-slate-900 border-t border-slate-700/80 rounded-t-3xl p-5 space-y-4 shadow-2xl flex flex-col items-center text-center">
+            <div class="w-full flex items-center justify-between pb-2 border-b border-slate-800">
+              <h3 class="font-extrabold text-sm text-white">Share Alex Rivera's Bio</h3>
+              <button onclick="$appz.sheetClose('#sheet-share')" class="w-7 h-7 rounded-full bg-slate-800 text-xs text-slate-300 flex items-center justify-center">✕</button>
+            </div>
+            
+            <!-- High Contrast QR Code SVG -->
+            <div class="p-4 bg-white rounded-2xl shadow-xl inline-block my-2">
+              <svg class="w-36 h-36" viewBox="0 0 100 100" fill="none">
+                <rect width="100" height="100" fill="white"/>
+                <!-- Outer Corners -->
+                <path d="M10 10h25v25h-25zM15 15h15v15h-15zM20 20h5v5h-5z" fill="black"/>
+                <path d="M65 10h25v25h-25zM70 15h15v15h-15zM75 20h5v5h-5z" fill="black"/>
+                <path d="M10 65h25v25h-25zM15 70h15v15h-15zM20 75h5v5h-5z" fill="black"/>
+                <!-- Data blocks -->
+                <path d="M40 15h5v5h-5zM50 15h5v5h-5zM45 25h10v5h-10zM15 45h5v10h-5zM25 45h10v5h-10zM40 40h20v5h-20zM45 50h5v10h-5zM60 45h10v10h-10zM75 45h10v5h-10zM40 65h5v20h-5zM50 70h10v5h-10zM65 65h5v10h-5zM75 70h10v15h-10zM85 85h5v5h-5z" fill="black"/>
+              </svg>
+            </div>
+            <p class="text-xs text-slate-400">Scan with your smartphone camera to open this bio on mobile.</p>
+
+            <div class="w-full flex gap-2">
+              <button onclick="copyBioUrl()" 
+                      class="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md shadow-indigo-600/30 active:scale-95 transition-all">
+                📋 Copy Link
+              </button>
+              <button onclick="nativeShare()" 
+                      class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs active:scale-95 transition-all">
+                📤 Share via...
+              </button>
+            </div>
+          </div>
+        </app-bottom-sheet>
+
+      </app-shellui>
+    </div>
+  </main>
+
+  <!-- Interactive JavaScript Logic (Zero Node/NPM) -->
+  <script>
+    // Live Clock Update
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const el = document.getElementById('live-clock');
+      if (el) el.textContent = `${h}:${m}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Tab Switching
+    function switchTab(tabName) {
+      if (window.$appz) $appz.haptic('selection');
+      if (window.$sound) $sound('click');
+
+      const tabs = ['links', 'chat', 'portfolio', 'tip'];
+      tabs.forEach(t => {
+        const view = document.getElementById(`view-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (t === tabName) {
+          if (view) view.style.display = 'block';
+          if (btn) {
+            btn.className = 'flex flex-col items-center gap-1 text-[10px] font-bold text-indigo-400 transition-colors py-1';
+          }
+        } else {
+          if (view) view.style.display = 'none';
+          if (btn) {
+            btn.className = 'flex flex-col items-center gap-1 text-[10px] font-bold text-slate-400 hover:text-white transition-colors py-1';
+          }
+        }
+      });
+      // Scroll to top of main area
+      const main = document.getElementById('main-scroll');
+      if (main && tabName !== 'chat') main.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Real-Time 0ms Link Filter (HxFlash-style instant filtering)
+    function filterLinks(query) {
+      const q = query.toLowerCase().trim();
+      const items = document.querySelectorAll('.bio-link-item');
+      items.forEach(item => {
+        const text = (item.getAttribute('data-search') || '') + ' ' + item.textContent.toLowerCase();
+        if (!q || text.includes(q)) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+
+    function clearSearch() {
+      const input = document.querySelector('input[hx-model="searchQuery"]');
+      if (input) {
+        input.value = '';
+        filterLinks('');
+      }
+    }
+
+    // Category Filter Pills
+    function setCategoryFilter(category) {
+      if (window.$appz) $appz.haptic('selection');
+      if (window.$sound) $sound('click');
+
+      document.querySelectorAll('.cat-chip').forEach(btn => {
+        if (btn.getAttribute('data-cat-btn') === category) {
+          btn.className = 'cat-chip px-3 py-1 rounded-full text-[10px] font-bold bg-indigo-600 text-white shrink-0 active:scale-95 transition-all';
+        } else {
+          btn.className = 'cat-chip px-3 py-1 rounded-full text-[10px] font-bold bg-slate-800 text-slate-400 hover:text-white shrink-0 active:scale-95 transition-all';
+        }
+      });
+
+      const items = document.querySelectorAll('.bio-link-item');
+      items.forEach(item => {
+        const itemCat = item.getAttribute('data-category');
+        if (category === 'all' || itemCat === category) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+
+    // Audio Preview Equalizer Simulation
+    let isAudioPlaying = false;
+    function toggleAudioPreview() {
+      isAudioPlaying = !isAudioPlaying;
+      if (window.$appz) $appz.haptic('impact');
+      if (window.$sound) $sound('click');
+
+      const icon = document.getElementById('audio-icon');
+      const label = document.getElementById('audio-status-label');
+      const eqBars = document.querySelectorAll('.eq-bar');
+
+      if (isAudioPlaying) {
+        if (icon) icon.textContent = '❚❚';
+        if (label) label.textContent = 'Playing • 0:14';
+        eqBars.forEach((bar, i) => {
+          bar.classList.add(`eq-bar-${(i % 4) + 1}`);
+        });
+        if (window.$toast) $toast('Audio preview started 🎙️', 'info');
+      } else {
+        if (icon) icon.textContent = '▶';
+        if (label) label.textContent = 'Preview (0:45)';
+        eqBars.forEach((bar, i) => {
+          bar.classList.remove('eq-bar-1', 'eq-bar-2', 'eq-bar-3', 'eq-bar-4');
+        });
+      }
+    }
+
+    // Link Click Telemetry
+    function registerClick(name) {
+      if (window.$appz) $appz.haptic('selection');
+      if (window.$sound) $sound('click');
+      if (window.$toast) $toast(`Opening ${name}...`, 'info');
+    }
+
+    // Article Alert
+    function alertArticle(title) {
+      if (window.$appz) $appz.haptic('selection');
+      if (window.$sound) $sound('click');
+      if (window.$toast) $toast(`Opened: "${title}"`, 'success');
+    }
+
+    // Chat Messenger Logic
+    const alexKnowledgeBase = {
+      'project': "My primary project is Hyperstack — a hyperreactive lean framework suite for HTMX and Go with zero React runtime. We also just launched Hypersheet for in-browser topological calculation!",
+      'stack': "Our core stack is Golang for native backend concurrency + Hyperstack micro-engines (HxBolt, HxFlash, AppzOS) on the front-end. Zero virtual DOM, zero Node.js!",
+      'hire': "I am currently accepting select architectural advisory and Fractional Staff/Principal Engineer roles! Feel free to book a 45-minute slot using the 'Book 1:1' button.",
+      'advisory': "You can book directly via the 'Book 1:1' sheet! We cover system architecture, eliminating SPA complexity, and scaling Go/HTMX to high throughput.",
+      'why': "Because 200MB JavaScript bundles and hydration mismatches are completely unnecessary. HTML over the wire with fine-grained reactive signals is 10x faster and far more reliable.",
+      'coffee': "I brew with a Fellow Ode Gen 2 grinder and a V60 ceramic dripper! Ethiopia Yirgacheffe natural process is my daily fuel ☕."
+    };
+
+    function sendQuickPrompt(promptText) {
+      appendChatMessage('visitor', promptText);
+      simulateAlexReply(promptText);
+    }
+
+    function handleChatSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('chat-user-input');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      appendChatMessage('visitor', text);
+      simulateAlexReply(text);
+    }
+
+    function appendChatMessage(sender, text) {
+      if (window.$sound) $sound('ping');
+      const stream = document.getElementById('chat-messages-stream');
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      const msgDiv = document.createElement('div');
+      if (sender === 'visitor') {
+        msgDiv.className = 'flex items-start gap-2.5 max-w-[85%] ml-auto flex-row-reverse animate-fade-in';
+        msgDiv.innerHTML = `
+          <div class="w-7 h-7 rounded-full bg-emerald-600 flex items-center justify-center text-white text-xs font-bold shrink-0">You</div>
+          <div class="p-3 rounded-2xl rounded-tr-sm bg-indigo-600 text-white text-xs leading-relaxed shadow-sm">
+            ${escapeHtml(text)}
+            <div class="text-[9px] text-indigo-200 text-right mt-1 font-mono">${time} ✓✓</div>
+          </div>`;
+      } else {
+        msgDiv.className = 'flex items-start gap-2.5 max-w-[88%] animate-fade-in';
+        msgDiv.innerHTML = `
+          <div class="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0">A</div>
+          <div class="p-3 rounded-2xl rounded-tl-sm bg-slate-800 border border-slate-700/70 text-xs text-slate-200 leading-relaxed shadow-sm">
+            ${escapeHtml(text)}
+            <div class="text-[9px] text-slate-400 text-right mt-1 font-mono">${time}</div>
+          </div>`;
+      }
+      stream.appendChild(msgDiv);
+      stream.scrollTop = stream.scrollHeight;
+    }
+
+    function simulateAlexReply(userText) {
+      const indicator = document.getElementById('typing-indicator');
+      if (indicator) indicator.classList.remove('hidden');
+
+      const lower = userText.toLowerCase();
+      let answer = "Thanks for asking! That's a great question. You can check out my projects tab above or book a quick 1-on-1 if you'd like to dive deep into your architecture!";
+      for (const [k, v] of Object.entries(alexKnowledgeBase)) {
+        if (lower.includes(k)) {
+          answer = v;
+          break;
+        }
+      }
+
+      setTimeout(() => {
+        if (indicator) indicator.classList.add('hidden');
+        appendChatMessage('alex', answer);
+        if (window.$appz) $appz.haptic('selection');
+      }, 700);
+    }
+
+    function escapeHtml(str) {
+      const p = document.createElement('p');
+      p.textContent = str;
+      return p.innerHTML;
+    }
+
+    // Tip Jar Logic
+    let currentTip = 15;
+    let tipTotal = 240;
+
+    function selectTip(amount) {
+      currentTip = amount;
+      if (window.$appz) $appz.haptic('selection');
+      if (window.$sound) $sound('click');
+
+      [3, 5, 15, 50].forEach(a => {
+        const btn = document.getElementById(`tip-btn-${a}`);
+        if (btn) {
+          if (a === amount) {
+            btn.className = 'tip-btn p-3 rounded-2xl border border-amber-500/60 bg-amber-500/20 text-white flex flex-col items-center justify-center transition-all active:scale-95 shadow-md';
+          } else {
+            btn.className = 'tip-btn p-3 rounded-2xl border border-slate-800 bg-slate-950 flex flex-col items-center justify-center transition-all active:scale-95';
+          }
+        }
+      });
+      const lbl = document.getElementById('tip-submit-label');
+      if (lbl) lbl.textContent = `$${amount}`;
+    }
+
+    function processTip() {
+      tipTotal += currentTip;
+      const countEl = document.getElementById('tip-total-count');
+      if (countEl) countEl.textContent = `$${tipTotal}`;
+
+      if (window.$sound) $sound('success');
+      if (window.$blast) $blast({ radius: 280, force: 35 });
+      if (window.$toast) $toast(`Sent $${currentTip} tip! Thank you so much for your support! ❤️`, 'success');
+      const noteInput = document.getElementById('tip-message-input');
+      if (noteInput) noteInput.value = '';
+    }
+
+    // Booking Advisory Modal Logic
+    function selectBookingDay(btn, day) {
+      document.querySelectorAll('.booking-day-btn').forEach(b => {
+        b.className = 'booking-day-btn p-2 rounded-xl border border-slate-800 bg-slate-950 text-slate-400 font-bold text-xs';
+      });
+      btn.className = 'booking-day-btn p-2 rounded-xl border border-indigo-500 bg-indigo-500/20 text-white font-bold text-xs';
+      if (window.$appz) $appz.haptic('selection');
+    }
+
+    function selectBookingTime(btn, time) {
+      document.querySelectorAll('.booking-time-btn').forEach(b => {
+        b.className = 'booking-time-btn p-2 rounded-xl border border-slate-800 bg-slate-950 text-slate-400 font-mono text-xs';
+      });
+      btn.className = 'booking-time-btn p-2 rounded-xl border border-indigo-500 bg-indigo-500/20 text-white font-mono text-xs';
+      if (window.$appz) $appz.haptic('selection');
+    }
+
+    function confirmBooking() {
+      const emailInput = document.getElementById('booking-email-input');
+      const email = emailInput ? emailInput.value.trim() : '';
+      if (!email || !email.includes('@')) {
+        if (window.$toast) $toast('Please enter a valid work email!', 'warning');
+        return;
+      }
+      if (window.$sound) $sound('success');
+      if (window.$toast) $toast(`Advisory booked! Calendar invite sent to ${email}`, 'success');
+      if (window.$appz) $appz.sheetClose('#sheet-booking');
+      if (emailInput) emailInput.value = '';
+    }
+
+    // Theme Switcher
+    const themes = ['dark', 'emerald', 'sunset', 'cyberpunk', 'light'];
+    let themeIdx = 0;
+    function cycleTheme() {
+      themeIdx = (themeIdx + 1) % themes.length;
+      const theme = themes[themeIdx];
+      document.documentElement.setAttribute('data-theme', theme);
+      if (window.$toast) $toast(`Theme: ${theme.toUpperCase()}`, 'info');
+      if (window.$appz) $appz.haptic('selection');
+      if (window.$sound) $sound('click');
+    }
+
+    // Share & URL Copy
+    function copyBioUrl() {
+      if (window.$copy) {
+        $copy(window.location.href);
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+      }
+      if (window.$toast) $toast('Profile URL copied to clipboard!', 'success');
+      if (window.$sound) $sound('click');
+    }
+
+    function nativeShare() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Alex Rivera — A Bio Chat',
+          text: 'Check out Alex Rivera\'s Link-in-Bio and interactive Bio Chat on Hyperstack!',
+          url: window.location.href
+        }).catch(() => {});
+      } else {
+        copyBioUrl();
+      }
+    }
+
+    // Viewport Mode Switcher for Desktop simulator
+    function setSimMode(mode) {
+      const frame = document.getElementById('device-frame');
+      const modes = ['Mob-P', 'Mob-H', 'Tab-P', 'Full'];
+      modes.forEach(m => {
+        const btn = document.getElementById(`btn-mode-${m}`);
+        if (btn) {
+          if (m === mode) {
+            btn.className = 'px-3 py-1.5 rounded-xl bg-indigo-600 text-white transition-all';
+          } else {
+            btn.className = 'px-3 py-1.5 rounded-xl bg-slate-800/80 text-slate-400 hover:text-white transition-all';
+          }
+        }
+      });
+
+      if (!frame) return;
+
+      if (mode === 'Mob-P') {
+        frame.style.width = '390px';
+        frame.style.height = '844px';
+        frame.style.borderRadius = '48px';
+        frame.style.borderWidth = '10px';
+      } else if (mode === 'Mob-H') {
+        frame.style.width = '844px';
+        frame.style.height = '420px';
+        frame.style.borderRadius = '40px';
+        frame.style.borderWidth = '10px';
+      } else if (mode === 'Tab-P') {
+        frame.style.width = '768px';
+        frame.style.height = '880px';
+        frame.style.borderRadius = '32px';
+        frame.style.borderWidth = '12px';
+      } else if (mode === 'Full') {
+        frame.style.width = '100%';
+        frame.style.height = '100vh';
+        frame.style.borderRadius = '0px';
+        frame.style.borderWidth = '0px';
+      }
+      if (window.$appz) $appz.haptic('selection');
+    }
+  </script>
+</body>
+</html>

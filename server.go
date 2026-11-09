@@ -42,6 +42,10 @@ var componentsList = []string{
 	"smart-tire-pressure-tpms", "smart-turn-by-turn-nav", "smart-uv-index-dial", "smart-weather-hero",
 	"smart-wind-compass",
 	"hy-hook",
+	"bio-profile",
+	"bio-links",
+	"bio-chat",
+	"bio-tipjar",
 }
 
 func formatName(slug string) string {
@@ -214,6 +218,72 @@ func main() {
 
 		if p == "/app/mobile" || p == "/demo/mobile" || p == "/mobile" || p == "/appz" {
 			http.ServeFile(w, r, filepath.Join("views", "app-mobile.html"))
+			return
+		}
+
+		if p == "/bio" || p == "/demo/bio" || p == "/app/bio" || p == "/app-bio" {
+			http.ServeFile(w, r, filepath.Join("views", "app-bio.html"))
+			return
+		}
+
+		if p == "/api/bio/chat" {
+			if r.Method == http.MethodPost {
+				_ = r.ParseForm()
+				msg := r.FormValue("message")
+				if msg == "" {
+					msg = "Hello!"
+				}
+				nowStr := time.Now().Format("15:04")
+				reply := "Thanks for asking! That's a great question. You can check out my projects tab above or book a quick 1-on-1 if you'd like to dive deep into your architecture!"
+				lower := strings.ToLower(msg)
+				if strings.Contains(lower, "project") {
+					reply = "My primary project is Hyperstack — a hyperreactive lean framework suite for HTMX and Go with zero React runtime!"
+				} else if strings.Contains(lower, "stack") {
+					reply = "Our core stack is Golang for backend concurrency + Hyperstack micro-engines (HxBolt, HxFlash, AppzOS). Zero virtual DOM!"
+				} else if strings.Contains(lower, "hire") || strings.Contains(lower, "advisory") {
+					reply = "I am currently accepting select architectural advisory roles! Feel free to book a 45m slot via the 'Book 1:1' button."
+				} else if strings.Contains(lower, "coffee") {
+					reply = "I brew with a Fellow Ode Gen 2 grinder and a V60 ceramic dripper! Ethiopia Yirgacheffe natural process is my fuel ☕."
+				}
+				w.Header().Set("Content-Type", "text/html; charset=utf-8")
+				fmt.Fprintf(w, `
+<div class="flex items-start gap-2.5 max-w-[85%%] ml-auto flex-row-reverse animate-fade-in">
+  <div class="w-7 h-7 rounded-full bg-emerald-600 flex items-center justify-center text-white text-xs font-bold shrink-0">You</div>
+  <div class="p-3 rounded-2xl rounded-tr-sm bg-indigo-600 text-white text-xs leading-relaxed shadow-sm">
+    %s
+    <div class="text-[9px] text-indigo-200 text-right mt-1 font-mono">%s ✓✓</div>
+  </div>
+</div>
+<div class="flex items-start gap-2.5 max-w-[88%%] animate-fade-in">
+  <div class="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0">A</div>
+  <div class="p-3 rounded-2xl rounded-tl-sm bg-slate-800 border border-slate-700/70 text-xs text-slate-200 leading-relaxed shadow-sm">
+    %s
+    <div class="text-[9px] text-slate-400 text-right mt-1 font-mono">%s</div>
+  </div>
+</div>`, escapeHTML(msg), nowStr, reply, nowStr)
+				return
+			}
+		}
+
+		if p == "/api/bio/tip" {
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"status":  "success",
+				"message": "Thank you for supporting open-source development! ❤️",
+			})
+			return
+		}
+
+		if p == "/api/bio/links" {
+			w.Header().Set("Content-Type", "application/json")
+			links := []map[string]interface{}{
+				{"id": "hyperstack", "title": "Hyperstack Framework", "url": "https://github.com/hyperlibs/hyperstack", "category": "projects", "stars": 8420},
+				{"id": "hypersheet", "title": "Hypersheet Live Cloud", "url": "/demo/hypersheet", "category": "projects", "rows": 100000},
+				{"id": "appzos", "title": "AppzOS Mobile Platform", "url": "/demo/mobile", "category": "projects", "modes": 8},
+				{"id": "article-zero-vdom", "title": "The Zero-Virtual-DOM Manifesto", "url": "#", "category": "articles", "readTime": "7 min"},
+				{"id": "advisory", "title": "1-on-1 Architecture Advisory", "url": "#", "category": "store", "price": "$150"},
+			}
+			json.NewEncoder(w).Encode(links)
 			return
 		}
 

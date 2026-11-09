@@ -1,0 +1,55 @@
+<!-- 
+  Component: bio-links.html
+  Configurable State: activeCategory ('all'|'projects'|'articles'|'store'), query (string)
+  Usage: 0ms real-time search & categorized reactive link cards with hx-vibe-card 3D tilt
+-->
+<div hx-ext="reactive" hx-state="{ activeCategory: 'all', query: '' }" class="space-y-3">
+  <!-- Search Bar -->
+  <div class="relative mb-3">
+    <input type="text" placeholder="Search links, articles & projects..." 
+           hx-model="query"
+           class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 shadow-inner" />
+    <span class="absolute left-3 top-2.5 text-xs text-slate-500">🔍</span>
+  </div>
+
+  <!-- Featured Spotlight Link -->
+  <div class="bio-link-card group relative rounded-2xl border border-indigo-500/50 bg-gradient-to-r from-indigo-950/60 via-slate-900 to-indigo-950/60 p-4 shadow-lg shadow-indigo-500/10 transition-all duration-200 active:scale-[0.98]"
+       hx-vibe-card="8">
+    <a href="https://github.com/hyperlibs/hyperstack" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3.5">
+      <div class="w-11 h-11 rounded-xl bg-indigo-600/20 border border-indigo-500/40 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
+        ⚡
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 mb-0.5">
+          <h3 class="font-bold text-sm text-white group-hover:text-indigo-400 transition-colors truncate">Hyperstack Framework</h3>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">v1.0.0</span>
+        </div>
+        <p class="text-xs text-slate-400 line-clamp-1">HTMX on Steroids. Zero-VDOM reactive micro-engines suite.</p>
+        <span class="text-[10px] font-mono text-indigo-400 mt-1 inline-block">★ 8,420 stars</span>
+      </div>
+      <div class="w-8 h-8 rounded-full bg-slate-800/60 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-indigo-600 transition-colors shrink-0">
+        ↗
+      </div>
+    </a>
+  </div>
+
+  <!-- Standard Link -->
+  <div class="bio-link-card group relative rounded-2xl border border-slate-800 bg-slate-900/90 p-4 transition-all duration-200 hover:border-slate-700 active:scale-[0.98]"
+       hx-vibe-card="8">
+    <a href="/demo/hypersheet" class="flex items-center gap-3.5">
+      <div class="w-11 h-11 rounded-xl bg-slate-800 border border-slate-700/60 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
+        📊
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 mb-0.5">
+          <h3 class="font-bold text-sm text-white group-hover:text-indigo-400 transition-colors truncate">Hypersheet Live Cloud</h3>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Reactive</span>
+        </div>
+        <p class="text-xs text-slate-400 line-clamp-1">Zero-NPM spreadsheet core with Kahn's DAG formula engine.</p>
+      </div>
+      <div class="w-8 h-8 rounded-full bg-slate-800/60 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-indigo-600 transition-colors shrink-0">
+        ↗
+      </div>
+    </a>
+  </div>
+</div>
