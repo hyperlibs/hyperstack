@@ -1,37 +1,37 @@
 <!-- 
   Component: bio-navbar.html
-  Theme: Light Minimalist PWA
-  Purpose: Floating App Navigation Bar (<app-navbar>) for Bio, Feed, Talk & PWA Install
+  Theme: Ultra-Compact Minimalist Light
+  Purpose: Ultra-compact Floating App Navigation Bar (<app-navbar>)
 -->
 <app-navbar mode="float" behavior="always-visible" 
-            class="fixed bottom-3 inset-x-0 mx-auto max-w-md px-4 z-40 flex items-center justify-between">
-  <div class="w-full bg-white/90 backdrop-blur-xl border border-slate-200/90 rounded-2xl shadow-xl shadow-slate-900/5 h-16 px-4 flex items-center justify-around">
-    <!-- Bio Tab Button -->
+            class="fixed bottom-2.5 inset-x-0 mx-auto max-w-sm px-3 z-40 flex items-center justify-between">
+  <div class="w-full bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl shadow-lg shadow-slate-900/5 h-13 px-2 flex items-center justify-around">
+    <!-- Bio -->
     <button onclick="switchTab('bio')" id="nav-btn-bio" 
-            class="nav-tab-item flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all text-indigo-600 font-bold bg-indigo-50/80">
-      <span class="text-base leading-none">🔗</span>
-      <span class="text-[10px] tracking-tight">Bio</span>
+            class="nav-tab-item flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-all text-indigo-600 font-bold bg-indigo-50/80 active:scale-95">
+      <span class="text-sm leading-none">🔗</span>
+      <span class="text-[9px] tracking-tight">Bio</span>
     </button>
 
-    <!-- Feed Tab Button -->
+    <!-- Feed -->
     <button onclick="switchTab('feed')" id="nav-btn-feed" 
-            class="nav-tab-item flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all text-slate-400 hover:text-slate-700">
-      <span class="text-base leading-none">📝</span>
-      <span class="text-[10px] tracking-tight">Feed</span>
+            class="nav-tab-item flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-all text-slate-400 hover:text-slate-700 active:scale-95">
+      <span class="text-sm leading-none">📝</span>
+      <span class="text-[9px] tracking-tight">Feed</span>
     </button>
 
-    <!-- Talk Tab Button -->
+    <!-- Talk -->
     <button onclick="switchTab('talk')" id="nav-btn-talk" 
-            class="nav-tab-item flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all text-slate-400 hover:text-slate-700">
-      <span class="text-base leading-none">💬</span>
-      <span class="text-[10px] tracking-tight">Talk</span>
+            class="nav-tab-item flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-all text-slate-400 hover:text-slate-700 active:scale-95">
+      <span class="text-sm leading-none">💬</span>
+      <span class="text-[9px] tracking-tight">Talk</span>
     </button>
 
-    <!-- PWA Install / Share Button -->
+    <!-- Install -->
     <button onclick="triggerPwaInstall()" id="nav-btn-install" 
-            class="flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all text-slate-400 hover:text-indigo-600">
-      <span class="text-base leading-none">📲</span>
-      <span class="text-[10px] tracking-tight">Install</span>
+            class="flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-all text-slate-400 hover:text-indigo-600 active:scale-95">
+      <span class="text-sm leading-none">📲</span>
+      <span class="text-[9px] tracking-tight">Install</span>
     </button>
   </div>
 </app-navbar>

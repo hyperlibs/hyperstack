@@ -1,23 +1,25 @@
 <!-- 
   Component: bio-feed.html
-  Theme: Light Minimalist
+  Theme: Ultra-Compact Minimalist Light
   Purpose: "Feed - i post what i do now - only text and emojis"
 -->
-<div hx-ext="reactive" class="space-y-3">
+<div hx-ext="reactive" class="space-y-1.5">
   <!-- Status update card 1 -->
-  <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2"
+  <div class="p-2.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs space-y-1"
        hx-state="{ liked: false, likes: 24 }">
-    <div class="flex items-center justify-between text-xs text-slate-400">
-      <span class="font-medium text-indigo-600">Now • What I'm doing</span>
+    <div class="flex items-center justify-between text-[10px] text-slate-400">
+      <span class="font-semibold text-indigo-600 flex items-center gap-1">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Right now
+      </span>
       <span class="font-mono">2h ago</span>
     </div>
-    <p class="text-sm text-slate-800 leading-relaxed font-normal">
+    <p class="text-xs text-slate-800 leading-snug font-normal">
       Shipped Hyperstack v1.1 release! Zero-eval signals are 2x faster now 🚀⚡️ Benchmarks looking super clean 📈✨
     </p>
-    <div class="pt-1 flex items-center justify-between text-xs text-slate-400 border-t border-slate-100">
-      <span class="text-[11px]">📍 San Francisco</span>
+    <div class="pt-1 flex items-center justify-between text-[10px] text-slate-400 border-t border-slate-100">
+      <span>📍 San Francisco, CA</span>
       <button hx-action="liked = !liked; likes = liked ? likes + 1 : likes - 1"
-              class="flex items-center gap-1 text-xs hover:text-rose-500 transition-colors"
+              class="flex items-center gap-1 hover:text-rose-500 transition-colors"
               hx-class="{ 'text-rose-500 font-bold': liked, 'text-slate-400': !liked }">
         <span hx-text="liked ? '❤️' : '🤍'">🤍</span>
         <span hx-text="likes">24</span>
@@ -26,19 +28,19 @@
   </div>
 
   <!-- Status update card 2 -->
-  <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2"
+  <div class="p-2.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs space-y-1"
        hx-state="{ liked: false, likes: 19 }">
-    <div class="flex items-center justify-between text-xs text-slate-400">
-      <span class="font-medium text-slate-500">Update</span>
+    <div class="flex items-center justify-between text-[10px] text-slate-400">
+      <span class="font-medium text-slate-500">Earlier today</span>
       <span class="font-mono">6h ago</span>
     </div>
-    <p class="text-sm text-slate-800 leading-relaxed font-normal">
+    <p class="text-xs text-slate-800 leading-snug font-normal">
       Brewing fresh Ethiopian natural pour-over ☕️✨ Reading distributed consensus papers on Sunday morning 📖🎧
     </p>
-    <div class="pt-1 flex items-center justify-between text-xs text-slate-400 border-t border-slate-100">
-      <span class="text-[11px]">📍 Mission District</span>
+    <div class="pt-1 flex items-center justify-between text-[10px] text-slate-400 border-t border-slate-100">
+      <span>📍 Mission District</span>
       <button hx-action="liked = !liked; likes = liked ? likes + 1 : likes - 1"
-              class="flex items-center gap-1 text-xs hover:text-rose-500 transition-colors"
+              class="flex items-center gap-1 hover:text-rose-500 transition-colors"
               hx-class="{ 'text-rose-500 font-bold': liked, 'text-slate-400': !liked }">
         <span hx-text="liked ? '❤️' : '🤍'">🤍</span>
         <span hx-text="likes">19</span>
@@ -47,19 +49,19 @@
   </div>
 
   <!-- Status update card 3 -->
-  <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2"
+  <div class="p-2.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs space-y-1"
        hx-state="{ liked: false, likes: 42 }">
-    <div class="flex items-center justify-between text-xs text-slate-400">
-      <span class="font-medium text-slate-500">Update</span>
+    <div class="flex items-center justify-between text-[10px] text-slate-400">
+      <span class="font-medium text-slate-500">Activity</span>
       <span class="font-mono">Yesterday</span>
     </div>
-    <p class="text-sm text-slate-800 leading-relaxed font-normal">
+    <p class="text-xs text-slate-800 leading-snug font-normal">
       Morning 5km run done 🏃‍♂️💨 Beautiful sunny morning over the bay ☀️🌉 Feeling energized for deep work 🔥💻
     </p>
-    <div class="pt-1 flex items-center justify-between text-xs text-slate-400 border-t border-slate-100">
-      <span class="text-[11px]">📍 Embarcadero</span>
+    <div class="pt-1 flex items-center justify-between text-[10px] text-slate-400 border-t border-slate-100">
+      <span>📍 Embarcadero</span>
       <button hx-action="liked = !liked; likes = liked ? likes + 1 : likes - 1"
-              class="flex items-center gap-1 text-xs hover:text-rose-500 transition-colors"
+              class="flex items-center gap-1 hover:text-rose-500 transition-colors"
               hx-class="{ 'text-rose-500 font-bold': liked, 'text-slate-400': !liked }">
         <span hx-text="liked ? '❤️' : '🤍'">🤍</span>
         <span hx-text="likes">42</span>
@@ -68,19 +70,19 @@
   </div>
 
   <!-- Status update card 4 -->
-  <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2"
+  <div class="p-2.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs space-y-1"
        hx-state="{ liked: false, likes: 31 }">
-    <div class="flex items-center justify-between text-xs text-slate-400">
-      <span class="font-medium text-slate-500">Update</span>
+    <div class="flex items-center justify-between text-[10px] text-slate-400">
+      <span class="font-medium text-slate-500">Engineering</span>
       <span class="font-mono">3 days ago</span>
     </div>
-    <p class="text-sm text-slate-800 leading-relaxed font-normal">
+    <p class="text-xs text-slate-800 leading-snug font-normal">
       Deep in Go channels & goroutine scheduling today 🧑‍💻 Benchmarking zero-allocation streaming at 1M RPS ⚡️📊
     </p>
-    <div class="pt-1 flex items-center justify-between text-xs text-slate-400 border-t border-slate-100">
-      <span class="text-[11px]">📍 Home Lab</span>
+    <div class="pt-1 flex items-center justify-between text-[10px] text-slate-400 border-t border-slate-100">
+      <span>📍 Home Lab</span>
       <button hx-action="liked = !liked; likes = liked ? likes + 1 : likes - 1"
-              class="flex items-center gap-1 text-xs hover:text-rose-500 transition-colors"
+              class="flex items-center gap-1 hover:text-rose-500 transition-colors"
               hx-class="{ 'text-rose-500 font-bold': liked, 'text-slate-400': !liked }">
         <span hx-text="liked ? '❤️' : '🤍'">🤍</span>
         <span hx-text="likes">31</span>

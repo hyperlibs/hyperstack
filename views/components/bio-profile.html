@@ -1,52 +1,40 @@
 <!-- 
   Component: bio-profile.html
-  Theme: Light Minimalist
-  Usage: Mobile-first Link-in-Bio profile header with avatar, bio, and social links
+  Theme: Ultra-Compact Minimalist Light
+  Usage: Mobile-first Link-in-Bio profile header with compact avatar, moniker, bio, and social links
 -->
 <div hx-ext="reactive" hx-state="{ isVerified: true }" 
-     class="flex flex-col items-center text-center p-6 bg-white border border-slate-200 rounded-3xl shadow-sm">
-  <!-- Avatar -->
-  <div class="relative mb-3">
-    <div class="w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-indigo-500 to-purple-600 shadow-md">
-      <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=280&q=80" 
-           alt="Alex Rivera" class="w-full h-full rounded-full object-cover border-2 border-white" />
+     class="p-3 bg-white border border-slate-200/80 rounded-2xl shadow-xs">
+  <div class="flex items-center gap-3">
+    <!-- Compact Avatar -->
+    <div class="relative shrink-0">
+      <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=140&q=80" 
+           alt="Alex Rivera" class="w-12 h-12 rounded-full object-cover border border-slate-200" />
+      <span class="w-3.5 h-3.5 rounded-full bg-blue-500 text-white text-[8px] font-bold absolute -bottom-0.5 -right-0.5 flex items-center justify-center border border-white" title="Verified Creator">✓</span>
+    </div>
+
+    <!-- Name & Moniker -->
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center justify-between">
+        <h1 class="text-sm font-bold text-slate-900 truncate">Alex Rivera</h1>
+        <button onclick="navigator.clipboard.writeText(window.location.href); alert('Profile link copied!');" 
+                title="Share Profile"
+                class="text-[11px] text-slate-500 hover:text-slate-900 px-2 py-0.5 rounded-md hover:bg-slate-100 transition-colors flex items-center gap-1">
+          <span>🔗</span> <span>Share Profile</span>
+        </button>
+      </div>
+      <p class="text-[11px] font-mono text-indigo-600 font-medium">@alex_hyperstack</p>
+      <p class="text-[11px] text-slate-600 truncate mt-0.5">Systems Architect • Building Hyperstack (Zero VDOM)</p>
     </div>
   </div>
 
-  <!-- Name & Verified Badge -->
-  <div class="flex items-center gap-1.5 justify-center mb-0.5">
-    <h1 class="text-xl font-bold text-slate-900 tracking-tight">Alex Rivera</h1>
-    <span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-blue-500 text-white text-[10px] font-bold shadow-sm" title="Verified Creator">✓</span>
+  <!-- Inline Socials Strip -->
+  <div class="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+    <div class="flex items-center gap-3">
+      <a href="https://github.com/hyperlibs/hyperstack" target="_blank" rel="noopener noreferrer" class="hover:text-slate-900 transition-colors" title="GitHub">🐙 GitHub</a>
+      <a href="https://x.com/" target="_blank" rel="noopener noreferrer" class="hover:text-slate-900 transition-colors" title="Twitter / X">𝕏 Twitter</a>
+      <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" class="hover:text-slate-900 transition-colors" title="LinkedIn">💼 LinkedIn</a>
+    </div>
+    <a href="mailto:alex@hyperstack.dev" class="text-indigo-600 font-medium hover:underline text-[11px]">alex@hyperstack.dev</a>
   </div>
-  <p class="text-xs font-mono font-medium text-indigo-600 mb-2">@alex_hyperstack</p>
-
-  <!-- Tagline / Bio -->
-  <p class="text-xs text-slate-600 max-w-xs mb-4 leading-relaxed font-normal">
-    Systems Architect & Open Source Creator. Building lean hyperreactive web systems with zero Virtual DOM.
-  </p>
-
-  <!-- Social Icons Strip -->
-  <div class="flex items-center justify-center gap-2 mb-4 flex-wrap">
-    <a href="https://github.com/hyperlibs/hyperstack" target="_blank" rel="noopener noreferrer" 
-       class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-sm text-slate-700 transition-colors"
-       title="GitHub">🐙</a>
-    <a href="https://x.com/" target="_blank" rel="noopener noreferrer" 
-       class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-sm text-slate-700 transition-colors"
-       title="X / Twitter">𝕏</a>
-    <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" 
-       class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-sm text-slate-700 transition-colors"
-       title="LinkedIn">💼</a>
-    <a href="https://youtube.com/" target="_blank" rel="noopener noreferrer" 
-       class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-sm text-slate-700 transition-colors"
-       title="YouTube">▶</a>
-    <a href="mailto:alex@hyperstack.dev" 
-       class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-sm text-slate-700 transition-colors"
-       title="Email">✉️</a>
-  </div>
-
-  <!-- Share Bio Button -->
-  <button onclick="navigator.clipboard.writeText(window.location.href); alert('Profile link copied to clipboard!');"
-          class="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs shadow-sm transition-colors flex items-center justify-center gap-1.5">
-    <span>🔗</span> <span>Share Profile</span>
-  </button>
 </div>
