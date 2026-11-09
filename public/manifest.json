@@ -1,0 +1,46 @@
+{
+  "name": "Alex Rivera • Bio, Feed & Talk",
+  "short_name": "Alex Rivera",
+  "description": "Mobile-first Link-in-Bio, 'What I Do Now' Feed, and Digital Clone AI Chat.",
+  "start_url": "/bio",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f8fafc",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["social", "portfolio", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Bio Links",
+      "short_name": "Bio",
+      "url": "/bio?tab=bio",
+      "icons": [{ "src": "/icons/icon-192.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Feed Updates",
+      "short_name": "Feed",
+      "url": "/bio?tab=feed",
+      "icons": [{ "src": "/icons/icon-192.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Talk to Clone AI",
+      "short_name": "Talk",
+      "url": "/bio?tab=talk",
+      "icons": [{ "src": "/icons/icon-192.svg", "sizes": "192x192" }]
+    }
+  ]
+}

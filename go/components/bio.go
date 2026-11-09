@@ -7,9 +7,9 @@ import (
 
 // =============================================================================
 // LINK IN BIO: GO COMPONENT DSL
-// Pure Mobile-First Link-in-Bio Application using Hyperstack (Light Theme)
+// Pure Mobile-First Link-in-Bio Application using Hyperstack (Light Theme & PWA)
 // Conforms to Hyperstack Component Standards & 1:1 Parity Rule
-// Tabs: Bio | Feed | Talk (Digital Clone AI Agent)
+// Tabs: Bio | Feed | Talk (Digital Clone AI Agent) with <app-navbar> PWA Navigation
 // =============================================================================
 
 // --- 1. Bio Profile Header ---
@@ -293,7 +293,65 @@ func BioTalk(p BioTalkProps) Component {
 	return Component{html: html}
 }
 
-// --- 5. Full Mobile-First Link-in-Bio Page Component ---
+// --- 5. Bio Navbar Component (<app-navbar>) ---
+
+type BioNavItem struct {
+	ID     string
+	Label  string
+	Icon   string
+	Active bool
+}
+
+type BioNavbarProps struct {
+	Mode     string // "float" | "sticky"
+	Behavior string // "always-visible" | "hide-on-scroll"
+	Active   string // "bio" | "feed" | "talk"
+	Items    []BioNavItem
+}
+
+func BioNavbar(p BioNavbarProps) Component {
+	if p.Mode == "" {
+		p.Mode = "float"
+	}
+	if p.Behavior == "" {
+		p.Behavior = "always-visible"
+	}
+	if p.Active == "" {
+		p.Active = "bio"
+	}
+	if len(p.Items) == 0 {
+		p.Items = []BioNavItem{
+			{ID: "bio", Label: "Bio", Icon: "🔗", Active: p.Active == "bio"},
+			{ID: "feed", Label: "Feed", Icon: "📝", Active: p.Active == "feed"},
+			{ID: "talk", Label: "Talk", Icon: "💬", Active: p.Active == "talk"},
+			{ID: "install", Label: "Install", Icon: "📲", Active: false},
+		}
+	}
+
+	var itemsSb strings.Builder
+	for _, it := range p.Items {
+		activeClass := "text-slate-400 hover:text-slate-700"
+		if it.Active {
+			activeClass = "text-indigo-600 font-bold bg-indigo-50/80"
+		}
+		itemsSb.WriteString(fmt.Sprintf(`
+      <button onclick="switchTab('%s')" id="nav-btn-%s" class="nav-tab-item flex flex-col items-center gap-0.5 py-1.5 px-3 rounded-xl transition-all %s">
+        <span class="text-base leading-none">%s</span>
+        <span class="text-[10px] tracking-tight">%s</span>
+      </button>`, it.ID, it.ID, activeClass, it.Icon, it.Label))
+	}
+
+	html := fmt.Sprintf(`
+<app-navbar mode="%s" behavior="%s" class="fixed bottom-3 inset-x-0 mx-auto max-w-md px-4 z-40 flex items-center justify-between">
+  <div class="w-full bg-white/95 backdrop-blur-xl border border-slate-200/90 rounded-2xl shadow-xl shadow-slate-900/5 h-16 px-3 flex items-center justify-around">
+    %s
+  </div>
+</app-navbar>`, p.Mode, p.Behavior, itemsSb.String())
+
+	return Component{html: html}
+}
+
+// --- 6. Full Mobile-First Link-in-Bio Page Component ---
 
 type BioPageProps struct {
 	Title   string
@@ -301,6 +359,7 @@ type BioPageProps struct {
 	Links   []BioLinkProps
 	Feed    BioFeedProps
 	Talk    BioTalkProps
+	Navbar  BioNavbarProps
 }
 
 func BioPage(p BioPageProps) Component {
@@ -309,6 +368,8 @@ func BioPage(p BioPageProps) Component {
 	}
 
 	profileComp := BioProfile(p.Profile)
+	navbarComp := BioNavbar(p.Navbar)
+
 	var linksSb strings.Builder
 	for _, l := range p.Links {
 		linksSb.WriteString(BioLinkCard(l).Render())
@@ -319,6 +380,11 @@ func BioPage(p BioPageProps) Component {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#f8fafc">
   <title>%s</title>
   <script src="/vendor/htmx.min.js"></script>
   <script src="/htmx-bolt.js"></script>
@@ -330,34 +396,38 @@ func BioPage(p BioPageProps) Component {
     body { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
   </style>
 </head>
-<body class="min-h-full flex flex-col items-center justify-start bg-slate-50 text-slate-900 py-6 px-4">
-  <main class="w-full max-w-md flex flex-col space-y-4">
-    %s
-    
-    <!-- 3 Tabs: Bio | Feed | Talk -->
-    <div class="flex items-center justify-between p-1 bg-white border border-slate-200 rounded-2xl shadow-sm text-xs font-semibold">
-      <button class="flex-1 py-2 rounded-xl bg-slate-900 text-white font-bold transition-all shadow-sm flex items-center justify-center gap-1.5">
-        <span>🔗</span> <span>Bio</span>
-      </button>
-      <button class="flex-1 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1.5">
-        <span>📝</span> <span>Feed</span>
-      </button>
-      <button class="flex-1 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1.5">
-        <span>💬</span> <span>Talk</span>
-      </button>
-    </div>
-
-    <!-- Links Stack -->
-    <div class="space-y-3">
+<body class="min-h-full flex flex-col items-center justify-start bg-slate-50 text-slate-900">
+  <app-shellui view-mode="Mob-P" class="w-full flex-1 flex flex-col items-center justify-start pb-28">
+    <main class="w-full max-w-md flex flex-col space-y-4 px-4 pt-4">
       %s
-    </div>
+      
+      <!-- 3 Tabs: Bio | Feed | Talk -->
+      <div class="flex items-center justify-between p-1 bg-white border border-slate-200 rounded-2xl shadow-sm text-xs font-semibold">
+        <button class="flex-1 py-2 rounded-xl bg-slate-900 text-white font-bold transition-all shadow-sm flex items-center justify-center gap-1.5">
+          <span>🔗</span> <span>Bio</span>
+        </button>
+        <button class="flex-1 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1.5">
+          <span>📝</span> <span>Feed</span>
+        </button>
+        <button class="flex-1 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1.5">
+          <span>💬</span> <span>Talk</span>
+        </button>
+      </div>
 
-    <footer class="pt-6 pb-4 text-center">
-      <p class="text-xs text-slate-400 font-mono">Built with Hyperstack • Zero Virtual DOM</p>
-    </footer>
-  </main>
+      <!-- Links Stack -->
+      <div class="space-y-3">
+        %s
+      </div>
+
+      <footer class="pt-6 pb-4 text-center">
+        <p class="text-xs text-slate-400 font-mono">Built with Hyperstack • Zero Virtual DOM</p>
+      </footer>
+    </main>
+
+    %s
+  </app-shellui>
 </body>
-</html>`, p.Title, profileComp.Render(), linksSb.String())
+</html>`, p.Title, profileComp.Render(), linksSb.String(), navbarComp.Render())
 
 	return Component{html: html}
 }

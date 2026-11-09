@@ -96,7 +96,28 @@ func TestBioComponents(t *testing.T) {
 		}
 	})
 
-	t.Run("BioPage compiles full mobile-first light HTML shell with 3 tabs", func(t *testing.T) {
+	t.Run("BioNavbar renders PWA <app-navbar> with floating capsule and tab items", func(t *testing.T) {
+		navbar := BioNavbar(BioNavbarProps{
+			Mode:   "float",
+			Active: "bio",
+		})
+
+		html := navbar.Render()
+		if !strings.Contains(html, "<app-navbar") {
+			t.Errorf("expected <app-navbar> custom element, got %s", html)
+		}
+		if !strings.Contains(html, "mode=\"float\"") {
+			t.Errorf("expected mode=float, got %s", html)
+		}
+		if !strings.Contains(html, "switchTab('bio')") {
+			t.Errorf("expected switchTab('bio'), got %s", html)
+		}
+		if !strings.Contains(html, "Install") {
+			t.Errorf("expected install button in navbar, got %s", html)
+		}
+	})
+
+	t.Run("BioPage compiles full mobile-first light HTML shell with PWA manifest & <app-shellui>", func(t *testing.T) {
 		page := BioPage(BioPageProps{
 			Title: "Test Bio",
 		})
@@ -108,8 +129,14 @@ func TestBioComponents(t *testing.T) {
 		if !strings.Contains(html, "bg-slate-50") {
 			t.Errorf("expected light background class, got %s", html)
 		}
-		if !strings.Contains(html, "Bio") || !strings.Contains(html, "Feed") || !strings.Contains(html, "Talk") {
-			t.Errorf("expected 3 tabs (Bio, Feed, Talk), got %s", html)
+		if !strings.Contains(html, "/manifest.json") {
+			t.Errorf("expected PWA manifest link, got %s", html)
+		}
+		if !strings.Contains(html, "<app-shellui") {
+			t.Errorf("expected <app-shellui>, got %s", html)
+		}
+		if !strings.Contains(html, "<app-navbar") {
+			t.Errorf("expected <app-navbar>, got %s", html)
 		}
 	})
 }

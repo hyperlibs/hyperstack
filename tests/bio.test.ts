@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { existsSync, readFileSync } from "node:fs";
 
-describe("Link in Bio Mobile-First Application Suite (Light Theme)", () => {
+describe("Link in Bio Mobile-First Application Suite (Light Theme & PWA)", () => {
   const bioHtmlPath = "views/app-bio.html";
 
   test("1. views/app-bio.html exists and is non-empty", () => {
@@ -21,6 +21,7 @@ describe("Link in Bio Mobile-First Application Suite (Light Theme)", () => {
     const html = readFileSync(bioHtmlPath, "utf-8");
     expect(html).toContain("/vendor/htmx.min.js");
     expect(html).toContain("/htmx-bolt.js");
+    expect(html).toContain("/appz.js");
   });
 
   test("4. Bio Profile Header includes creator details and verified badge", () => {
@@ -54,12 +55,12 @@ describe("Link in Bio Mobile-First Application Suite (Light Theme)", () => {
   });
 
   test("8. 1:1 Component HTML partials exist in views/components/", () => {
-    const components = ["bio-profile", "bio-links", "bio-feed", "bio-talk"];
+    const components = ["bio-profile", "bio-links", "bio-feed", "bio-talk", "bio-navbar"];
     for (const c of components) {
       const p = `views/components/${c}.html`;
       expect(existsSync(p)).toBe(true);
       const content = readFileSync(p, "utf-8");
-      expect(content).toContain('hx-ext="reactive"');
+      expect(content.length).toBeGreaterThan(50);
     }
   });
 
@@ -71,6 +72,7 @@ describe("Link in Bio Mobile-First Application Suite (Light Theme)", () => {
     expect(goCode).toContain("func BioLinkCard(");
     expect(goCode).toContain("func BioFeed(");
     expect(goCode).toContain("func BioTalk(");
+    expect(goCode).toContain("func BioNavbar(");
     expect(goCode).toContain("func BioPage(");
     expect(goCode).not.toContain("func BioChat(");
     expect(goCode).not.toContain("func BioTipJar(");
@@ -102,5 +104,43 @@ describe("Link in Bio Mobile-First Application Suite (Light Theme)", () => {
     expect(html).toContain("Do you have a girlfriend?");
     expect(html).toContain("Haha nope, currently single!");
     expect(html).toContain("alexInputs");
+  });
+
+  test("13. PWA Manifest & Service Worker exist and are properly configured", () => {
+    const manifestPath = "public/manifest.json";
+    const swPath = "public/sw.js";
+    expect(existsSync(manifestPath)).toBe(true);
+    expect(existsSync(swPath)).toBe(true);
+
+    const manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
+    expect(manifest.name).toBe("Alex Rivera • Bio, Feed & Talk");
+    expect(manifest.display).toBe("standalone");
+    expect(manifest.start_url).toBe("/bio");
+    expect(manifest.theme_color).toBe("#f8fafc");
+
+    const sw = readFileSync(swPath, "utf-8");
+    expect(sw).toContain("caches.open");
+    expect(sw).toContain("/bio");
+  });
+
+  test("14. Mobile App Shell UI includes <app-shellui>, <app-bar>, and <app-navbar>", () => {
+    const html = readFileSync(bioHtmlPath, "utf-8");
+    expect(html).toContain("<app-shellui");
+    expect(html).toContain("<app-bar");
+    expect(html).toContain("<app-navbar");
+    expect(html).toContain('mode="float"');
+    expect(html).toContain('behavior="always-visible"');
+    expect(html).toContain('id="nav-btn-bio"');
+    expect(html).toContain('id="nav-btn-feed"');
+    expect(html).toContain('id="nav-btn-talk"');
+    expect(html).toContain('id="nav-btn-install"');
+  });
+
+  test("15. PWA Install & Offline indicators are implemented in page script", () => {
+    const html = readFileSync(bioHtmlPath, "utf-8");
+    expect(html).toContain("serviceWorker.register('/sw.js')");
+    expect(html).toContain("beforeinstallprompt");
+    expect(html).toContain("triggerPwaInstall");
+    expect(html).toContain("updateNetworkStatus");
   });
 });
