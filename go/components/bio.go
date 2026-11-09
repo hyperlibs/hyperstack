@@ -9,6 +9,7 @@ import (
 // LINK IN BIO: GO COMPONENT DSL
 // Pure Mobile-First Link-in-Bio Application using Hyperstack (Light Theme)
 // Conforms to Hyperstack Component Standards & 1:1 Parity Rule
+// Tabs: Bio | Feed | Talk (Digital Clone AI Agent)
 // =============================================================================
 
 // --- 1. Bio Profile Header ---
@@ -130,17 +131,181 @@ func BioLinkCard(p BioLinkProps) Component {
 	return Component{html: html}
 }
 
-// --- 3. Full Mobile-First Link-in-Bio Page Component ---
+// --- 3. Bio Feed Component (Text & Emojis Only) ---
+
+type BioFeedPost struct {
+	ID       string
+	TimeAgo  string
+	Tag      string
+	Content  string
+	Location string
+	Likes    int
+}
+
+type BioFeedProps struct {
+	Posts []BioFeedPost
+}
+
+func BioFeed(p BioFeedProps) Component {
+	if len(p.Posts) == 0 {
+		p.Posts = []BioFeedPost{
+			{
+				ID:       "post-1",
+				TimeAgo:  "2h ago",
+				Tag:      "Right now",
+				Content:  "Shipped Hyperstack v1.1 release! Zero-eval signals are 2x faster now 🚀⚡️ Benchmarks looking super clean 📈✨",
+				Location: "San Francisco, CA",
+				Likes:    24,
+			},
+			{
+				ID:       "post-2",
+				TimeAgo:  "6h ago",
+				Tag:      "Earlier today",
+				Content:  "Brewing fresh Ethiopian natural pour-over ☕️✨ Reading distributed consensus papers on Sunday morning 📖🎧",
+				Location: "Mission District",
+				Likes:    19,
+			},
+			{
+				ID:       "post-3",
+				TimeAgo:  "Yesterday",
+				Tag:      "Activity",
+				Content:  "Morning 5km run done 🏃‍♂️💨 Beautiful sunny morning over the bay ☀️🌉 Feeling energized for deep work 🔥💻",
+				Location: "Embarcadero",
+				Likes:    42,
+			},
+		}
+	}
+
+	var postsSb strings.Builder
+	for _, post := range p.Posts {
+		tagColor := "text-slate-500"
+		if strings.Contains(strings.ToLower(post.Tag), "now") {
+			tagColor = "text-indigo-600 font-semibold"
+		}
+
+		postsSb.WriteString(fmt.Sprintf(`
+  <article class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
+    <div class="flex items-center justify-between text-xs text-slate-400">
+      <span class="%s">%s</span>
+      <span class="font-mono text-[11px]">%s</span>
+    </div>
+    <p class="text-sm text-slate-800 leading-relaxed font-normal">
+      %s
+    </p>
+    <div class="pt-2 flex items-center justify-between text-xs text-slate-400 border-t border-slate-100">
+      <span class="text-[11px]">📍 %s</span>
+      <button class="flex items-center gap-1 text-xs text-slate-400 hover:text-rose-500 transition-colors">
+        <span>🤍</span> <span>%d</span>
+      </button>
+    </div>
+  </article>`, tagColor, post.Tag, post.TimeAgo, post.Content, post.Location, post.Likes))
+	}
+
+	html := fmt.Sprintf(`<section class="space-y-3">%s</section>`, postsSb.String())
+	return Component{html: html}
+}
+
+// --- 4. Bio Talk Component (Digital Clone AI Agent) ---
+
+type BioTalkProps struct {
+	CloneName    string
+	Subtitle     string
+	Greeting     string
+	QuickPrompts []string
+}
+
+func BioTalk(p BioTalkProps) Component {
+	if p.CloneName == "" {
+		p.CloneName = "Alex's Digital Clone"
+	}
+	if p.Subtitle == "" {
+		p.Subtitle = "Responds strictly as per Alex's verified answers"
+	}
+	if p.Greeting == "" {
+		p.Greeting = "Hey! 👋 I'm <strong>Alex's Digital Clone AI</strong>. I answer strictly based on Alex's own personal inputs and real answers."
+	}
+	if len(p.QuickPrompts) == 0 {
+		p.QuickPrompts = []string{
+			"Do you have a girlfriend? 👀",
+			"Top projects? 🚀",
+			"Where do you live? 📍",
+			"Tech stack? ⚡",
+		}
+	}
+
+	var chipsSb strings.Builder
+	for _, prompt := range p.QuickPrompts {
+		chipsSb.WriteString(fmt.Sprintf(`
+    <button class="px-2.5 py-1 rounded-full bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 text-xs font-medium text-slate-700 shrink-0 transition-colors">
+      %s
+    </button>`, prompt))
+	}
+
+	html := fmt.Sprintf(`
+<div class="flex flex-col h-[520px] rounded-3xl bg-white border border-slate-200 overflow-hidden shadow-sm">
+  <div class="h-14 px-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between shrink-0">
+    <div class="flex items-center gap-2.5">
+      <div class="relative">
+        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-sm">
+          A
+        </div>
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 absolute -bottom-0.5 -right-0.5 border-2 border-white"></span>
+      </div>
+      <div>
+        <div class="flex items-center gap-1.5">
+          <h3 class="text-xs font-bold text-slate-900 leading-none">%s</h3>
+          <span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-indigo-50 text-indigo-700 border border-indigo-200 font-bold">AI Agent</span>
+        </div>
+        <p class="text-[10px] text-slate-500 mt-0.5">%s</p>
+      </div>
+    </div>
+
+    <label class="flex items-center gap-1.5 cursor-pointer select-none" title="Ask without revealing your identity">
+      <input type="checkbox" id="anon-checkbox" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-3.5 w-3.5 cursor-pointer" />
+      <span class="text-xs font-medium text-slate-600 flex items-center gap-1">
+        <span>🎭</span> <span>Ask Anon</span>
+      </span>
+    </label>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/50">
+    <div class="flex items-start gap-2.5 max-w-[88%%]">
+      <div class="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0">A</div>
+      <div class="p-3 rounded-2xl rounded-tl-sm bg-white border border-slate-200 text-xs text-slate-800 leading-relaxed shadow-sm">
+        %s
+        <div class="text-[9px] text-slate-400 text-right mt-1 font-mono">09:41</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="px-3 py-2 bg-white border-t border-slate-200 flex items-center gap-1.5 overflow-x-auto shrink-0 scrollbar-none">
+    %s
+  </div>
+
+  <div class="p-3 bg-white border-t border-slate-200 flex items-center gap-2 shrink-0">
+    <input type="text" placeholder="Ask Alex's clone anything..." class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 shadow-inner" />
+    <button class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs shadow-sm transition-all flex items-center gap-1">
+      <span>Send</span> <span>➤</span>
+    </button>
+  </div>
+</div>`, p.CloneName, p.Subtitle, p.Greeting, chipsSb.String())
+
+	return Component{html: html}
+}
+
+// --- 5. Full Mobile-First Link-in-Bio Page Component ---
 
 type BioPageProps struct {
 	Title   string
 	Profile BioProfileProps
 	Links   []BioLinkProps
+	Feed    BioFeedProps
+	Talk    BioTalkProps
 }
 
 func BioPage(p BioPageProps) Component {
 	if p.Title == "" {
-		p.Title = "Alex Rivera • Link in Bio"
+		p.Title = "Alex Rivera • Bio, Feed & Talk"
 	}
 
 	profileComp := BioProfile(p.Profile)
@@ -168,9 +333,25 @@ func BioPage(p BioPageProps) Component {
 <body class="min-h-full flex flex-col items-center justify-start bg-slate-50 text-slate-900 py-6 px-4">
   <main class="w-full max-w-md flex flex-col space-y-4">
     %s
+    
+    <!-- 3 Tabs: Bio | Feed | Talk -->
+    <div class="flex items-center justify-between p-1 bg-white border border-slate-200 rounded-2xl shadow-sm text-xs font-semibold">
+      <button class="flex-1 py-2 rounded-xl bg-slate-900 text-white font-bold transition-all shadow-sm flex items-center justify-center gap-1.5">
+        <span>🔗</span> <span>Bio</span>
+      </button>
+      <button class="flex-1 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1.5">
+        <span>📝</span> <span>Feed</span>
+      </button>
+      <button class="flex-1 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1.5">
+        <span>💬</span> <span>Talk</span>
+      </button>
+    </div>
+
+    <!-- Links Stack -->
     <div class="space-y-3">
       %s
     </div>
+
     <footer class="pt-6 pb-4 text-center">
       <p class="text-xs text-slate-400 font-mono">Built with Hyperstack • Zero Virtual DOM</p>
     </footer>

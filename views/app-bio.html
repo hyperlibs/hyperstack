@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="theme-color" content="#f8fafc">
-  <title>Alex Rivera • Link in Bio</title>
+  <title>Alex Rivera • Bio, Feed & Talk</title>
 
   <!-- Hyperstack Lean Core -->
   <script src="/vendor/htmx.min.js"></script>
@@ -23,6 +23,9 @@
       padding-left: env(safe-area-inset-left);
       padding-right: env(safe-area-inset-right);
     }
+    .custom-scroll::-webkit-scrollbar { width: 4px; }
+    .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 4px; }
   </style>
 </head>
 <body class="min-h-full flex flex-col items-center justify-start bg-slate-50 text-slate-900 py-6 px-4">
@@ -49,7 +52,7 @@
       <p class="text-xs font-mono font-medium text-indigo-600 mb-2">@alex_hyperstack</p>
 
       <!-- Tagline / Bio -->
-      <p class="text-xs text-slate-600 max-w-xs mb-4 leading-relaxed font-normal">
+      <p class="text-xs text-slate-600 max-w-xs mb-3.5 leading-relaxed font-normal">
         Systems Architect & Open Source Creator. Building lean hyperreactive web systems with zero Virtual DOM.
       </p>
 
@@ -74,115 +77,306 @@
 
       <!-- One-click Share Bio Link -->
       <button onclick="copyBioUrl()" 
-              class="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs shadow-sm transition-colors flex items-center justify-center gap-1.5 active:scale-95">
+              class="w-full py-2 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs shadow-sm transition-colors flex items-center justify-center gap-1.5 active:scale-95">
         <span>🔗</span> <span>Share Profile</span>
       </button>
     </div>
 
-    <!-- Quick Search Filter Bar -->
-    <div class="relative">
-      <input type="text" id="link-search" oninput="filterLinks(this.value)" placeholder="Search links & resources..." 
-             class="w-full bg-white border border-slate-200 rounded-2xl pl-9 pr-3 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 shadow-sm" />
-      <span class="absolute left-3 top-2.5 text-xs text-slate-400">🔍</span>
+    <!-- TABS DIRECTLY UNDER PROFILE: Bio | Feed | Talk -->
+    <div class="flex items-center justify-between p-1 bg-white border border-slate-200 rounded-2xl shadow-sm text-xs font-semibold">
+      <button onclick="switchTab('bio')" id="tab-btn-bio" 
+              class="flex-1 py-2 rounded-xl bg-slate-900 text-white font-bold transition-all shadow-sm flex items-center justify-center gap-1.5">
+        <span>🔗</span> <span>Bio</span>
+      </button>
+      <button onclick="switchTab('feed')" id="tab-btn-feed" 
+              class="flex-1 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1.5">
+        <span>📝</span> <span>Feed</span>
+      </button>
+      <button onclick="switchTab('talk')" id="tab-btn-talk" 
+              class="flex-1 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1.5">
+        <span>💬</span> <span>Talk</span>
+      </button>
     </div>
 
-    <!-- Curated Links Stack -->
-    <div id="links-container" class="space-y-3">
+    <!-- ================================================================= -->
+    <!-- TAB 1: BIO (Links & Resources) -->
+    <!-- ================================================================= -->
+    <section id="pane-bio" class="space-y-3">
+      
+      <!-- Quick Search Filter Bar -->
+      <div class="relative">
+        <input type="text" id="link-search" oninput="filterLinks(this.value)" placeholder="Search links & resources..." 
+               class="w-full bg-white border border-slate-200 rounded-2xl pl-9 pr-3 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 shadow-sm" />
+        <span class="absolute left-3 top-2.5 text-xs text-slate-400">🔍</span>
+      </div>
 
-      <!-- Link 1: Hyperstack -->
-      <a href="https://github.com/hyperlibs/hyperstack" target="_blank" rel="noopener noreferrer"
-         class="bio-link-item group flex items-center gap-3.5 p-4 rounded-2xl bg-white border border-slate-200 hover:border-indigo-400 hover:shadow-md transition-all active:scale-[0.99] shadow-sm"
-         data-search="hyperstack framework htmx go reactive zero vdom github">
-        <div class="w-11 h-11 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-xl shrink-0 text-indigo-600">
-          ⚡
-        </div>
-        <div class="flex-1 min-w-0 text-left">
-          <div class="flex items-center gap-2">
-            <h2 class="font-bold text-sm text-slate-900 group-hover:text-indigo-600 transition-colors truncate">Hyperstack Framework</h2>
-            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">v1.0</span>
+      <!-- Curated Links Stack -->
+      <div id="links-container" class="space-y-3">
+
+        <!-- Link 1: Hyperstack -->
+        <a href="https://github.com/hyperlibs/hyperstack" target="_blank" rel="noopener noreferrer"
+           class="bio-link-item group flex items-center gap-3.5 p-4 rounded-2xl bg-white border border-slate-200 hover:border-indigo-400 hover:shadow-md transition-all active:scale-[0.99] shadow-sm"
+           data-search="hyperstack framework htmx go reactive zero vdom github">
+          <div class="w-11 h-11 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-xl shrink-0 text-indigo-600">
+            ⚡
           </div>
-          <p class="text-xs text-slate-500 truncate mt-0.5">HTMX on Steroids • Zero Virtual DOM</p>
-        </div>
-        <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-indigo-600 group-hover:bg-indigo-50 transition-colors shrink-0">
-          ↗
-        </div>
-      </a>
-
-      <!-- Link 2: Hypersheet -->
-      <a href="/demo/hypersheet" target="_blank"
-         class="bio-link-item group flex items-center gap-3.5 p-4 rounded-2xl bg-white border border-slate-200 hover:border-emerald-400 hover:shadow-md transition-all active:scale-[0.99] shadow-sm"
-         data-search="hypersheet spreadsheet dag reactive live demo table">
-        <div class="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-xl shrink-0 text-emerald-600">
-          📊
-        </div>
-        <div class="flex-1 min-w-0 text-left">
-          <div class="flex items-center gap-2">
-            <h2 class="font-bold text-sm text-slate-900 group-hover:text-emerald-600 transition-colors truncate">Hypersheet Live Cloud</h2>
-            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Demo</span>
+          <div class="flex-1 min-w-0 text-left">
+            <div class="flex items-center gap-2">
+              <h2 class="font-bold text-sm text-slate-900 group-hover:text-indigo-600 transition-colors truncate">Hyperstack Framework</h2>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">v1.0</span>
+            </div>
+            <p class="text-xs text-slate-500 truncate mt-0.5">HTMX on Steroids • Zero Virtual DOM</p>
           </div>
-          <p class="text-xs text-slate-500 truncate mt-0.5">Zero-NPM Reactive Spreadsheet Core</p>
-        </div>
-        <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-emerald-600 group-hover:bg-emerald-50 transition-colors shrink-0">
-          ↗
-        </div>
-      </a>
-
-      <!-- Link 3: AppzOS Mobile Platform -->
-      <a href="/demo/mobile" target="_blank"
-         class="bio-link-item group flex items-center gap-3.5 p-4 rounded-2xl bg-white border border-slate-200 hover:border-purple-400 hover:shadow-md transition-all active:scale-[0.99] shadow-sm"
-         data-search="appzos mobile platform spatial operating system">
-        <div class="w-11 h-11 rounded-xl bg-purple-50 border border-purple-100 flex items-center justify-center text-xl shrink-0 text-purple-600">
-          📱
-        </div>
-        <div class="flex-1 min-w-0 text-left">
-          <div class="flex items-center gap-2">
-            <h2 class="font-bold text-sm text-slate-900 group-hover:text-purple-600 transition-colors truncate">AppzOS Mobile Platform</h2>
-            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200">Mobile</span>
+          <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-indigo-600 group-hover:bg-indigo-50 transition-colors shrink-0">
+            ↗
           </div>
-          <p class="text-xs text-slate-500 truncate mt-0.5">8 Viewport Modes • 0–9 Z-Index Layers</p>
-        </div>
-        <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-purple-600 group-hover:bg-purple-50 transition-colors shrink-0">
-          ↗
-        </div>
-      </a>
+        </a>
 
-      <!-- Link 4: Discord Community -->
-      <a href="https://discord.gg/" target="_blank" rel="noopener noreferrer"
-         class="bio-link-item group flex items-center gap-3.5 p-4 rounded-2xl bg-white border border-slate-200 hover:border-indigo-400 hover:shadow-md transition-all active:scale-[0.99] shadow-sm"
-         data-search="discord community chat developers builders">
-        <div class="w-11 h-11 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-xl shrink-0 text-indigo-600">
-          💬
-        </div>
-        <div class="flex-1 min-w-0 text-left">
-          <div class="flex items-center gap-2">
-            <h2 class="font-bold text-sm text-slate-900 group-hover:text-indigo-600 transition-colors truncate">Hypermedia Discord</h2>
+        <!-- Link 2: Hypersheet -->
+        <a href="/demo/hypersheet" target="_blank"
+           class="bio-link-item group flex items-center gap-3.5 p-4 rounded-2xl bg-white border border-slate-200 hover:border-emerald-400 hover:shadow-md transition-all active:scale-[0.99] shadow-sm"
+           data-search="hypersheet spreadsheet dag reactive live demo table">
+          <div class="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-xl shrink-0 text-emerald-600">
+            📊
           </div>
-          <p class="text-xs text-slate-500 truncate mt-0.5">Connect with 3,400+ hyperstack developers</p>
-        </div>
-        <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-indigo-600 group-hover:bg-indigo-50 transition-colors shrink-0">
-          ↗
-        </div>
-      </a>
-
-      <!-- Link 5: Personal Blog -->
-      <a href="https://github.com/hyperlibs/hyperstack" target="_blank" rel="noopener noreferrer"
-         class="bio-link-item group flex items-center gap-3.5 p-4 rounded-2xl bg-white border border-slate-200 hover:border-slate-400 hover:shadow-md transition-all active:scale-[0.99] shadow-sm"
-         data-search="website blog essays articles engineering">
-        <div class="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-xl shrink-0 text-slate-700">
-          🌐
-        </div>
-        <div class="flex-1 min-w-0 text-left">
-          <div class="flex items-center gap-2">
-            <h2 class="font-bold text-sm text-slate-900 group-hover:text-slate-700 transition-colors truncate">Personal Website & Blog</h2>
+          <div class="flex-1 min-w-0 text-left">
+            <div class="flex items-center gap-2">
+              <h2 class="font-bold text-sm text-slate-900 group-hover:text-emerald-600 transition-colors truncate">Hypersheet Live Cloud</h2>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Demo</span>
+            </div>
+            <p class="text-xs text-slate-500 truncate mt-0.5">Zero-NPM Reactive Spreadsheet Core</p>
           </div>
-          <p class="text-xs text-slate-500 truncate mt-0.5">Essays on Go, hypermedia, and systems engineering</p>
-        </div>
-        <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-slate-700 group-hover:bg-slate-100 transition-colors shrink-0">
-          ↗
-        </div>
-      </a>
+          <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-emerald-600 group-hover:bg-emerald-50 transition-colors shrink-0">
+            ↗
+          </div>
+        </a>
 
-    </div>
+        <!-- Link 3: AppzOS Mobile Platform -->
+        <a href="/demo/mobile" target="_blank"
+           class="bio-link-item group flex items-center gap-3.5 p-4 rounded-2xl bg-white border border-slate-200 hover:border-purple-400 hover:shadow-md transition-all active:scale-[0.99] shadow-sm"
+           data-search="appzos mobile platform spatial operating system">
+          <div class="w-11 h-11 rounded-xl bg-purple-50 border border-purple-100 flex items-center justify-center text-xl shrink-0 text-purple-600">
+            📱
+          </div>
+          <div class="flex-1 min-w-0 text-left">
+            <div class="flex items-center gap-2">
+              <h2 class="font-bold text-sm text-slate-900 group-hover:text-purple-600 transition-colors truncate">AppzOS Mobile Platform</h2>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200">Mobile</span>
+            </div>
+            <p class="text-xs text-slate-500 truncate mt-0.5">8 Viewport Modes • 0–9 Z-Index Layers</p>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-purple-600 group-hover:bg-purple-50 transition-colors shrink-0">
+            ↗
+          </div>
+        </a>
+
+        <!-- Link 4: Discord Community -->
+        <a href="https://discord.gg/" target="_blank" rel="noopener noreferrer"
+           class="bio-link-item group flex items-center gap-3.5 p-4 rounded-2xl bg-white border border-slate-200 hover:border-indigo-400 hover:shadow-md transition-all active:scale-[0.99] shadow-sm"
+           data-search="discord community chat developers builders">
+          <div class="w-11 h-11 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-xl shrink-0 text-indigo-600">
+            💬
+          </div>
+          <div class="flex-1 min-w-0 text-left">
+            <div class="flex items-center gap-2">
+              <h2 class="font-bold text-sm text-slate-900 group-hover:text-indigo-600 transition-colors truncate">Hypermedia Discord</h2>
+            </div>
+            <p class="text-xs text-slate-500 truncate mt-0.5">Connect with 3,400+ hyperstack developers</p>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-indigo-600 group-hover:bg-indigo-50 transition-colors shrink-0">
+            ↗
+          </div>
+        </a>
+
+        <!-- Link 5: Personal Website & Blog -->
+        <a href="https://github.com/hyperlibs/hyperstack" target="_blank" rel="noopener noreferrer"
+           class="bio-link-item group flex items-center gap-3.5 p-4 rounded-2xl bg-white border border-slate-200 hover:border-slate-400 hover:shadow-md transition-all active:scale-[0.99] shadow-sm"
+           data-search="website blog essays articles engineering">
+          <div class="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-xl shrink-0 text-slate-700">
+            🌐
+          </div>
+          <div class="flex-1 min-w-0 text-left">
+            <div class="flex items-center gap-2">
+              <h2 class="font-bold text-sm text-slate-900 group-hover:text-slate-700 transition-colors truncate">Personal Website & Blog</h2>
+            </div>
+            <p class="text-xs text-slate-500 truncate mt-0.5">Essays on Go, hypermedia, and systems engineering</p>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-slate-700 group-hover:bg-slate-100 transition-colors shrink-0">
+            ↗
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- TAB 2: FEED ("i post what i do now - only text and emojis") -->
+    <!-- ================================================================= -->
+    <section id="pane-feed" class="hidden space-y-3">
+      
+      <!-- Feed Post 1 -->
+      <article class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
+        <div class="flex items-center justify-between text-xs text-slate-400">
+          <span class="font-semibold text-indigo-600 flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Right now
+          </span>
+          <span class="font-mono text-[11px]">2h ago</span>
+        </div>
+        <p class="text-sm text-slate-800 leading-relaxed font-normal">
+          Shipped Hyperstack v1.1 release! Zero-eval signals are 2x faster now 🚀⚡️ Benchmarks looking super clean 📈✨
+        </p>
+        <div class="pt-2 flex items-center justify-between text-xs text-slate-400 border-t border-slate-100">
+          <span class="text-[11px]">📍 San Francisco, CA</span>
+          <button onclick="toggleLike(this)" class="flex items-center gap-1 text-xs text-slate-400 hover:text-rose-500 transition-colors">
+            <span class="like-heart">🤍</span> <span class="like-count">24</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- Feed Post 2 -->
+      <article class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
+        <div class="flex items-center justify-between text-xs text-slate-400">
+          <span class="font-medium text-slate-500">Earlier today</span>
+          <span class="font-mono text-[11px]">6h ago</span>
+        </div>
+        <p class="text-sm text-slate-800 leading-relaxed font-normal">
+          Brewing fresh Ethiopian natural pour-over ☕️✨ Reading distributed consensus papers on Sunday morning 📖🎧
+        </p>
+        <div class="pt-2 flex items-center justify-between text-xs text-slate-400 border-t border-slate-100">
+          <span class="text-[11px]">📍 Mission District</span>
+          <button onclick="toggleLike(this)" class="flex items-center gap-1 text-xs text-slate-400 hover:text-rose-500 transition-colors">
+            <span class="like-heart">🤍</span> <span class="like-count">19</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- Feed Post 3 -->
+      <article class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
+        <div class="flex items-center justify-between text-xs text-slate-400">
+          <span class="font-medium text-slate-500">Activity</span>
+          <span class="font-mono text-[11px]">Yesterday</span>
+        </div>
+        <p class="text-sm text-slate-800 leading-relaxed font-normal">
+          Morning 5km run done 🏃‍♂️💨 Beautiful sunny morning over the bay ☀️🌉 Feeling energized for deep work 🔥💻
+        </p>
+        <div class="pt-2 flex items-center justify-between text-xs text-slate-400 border-t border-slate-100">
+          <span class="text-[11px]">📍 Embarcadero</span>
+          <button onclick="toggleLike(this)" class="flex items-center gap-1 text-xs text-slate-400 hover:text-rose-500 transition-colors">
+            <span class="like-heart">🤍</span> <span class="like-count">42</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- Feed Post 4 -->
+      <article class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
+        <div class="flex items-center justify-between text-xs text-slate-400">
+          <span class="font-medium text-slate-500">Engineering</span>
+          <span class="font-mono text-[11px]">3 days ago</span>
+        </div>
+        <p class="text-sm text-slate-800 leading-relaxed font-normal">
+          Deep in Go channels & goroutine scheduling today 🧑‍💻 Benchmarking zero-allocation streaming at 1M RPS ⚡️📊
+        </p>
+        <div class="pt-2 flex items-center justify-between text-xs text-slate-400 border-t border-slate-100">
+          <span class="text-[11px]">📍 Home Lab</span>
+          <button onclick="toggleLike(this)" class="flex items-center gap-1 text-xs text-slate-400 hover:text-rose-500 transition-colors">
+            <span class="like-heart">🤍</span> <span class="like-count">31</span>
+          </button>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- TAB 3: TALK (Digital Clone AI with Anonymous Option) -->
+    <!-- ================================================================= -->
+    <section id="pane-talk" class="hidden">
+      
+      <div class="flex flex-col h-[520px] rounded-3xl bg-white border border-slate-200 overflow-hidden shadow-sm">
+        
+        <!-- Digital Clone AI Header -->
+        <div class="h-14 px-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between shrink-0">
+          <div class="flex items-center gap-2.5">
+            <div class="relative">
+              <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-sm">
+                A
+              </div>
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 absolute -bottom-0.5 -right-0.5 border-2 border-white"></span>
+            </div>
+            <div>
+              <div class="flex items-center gap-1.5">
+                <h3 class="text-xs font-bold text-slate-900 leading-none">Alex's Digital Clone</h3>
+                <span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-indigo-50 text-indigo-700 border border-indigo-200 font-bold">AI Agent</span>
+              </div>
+              <p class="text-[10px] text-slate-500 mt-0.5">Responds strictly as per Alex's verified answers</p>
+            </div>
+          </div>
+
+          <!-- Anonymous Toggle Checkbox -->
+          <label class="flex items-center gap-1.5 cursor-pointer select-none" title="Ask without revealing your identity">
+            <input type="checkbox" id="anon-toggle" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-3.5 w-3.5 cursor-pointer" />
+            <span class="text-xs font-medium text-slate-600 flex items-center gap-1">
+              <span>🎭</span> <span>Ask Anon</span>
+            </span>
+          </label>
+        </div>
+
+        <!-- Chat Stream Feed -->
+        <div id="talk-stream" class="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/50 custom-scroll">
+          <!-- Initial Clone Message -->
+          <div class="flex items-start gap-2.5 max-w-[88%]">
+            <div class="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0">A</div>
+            <div class="p-3 rounded-2xl rounded-tl-sm bg-white border border-slate-200 text-xs text-slate-800 leading-relaxed shadow-sm">
+              Hey! 👋 I'm <strong>Alex's Digital Clone AI</strong>. I answer strictly based on Alex's own personal inputs and real answers.
+              <p class="text-slate-500 text-[11px] mt-1.5">You can ask me about his projects, daily life, hobbies, or personal status — feel free to toggle <strong>Ask Anon 🎭</strong> above!</p>
+              <div class="text-[9px] text-slate-400 text-right mt-1 font-mono">09:41</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Typing Indicator -->
+        <div id="clone-typing" class="hidden px-4 py-1.5 bg-white border-t border-slate-100 flex items-center gap-1.5 text-xs text-slate-400">
+          <span class="flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce [animation-delay:0.2s]"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce [animation-delay:0.4s]"></span>
+          </span>
+          <span class="text-[11px]">Alex's clone is looking up answer...</span>
+        </div>
+
+        <!-- Quick Prompts (Including "Do you have a girlfriend?") -->
+        <div class="px-3 py-2 bg-white border-t border-slate-200 flex items-center gap-1.5 overflow-x-auto shrink-0 scrollbar-none">
+          <button onclick="askClone('Do you have a girlfriend?')" 
+                  class="px-2.5 py-1 rounded-full bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 border border-slate-200 text-xs font-medium text-slate-700 shrink-0 transition-colors">
+            Do you have a girlfriend? 👀
+          </button>
+          <button onclick="askClone('What are your top projects?')" 
+                  class="px-2.5 py-1 rounded-full bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 border border-slate-200 text-xs font-medium text-slate-700 shrink-0 transition-colors">
+            Top projects? 🚀
+          </button>
+          <button onclick="askClone('Where do you live?')" 
+                  class="px-2.5 py-1 rounded-full bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 border border-slate-200 text-xs font-medium text-slate-700 shrink-0 transition-colors">
+            Where do you live? 📍
+          </button>
+          <button onclick="askClone('What tech stack do you use?')" 
+                  class="px-2.5 py-1 rounded-full bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 border border-slate-200 text-xs font-medium text-slate-700 shrink-0 transition-colors">
+            Tech stack? ⚡
+          </button>
+        </div>
+
+        <!-- Talk Input Form -->
+        <form id="clone-form" onsubmit="handleCloneSubmit(event)" 
+              class="p-3 bg-white border-t border-slate-200 flex items-center gap-2 shrink-0">
+          <input type="text" id="clone-input" placeholder="Ask Alex's clone anything..." required autocomplete="off"
+                 class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white transition-all shadow-inner" />
+          <button type="submit" 
+                  class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs shadow-sm transition-all active:scale-95 flex items-center gap-1">
+            <span>Send</span> <span>➤</span>
+          </button>
+        </form>
+
+      </div>
+
+    </section>
 
     <!-- Minimalist Footer -->
     <footer class="pt-6 pb-4 text-center">
@@ -192,18 +386,55 @@
   </main>
 
   <!-- Notification Toast -->
-  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-medium shadow-xl opacity-0 pointer-events-none transition-opacity duration-200">
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-medium shadow-xl opacity-0 pointer-events-none transition-opacity duration-200 z-50">
     Copied to clipboard!
   </div>
 
   <script>
-    // 0ms In-Memory Link Search
+    // Tab Switching: Bio | Feed | Talk
+    function switchTab(tabName) {
+      ['bio', 'feed', 'talk'].forEach(t => {
+        const pane = document.getElementById(`pane-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (t === tabName) {
+          if (pane) pane.classList.remove('hidden');
+          if (btn) {
+            btn.className = 'flex-1 py-2 rounded-xl bg-slate-900 text-white font-bold transition-all shadow-sm flex items-center justify-center gap-1.5';
+          }
+        } else {
+          if (pane) pane.classList.add('hidden');
+          if (btn) {
+            btn.className = 'flex-1 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1.5';
+          }
+        }
+      });
+    }
+
+    // 0ms Link Search Filter
     function filterLinks(val) {
       const q = val.toLowerCase().trim();
       document.querySelectorAll('.bio-link-item').forEach(el => {
         const text = (el.getAttribute('data-search') || '') + ' ' + el.textContent.toLowerCase();
         el.style.display = (!q || text.includes(q)) ? 'flex' : 'none';
       });
+    }
+
+    // Like Reaction in Feed
+    function toggleLike(btn) {
+      const heart = btn.querySelector('.like-heart');
+      const countEl = btn.querySelector('.like-count');
+      let count = parseInt(countEl.textContent, 10);
+      if (heart.textContent === '🤍') {
+        heart.textContent = '❤️';
+        countEl.textContent = count + 1;
+        btn.classList.remove('text-slate-400');
+        btn.classList.add('text-rose-500', 'font-bold');
+      } else {
+        heart.textContent = '🤍';
+        countEl.textContent = count - 1;
+        btn.classList.remove('text-rose-500', 'font-bold');
+        btn.classList.add('text-slate-400');
+      }
     }
 
     // Copy Bio URL
@@ -213,6 +444,111 @@
       toast.textContent = 'Profile link copied to clipboard! 📋';
       toast.classList.remove('opacity-0', 'pointer-events-none');
       setTimeout(() => toast.classList.add('opacity-0', 'pointer-events-none'), 2200);
+    }
+
+    // =========================================================================
+    // DIGITAL CLONE AI AGENT LOGIC (Grounded in Alex's verified personal inputs)
+    // =========================================================================
+    const alexInputs = {
+      // Personal & Relationship
+      'girlfriend': "Haha nope, currently single! 100% focused on engineering open-source systems and building Hyperstack right now 🚀",
+      'dating': "Currently single! My main commitment right now is building lean software and open-source frameworks ⚡",
+      'relationship': "Single and happily locked into deep engineering work and open-source projects right now 🙂",
+      'married': "Nope, not married! Single and living in San Francisco 🌉",
+      
+      // Projects & Engineering
+      'project': "My primary projects are Hyperstack (a lean hypermedia UI suite with zero Virtual DOM) and Hypersheet (topological spreadsheet core in Go).",
+      'working on': "Currently working on Hyperstack v1.1 performance benchmarks and single-binary Go architectures ⚡",
+      'hyperstack': "Hyperstack is our framework that brings reactive signals, 0ms search, and spatial layouts to HTMX with zero Virtual DOM and zero Node.js footprint!",
+      'stack': "Alex's core stack is Golang for backend concurrency, Hyperstack & HTMX on the frontend, Neovim for coding, and Bun for TypeScript tools ⚡",
+      
+      // Personal Background & Life
+      'live': "Alex lives and works in San Francisco, California 🌉",
+      'where': "Based in San Francisco, CA 📍",
+      'location': "San Francisco, California 📍",
+      'coffee': "Huge pour-over enthusiast! V60 with light roast Ethiopian Yirgacheffe natural beans is his daily ritual ☕️✨",
+      'routine': "Morning 5km run 🏃‍♂️, fresh pour-over coffee ☕️, and deep focused systems coding in Neovim 🧑‍💻",
+      'hobby': "Running 🏃‍♂️, reading sci-fi 📚, playing chess ♟️, and building mechanical keyboards ⌨️",
+      
+      // Advisory & Contact
+      'hire': "Alex is available for select architectural advisory and Fractional Staff/Principal roles! You can email him at alex@hyperstack.dev ✉️",
+      'contact': "You can reach Alex directly by email at alex@hyperstack.dev ✉️ or on Twitter/X @alex_hyperstack."
+    };
+
+    function askClone(promptText) {
+      addMessage(promptText);
+      triggerCloneAnswer(promptText);
+    }
+
+    function handleCloneSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('clone-input');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      addMessage(text);
+      triggerCloneAnswer(text);
+    }
+
+    function addMessage(text) {
+      const isAnon = document.getElementById('anon-toggle').checked;
+      const stream = document.getElementById('talk-stream');
+      const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'flex items-start gap-2.5 max-w-[85%] ml-auto flex-row-reverse animate-fade-in';
+      
+      const badge = isAnon ? '🎭 Anon' : 'You';
+      const badgeBg = isAnon ? 'bg-slate-700' : 'bg-emerald-600';
+
+      msgDiv.innerHTML = `
+        <div class="w-7 h-7 rounded-full ${badgeBg} flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+          ${isAnon ? '🎭' : 'You'}
+        </div>
+        <div class="p-3 rounded-2xl rounded-tr-sm bg-slate-900 text-white text-xs leading-relaxed shadow-sm">
+          ${escapeHtml(text)}
+          <div class="text-[9px] text-slate-400 text-right mt-1 font-mono">${badge} • ${now} ✓✓</div>
+        </div>`;
+
+      stream.appendChild(msgDiv);
+      stream.scrollTop = stream.scrollHeight;
+    }
+
+    function triggerCloneAnswer(query) {
+      const typing = document.getElementById('clone-typing');
+      const stream = document.getElementById('talk-stream');
+      typing.classList.remove('hidden');
+
+      const lower = query.toLowerCase();
+      let answer = "Alex hasn't shared his thoughts on that yet! But you can ask about his relationship status, projects, tech stack, or daily routine 🙂";
+
+      for (const [key, value] of Object.entries(alexInputs)) {
+        if (lower.includes(key)) {
+          answer = value;
+          break;
+        }
+      }
+
+      setTimeout(() => {
+        typing.classList.add('hidden');
+        const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const replyDiv = document.createElement('div');
+        replyDiv.className = 'flex items-start gap-2.5 max-w-[88%] animate-fade-in';
+        replyDiv.innerHTML = `
+          <div class="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0">A</div>
+          <div class="p-3 rounded-2xl rounded-tl-sm bg-white border border-slate-200 text-xs text-slate-800 leading-relaxed shadow-sm">
+            ${escapeHtml(answer)}
+            <div class="text-[9px] text-slate-400 text-right mt-1 font-mono">Clone AI • ${now}</div>
+          </div>`;
+        stream.appendChild(replyDiv);
+        stream.scrollTop = stream.scrollHeight;
+      }, 600);
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
     }
   </script>
 </body>

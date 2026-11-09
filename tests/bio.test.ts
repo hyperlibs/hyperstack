@@ -54,7 +54,7 @@ describe("Link in Bio Mobile-First Application Suite (Light Theme)", () => {
   });
 
   test("8. 1:1 Component HTML partials exist in views/components/", () => {
-    const components = ["bio-profile", "bio-links"];
+    const components = ["bio-profile", "bio-links", "bio-feed", "bio-talk"];
     for (const c of components) {
       const p = `views/components/${c}.html`;
       expect(existsSync(p)).toBe(true);
@@ -69,8 +69,38 @@ describe("Link in Bio Mobile-First Application Suite (Light Theme)", () => {
     const goCode = readFileSync(goBioPath, "utf-8");
     expect(goCode).toContain("func BioProfile(");
     expect(goCode).toContain("func BioLinkCard(");
+    expect(goCode).toContain("func BioFeed(");
+    expect(goCode).toContain("func BioTalk(");
     expect(goCode).toContain("func BioPage(");
     expect(goCode).not.toContain("func BioChat(");
     expect(goCode).not.toContain("func BioTipJar(");
+  });
+
+  test("10. 3 Tabs under profile: Bio, Feed, and Talk segmented controller", () => {
+    const html = readFileSync(bioHtmlPath, "utf-8");
+    expect(html).toContain('switchTab(\'bio\')');
+    expect(html).toContain('switchTab(\'feed\')');
+    expect(html).toContain('switchTab(\'talk\')');
+    expect(html).toContain('id="pane-bio"');
+    expect(html).toContain('id="pane-feed"');
+    expect(html).toContain('id="pane-talk"');
+  });
+
+  test("11. Feed tab: 'what i do now' with only text and emojis", () => {
+    const html = readFileSync(bioHtmlPath, "utf-8");
+    expect(html).toContain("Shipped Hyperstack v1.1 release! Zero-eval signals are 2x faster now 🚀⚡️");
+    expect(html).toContain("Brewing fresh Ethiopian natural pour-over ☕️✨");
+    expect(html).toContain("Morning 5km run done 🏃‍♂️💨");
+    expect(html).toContain("toggleLike");
+  });
+
+  test("12. Talk tab: Digital Clone AI agent answering verified inputs & anonymous toggle", () => {
+    const html = readFileSync(bioHtmlPath, "utf-8");
+    expect(html).toContain("Alex's Digital Clone");
+    expect(html).toContain("Ask Anon");
+    expect(html).toContain("anon-toggle");
+    expect(html).toContain("Do you have a girlfriend?");
+    expect(html).toContain("Haha nope, currently single!");
+    expect(html).toContain("alexInputs");
   });
 });

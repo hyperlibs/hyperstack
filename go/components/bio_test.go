@@ -55,7 +55,48 @@ func TestBioComponents(t *testing.T) {
 		}
 	})
 
-	t.Run("BioPage compiles full mobile-first light HTML shell", func(t *testing.T) {
+	t.Run("BioFeed renders creator status updates with text and emojis", func(t *testing.T) {
+		feed := BioFeed(BioFeedProps{
+			Posts: []BioFeedPost{
+				{
+					ID:       "test-post-1",
+					TimeAgo:  "1h ago",
+					Tag:      "Right now",
+					Content:  "Shipped Hyperstack v1.1 🚀⚡️",
+					Location: "San Francisco",
+					Likes:    25,
+				},
+			},
+		})
+
+		html := feed.Render()
+		if !strings.Contains(html, "Shipped Hyperstack v1.1 🚀⚡️") {
+			t.Errorf("expected feed to contain text and emojis, got %s", html)
+		}
+		if !strings.Contains(html, "25") {
+			t.Errorf("expected likes count, got %s", html)
+		}
+	})
+
+	t.Run("BioTalk renders Digital Clone AI chat interface with Anonymous toggle", func(t *testing.T) {
+		talk := BioTalk(BioTalkProps{
+			CloneName: "Alex's Digital Clone",
+			Subtitle:  "Responds strictly as per Alex's verified answers",
+		})
+
+		html := talk.Render()
+		if !strings.Contains(html, "Alex's Digital Clone") {
+			t.Errorf("expected clone name, got %s", html)
+		}
+		if !strings.Contains(html, "Ask Anon") {
+			t.Errorf("expected anonymous mode option, got %s", html)
+		}
+		if !strings.Contains(html, "Do you have a girlfriend? 👀") {
+			t.Errorf("expected prompt chip for girlfriend query, got %s", html)
+		}
+	})
+
+	t.Run("BioPage compiles full mobile-first light HTML shell with 3 tabs", func(t *testing.T) {
 		page := BioPage(BioPageProps{
 			Title: "Test Bio",
 		})
@@ -67,8 +108,8 @@ func TestBioComponents(t *testing.T) {
 		if !strings.Contains(html, "bg-slate-50") {
 			t.Errorf("expected light background class, got %s", html)
 		}
-		if !strings.Contains(html, "/vendor/htmx.min.js") {
-			t.Errorf("expected htmx script tag, got %s", html)
+		if !strings.Contains(html, "Bio") || !strings.Contains(html, "Feed") || !strings.Contains(html, "Talk") {
+			t.Errorf("expected 3 tabs (Bio, Feed, Talk), got %s", html)
 		}
 	})
 }
