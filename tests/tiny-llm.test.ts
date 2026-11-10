@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { TinyLLM } from "../src/tiny-llm";
+import { TinyLLM, checkUsernameCooldown, USERNAME_COOLDOWN_DAYS, USERNAME_COOLDOWN_MS } from "../src/tiny-llm";
 
 describe("TinyLLM Embedded On-Device Self-Learning Language Model", () => {
   test("1. Model initializes with baseline vocab, embeddings, and parameters", () => {
@@ -151,5 +151,69 @@ describe("TinyLLM Embedded On-Device Self-Learning Language Model", () => {
 
     const friendsRes = await llm.generate(question, { contextRole: "friends" });
     expect(friendsRes.text).toBe("Played poker night until 3am 🃏");
+  });
+
+  test("11. People usernames used for identification & multi-audience routing", async () => {
+    const llm = new TinyLLM();
+    const q = "Where are you now?";
+
+    // Explicitly configure contextual answers with specific username overrides
+    llm.answerQuestion(q, {
+      all: "im at work, chennai",
+      family: "im going for shopping today",
+      friends: "im at home with my family",
+      bffs: "im dating with name, quiet a time so far",
+      marcus: "im at home with my family (hey Marcus! grab a slice if you swing by 🍕)",
+      sarah: "im dating with name, quiet a time so far (tell you all the tea later Sarah! 🤫)"
+    });
+
+    // Query as @marcus -> matches specific @marcus answer
+    const marcusRes = await llm.generate(q, { username: "marcus", contextRole: "friends" });
+    expect(marcusRes.text).toContain("grab a slice if you swing by 🍕");
+    expect(marcusRes.matchedAudience).toBe("@marcus");
+
+    // Query as @sarah -> matches specific @sarah answer
+    const sarahRes = await llm.generate(q, { username: "sarah", contextRole: "bffs" });
+    expect(sarahRes.text).toContain("tell you all the tea later Sarah! 🤫");
+    expect(sarahRes.matchedAudience).toBe("@sarah");
+
+    // Multi-tag answer with multiple comma-separated usernames & groups
+    const newQ = "What project are you shipping today?";
+    llm.answerQuestion(newQ, `@all Shipping Hyperstack v1.1 🚀\n@friends, @marcus, @priya Shipping with custom audio synthesis 🎹\n@bffs, @sarah Shipping secret surprise feature 🤫`);
+
+    const priyaRes = await llm.generate(newQ, { username: "priya" });
+    expect(priyaRes.text).toBe("Shipping with custom audio synthesis 🎹");
+    expect(priyaRes.matchedAudience).toBe("@priya");
+
+    const generalFriendRes = await llm.generate(newQ, { username: "dave", contextRole: "friends" });
+    expect(generalFriendRes.text).toBe("Shipping with custom audio synthesis 🎹");
+    expect(generalFriendRes.matchedAudience).toBe("friends");
+
+    const strangerRes = await llm.generate(newQ, { username: "stranger", contextRole: "public" });
+    expect(strangerRes.text).toBe("Shipping Hyperstack v1.1 🚀");
+    expect(strangerRes.matchedAudience).toBe("all");
+  });
+
+  test("12. Username change policy: Usernames can be changed only once a year (365 days cooldown)", () => {
+    expect(USERNAME_COOLDOWN_DAYS).toBe(365);
+    expect(USERNAME_COOLDOWN_MS).toBe(31536000000);
+
+    // Initial check (no prior change) -> Allowed
+    const initialCheck = checkUsernameCooldown(0);
+    expect(initialCheck.allowed).toBe(true);
+    expect(initialCheck.daysRemaining).toBe(0);
+
+    // Changed 100 days ago -> Blocked with remaining days
+    const hundredDaysAgo = Date.now() - (100 * 24 * 60 * 60 * 1000);
+    const blockedCheck = checkUsernameCooldown(hundredDaysAgo);
+    expect(blockedCheck.allowed).toBe(false);
+    expect(blockedCheck.daysRemaining).toBe(265);
+    expect(blockedCheck.reason).toContain("Usernames can only be changed once a year");
+
+    // Changed 366 days ago -> Cooldown expired, allowed again
+    const overOneYearAgo = Date.now() - (366 * 24 * 60 * 60 * 1000);
+    const allowedCheck = checkUsernameCooldown(overOneYearAgo);
+    expect(allowedCheck.allowed).toBe(true);
+    expect(allowedCheck.daysRemaining).toBe(0);
   });
 });

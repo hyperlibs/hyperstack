@@ -401,7 +401,7 @@ func BioTalk(p BioTalkProps) Component {
 	}
 
 	html := fmt.Sprintf(`
-<div id="talk-container" class="flex flex-col h-[430px] rounded-2xl bg-white border border-slate-200/80 overflow-hidden shadow-2xs">
+<div id="talk-container" class="flex flex-col h-[520px] rounded-2xl bg-white border border-slate-200/80 overflow-hidden shadow-2xs">
   <div class="h-10 px-3 bg-slate-50 border-b border-slate-200/70 flex items-center justify-between shrink-0">
     <div class="flex items-center gap-1.5">
       <div class="w-5 h-5 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white text-[9px] font-bold">
@@ -416,10 +416,18 @@ func BioTalk(p BioTalkProps) Component {
     </div>
 
     <div class="flex items-center gap-1.5">
+      <button onclick="openUsernameModal()" id="talk-user-badge-btn" type="button"
+              class="px-2 py-0.5 rounded-md bg-white hover:bg-slate-100 border border-slate-200 text-[10px] font-mono font-bold text-slate-700 flex items-center gap-1 transition-colors shadow-2xs"
+              title="Your username for identification (can be changed once a year)">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+        <span id="active-user-handle">@visitor</span>
+        <span class="text-[9px] text-slate-400">✏️</span>
+      </button>
+
       <button onclick="toggleInboxDrawer()" id="inbox-drawer-btn" type="button"
               class="text-[10px] font-bold text-amber-700 hover:text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 px-1.5 py-0.5 rounded-md transition-colors flex items-center gap-1" title="Alex's Question Inbox (Middleman Control)">
         <span>📥</span> <span>Inbox</span>
-        <span id="inbox-pending-count" class="bg-amber-600 text-white rounded-full px-1 text-[8px] font-bold">1</span>
+        <span id="inbox-pending-count" class="bg-amber-600 text-white rounded-full px-1 text-[8px] font-bold">2</span>
       </button>
 
       <button onclick="toggleTeachDrawer()" id="teach-drawer-btn" type="button"
@@ -436,42 +444,33 @@ func BioTalk(p BioTalkProps) Component {
     </div>
   </div>
 
+  <!-- 2 Sub-Tabs Controller: Talk | Talk back -->
+  <div class="px-3 py-1.5 bg-slate-100/70 border-b border-slate-200 flex items-center justify-between shrink-0">
+    <div class="flex items-center gap-1 bg-white p-0.5 rounded-xl border border-slate-200/80 shadow-2xs text-xs font-semibold">
+      <button type="button" onclick="switchTalkSubTab('talk')" id="talk-subtab-talk" 
+              class="px-3 py-1 rounded-lg bg-slate-900 text-white font-bold transition-all shadow-xs flex items-center gap-1.5 text-xs">
+        <span>💬</span> <span>Talk</span>
+        <span id="talk-unanswered-badge" class="bg-amber-500 text-white rounded-full px-1.5 text-[9px] font-bold">2</span>
+      </button>
+      <button type="button" onclick="switchTalkSubTab('talkback')" id="talk-subtab-talkback" 
+              class="px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 font-bold transition-all flex items-center gap-1.5 text-xs">
+        <span>↩️</span> <span>Talk back</span>
+        <span class="text-[9px] text-slate-400 font-normal">Alex Answers</span>
+      </button>
+    </div>
+  </div>
+
   <!-- Collapsible Alex's Question Inbox Drawer -->
   <div id="inbox-drawer" class="hidden px-3 py-2 bg-amber-50/70 border-b border-amber-200/80 text-xs space-y-2 animate-slide-down">
     <div class="flex items-center justify-between text-[10px]">
       <span class="font-bold text-amber-900 flex items-center gap-1">
         <span>👑</span> <span>Alex's Inbox (Middleman Control)</span>
       </span>
-      <div class="flex items-center gap-1">
-        <button type="button" onclick="renderInboxList('pending')" id="inbox-tab-pending" class="px-1.5 py-0.5 rounded bg-amber-200/80 text-amber-900 font-bold text-[9px]">
-          Pending (<span id="inbox-tab-count">1</span>)
-        </button>
-        <button type="button" onclick="renderInboxList('answered')" id="inbox-tab-answered" class="px-1.5 py-0.5 rounded text-amber-800 hover:bg-amber-100 text-[9px] font-medium">
-          Answered
-        </button>
-        <button type="button" onclick="toggleInboxDrawer()" class="text-amber-600 hover:text-amber-900 ml-1 font-bold">✕</button>
-      </div>
+      <button type="button" onclick="toggleInboxDrawer()" class="text-amber-600 hover:text-amber-900 ml-1 font-bold">✕</button>
     </div>
-    <div id="inbox-list-container" class="space-y-1.5 max-h-44 overflow-y-auto custom-scroll pr-1"></div>
-    <div id="inbox-answer-box" class="hidden p-2 rounded-xl bg-white border border-amber-200/90 shadow-2xs space-y-1.5">
-      <div class="flex items-center justify-between text-[10px]">
-        <span class="font-bold text-slate-800 flex items-center gap-1 truncate max-w-[80%%]">
-          <span>✏️</span> <span id="inbox-answer-target-q" class="truncate font-mono">Where are you now?</span>
-        </span>
-        <button type="button" onclick="closeAnswerBox()" class="text-slate-400 hover:text-slate-600 text-xs">✕</button>
-      </div>
-      <p class="text-[9px] text-slate-500 leading-tight">Add multiple contextual answers per audience tag (@all, @family, @friends, @bffs):</p>
-      <div class="flex items-center gap-1 overflow-x-auto py-0.5">
-        <button type="button" onclick="insertAnswerTag('@all ')" class="px-1.5 py-0.2 rounded bg-slate-100 text-slate-700 text-[9px] font-bold shrink-0">@all</button>
-        <button type="button" onclick="insertAnswerTag('@family ')" class="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 text-[9px] font-bold shrink-0">@family</button>
-        <button type="button" onclick="insertAnswerTag('@friends ')" class="px-1.5 py-0.2 rounded bg-indigo-100 text-indigo-800 text-[9px] font-bold shrink-0">@friends</button>
-        <button type="button" onclick="insertAnswerTag('@bffs ')" class="px-1.5 py-0.2 rounded bg-pink-100 text-pink-800 text-[9px] font-bold shrink-0">@bffs</button>
-      </div>
-      <textarea id="inbox-answer-text" rows="3" placeholder="@all im at work, chennai&#10;@family im going for shopping today" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs text-slate-900 font-mono text-[11px]"></textarea>
-      <div class="flex items-center justify-end gap-1.5">
-        <button type="button" onclick="closeAnswerBox()" class="px-2 py-0.5 rounded-lg bg-slate-100 text-slate-600 text-[10px] font-medium">Cancel</button>
-        <button type="button" onclick="submitInboxAnswer()" class="px-2.5 py-0.5 rounded-lg bg-amber-600 text-white text-[10px] font-bold shadow-xs">Save & Teach AlexAI</button>
-      </div>
+    <div id="inbox-answer-box" class="p-2 rounded-xl bg-white border border-amber-200/90 shadow-2xs space-y-1.5">
+      <div class="text-[10px] font-bold text-slate-800">Middleman Question Queue Active</div>
+      <button type="button" onclick="submitInboxAnswer()" class="hidden">Save</button>
     </div>
   </div>
 
@@ -492,33 +491,78 @@ func BioTalk(p BioTalkProps) Component {
         Teach & Train
       </button>
     </form>
-    <p class="text-[9px] text-indigo-600 leading-tight">
-      ⚡ Fact is tokenized & absorbed into on-device neural weights with zero cloud network calls.
-    </p>
   </div>
 
-  <div id="talk-stream" class="flex-1 overflow-y-auto p-2.5 space-y-2 bg-slate-50/40 custom-scroll text-xs">
-    <div class="flex items-start gap-1.5 max-w-[92%%]">
-      <div class="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center text-white text-[9px] font-bold shrink-0">A</div>
-      <div class="p-2 rounded-xl rounded-tl-xs bg-white border border-slate-200/80 text-xs text-slate-800 leading-snug shadow-2xs">
-        %s
-        <div class="text-[8px] text-slate-400 text-right mt-1 font-mono flex items-center justify-end gap-1">
-          <span class="text-emerald-600">● Middleman Proxy</span> • <span>Multi-Audience</span>
+  <!-- SUB-PANE 1: TALK (Recent Unanswered Questions FIRST + Chat Stream) -->
+  <div id="subpane-talk" class="flex-1 flex flex-col min-h-0">
+    <div id="unanswered-questions-section" class="border-b border-amber-200/80 bg-amber-50/40 p-2.5 space-y-1.5 shrink-0 max-h-48 overflow-y-auto custom-scroll">
+      <div class="flex items-center justify-between text-[11px]">
+        <div class="flex items-center gap-1.5 font-bold text-amber-950">
+          <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+          <span>Recent Unanswered Questions</span>
+          <span id="unanswered-count-badge" class="px-1.5 py-0.2 rounded-full bg-amber-200 text-amber-900 text-[9px] font-mono font-bold">2</span>
+        </div>
+        <span class="text-[9px] text-amber-800 font-mono">AlexAI silent until answered</span>
+      </div>
+      <div id="unanswered-questions-list" class="space-y-1.5"></div>
+    </div>
+
+    <div id="talk-stream" class="flex-1 overflow-y-auto p-2.5 space-y-2 bg-slate-50/40 custom-scroll text-xs">
+      <div class="flex items-start gap-1.5 max-w-[92%%]">
+        <div class="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center text-white text-[9px] font-bold shrink-0">A</div>
+        <div class="p-2 rounded-xl rounded-tl-xs bg-white border border-slate-200/80 text-xs text-slate-800 leading-snug shadow-2xs">
+          %s
+          <div class="text-[8px] text-slate-400 text-right mt-1 font-mono flex items-center justify-end gap-1">
+            <span class="text-emerald-600">● Middleman Proxy</span> • <span>Multi-Audience</span>
+          </div>
         </div>
       </div>
     </div>
+
+    <div class="px-2 py-1 bg-white border-t border-slate-200/70 flex items-center gap-1 overflow-x-auto shrink-0 scrollbar-none">
+      %s
+    </div>
+
+    <form id="talk-form" onsubmit="handleCloneSubmit(event)" class="p-1.5 bg-white border-t border-slate-200/70 flex items-center gap-1.5 shrink-0">
+      <input type="text" id="clone-input" placeholder="Ask Alex's offline clone anything..." class="flex-1 bg-slate-50 border border-slate-200/80 rounded-lg px-2.5 py-1 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 shadow-2xs" />
+      <button type="submit" class="px-3 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs transition-all">
+        ➤
+      </button>
+    </form>
   </div>
 
-  <div class="px-2 py-1 bg-white border-t border-slate-200/70 flex items-center gap-1 overflow-x-auto shrink-0 scrollbar-none">
-    %s
-  </div>
+  <!-- SUB-PANE 2: TALK BACK (Answer Station: Multi-People & Usernames) -->
+  <div id="subpane-talkback" class="hidden flex-1 flex flex-col min-h-0 bg-slate-50/50 overflow-y-auto custom-scroll p-3 space-y-3">
+    <div class="p-2.5 rounded-xl bg-white border border-amber-200 shadow-2xs space-y-2">
+      <div class="flex items-center justify-between text-xs">
+        <span class="font-bold text-amber-950 flex items-center gap-1.5">
+          <span>👑</span> <span>Talk back — Alex's Answer Station</span>
+        </span>
+        <span class="text-[9px] px-1.5 py-0.2 rounded bg-amber-100 text-amber-900 font-mono font-bold">Middleman Mode</span>
+      </div>
+      <div class="space-y-1">
+        <select id="talkback-question-select" onchange="onTalkBackQuestionSelected(this.value)" class="w-full bg-amber-50/70 border border-amber-300 rounded-lg px-2 py-1 text-xs font-bold text-slate-900"></select>
+      </div>
+    </div>
 
-  <form id="talk-form" onsubmit="handleCloneSubmit(event)" class="p-1.5 bg-white border-t border-slate-200/70 flex items-center gap-1.5 shrink-0">
-    <input type="text" id="clone-input" placeholder="Ask Alex's offline clone anything..." class="flex-1 bg-slate-50 border border-slate-200/80 rounded-lg px-2.5 py-1 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 shadow-2xs" />
-    <button type="submit" class="px-3 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs transition-all">
-      ➤
-    </button>
-  </form>
+    <div class="p-3 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-2.5">
+      <div class="flex items-center gap-1 flex-wrap text-[10px]">
+        <span class="font-bold text-slate-600">People:</span>
+        <span class="font-mono text-emerald-800 bg-emerald-50 px-1 rounded">@marcus</span>
+        <span class="font-mono text-purple-800 bg-purple-50 px-1 rounded">@sarah</span>
+        <span class="font-mono text-blue-800 bg-blue-50 px-1 rounded">@priya</span>
+        <span class="font-mono text-rose-800 bg-rose-50 px-1 rounded">@mom</span>
+      </div>
+      <textarea id="talkback-answers-editor" rows="4" placeholder="@all im at work, chennai&#10;@friends, @marcus im at home with my family" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 font-mono"></textarea>
+      <div class="flex items-center justify-end">
+        <button type="button" onclick="submitTalkBackAnswer()" class="px-3 py-1.5 rounded-xl bg-amber-600 text-white font-bold text-xs shadow-xs">
+          💾 Save Answers & Publish to AlexAI
+        </button>
+      </div>
+    </div>
+
+    <div id="talkback-answered-directory" class="space-y-1.5"></div>
+  </div>
 </div>`, p.CloneName, p.Greeting, chipsSb.String())
 
 	return Component{html: html}

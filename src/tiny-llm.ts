@@ -16,6 +16,53 @@ export interface GenerationOptions {
   maxTokens?: number;
   contextRole?: string;
   isAnon?: boolean;
+  username?: string;
+}
+
+export const USERNAME_COOLDOWN_DAYS = 365;
+export const USERNAME_COOLDOWN_MS = 365 * 24 * 60 * 60 * 1000; // 31,536,000,000 ms
+
+export interface UsernameCooldownResult {
+  allowed: boolean;
+  daysRemaining: number;
+  msRemaining: number;
+  lastChangedDate?: string;
+  nextEligibleDate?: string;
+  reason?: string;
+}
+
+/**
+ * Enforces the strict rule: "usernames can be changed once a year"
+ * 365-day cooldown verification
+ */
+export function checkUsernameCooldown(lastChangeTimestamp?: number, now: number = Date.now()): UsernameCooldownResult {
+  if (!lastChangeTimestamp || isNaN(lastChangeTimestamp) || lastChangeTimestamp <= 0) {
+    return {
+      allowed: true,
+      daysRemaining: 0,
+      msRemaining: 0
+    };
+  }
+  const elapsed = now - lastChangeTimestamp;
+  if (elapsed >= USERNAME_COOLDOWN_MS) {
+    return {
+      allowed: true,
+      daysRemaining: 0,
+      msRemaining: 0,
+      lastChangedDate: new Date(lastChangeTimestamp).toLocaleDateString()
+    };
+  }
+  const msRemaining = USERNAME_COOLDOWN_MS - elapsed;
+  const daysRemaining = Math.ceil(msRemaining / (1000 * 60 * 60 * 24));
+  const nextEligibleTime = new Date(lastChangeTimestamp + USERNAME_COOLDOWN_MS);
+  return {
+    allowed: false,
+    daysRemaining,
+    msRemaining,
+    lastChangedDate: new Date(lastChangeTimestamp).toLocaleDateString(),
+    nextEligibleDate: nextEligibleTime.toLocaleDateString(),
+    reason: `Usernames can only be changed once a year. ${daysRemaining} day(s) remaining until ${nextEligibleTime.toLocaleDateString()}.`
+  };
 }
 
 export interface GenerationResult {
@@ -83,24 +130,42 @@ export interface TinyLLMStats {
  * @friends im at home with my family
  * @bffs im dating with name, quiet a time so far
  */
+/**
+ * Parses multi-audience and multi-username answers in format:
+ * @all im at work, chennai
+ * @family im going for shopping today
+ * @friends, @marcus im at home with my family
+ * @bffs, @sarah im dating with name, quiet a time so far
+ */
 export function parseAudienceAnswers(rawText: string): AudienceAnswers {
   const answers: AudienceAnswers = {};
   const lines = rawText.split('\n').map(l => l.trim()).filter(Boolean);
-  let currentTag = 'all';
+  let currentTags: string[] = ['all'];
 
   for (const line of lines) {
-    const match = line.match(/^@([a-zA-Z0-9_-]+)\s*(.*)$/);
-    if (match) {
-      currentTag = match[1].toLowerCase();
+    // Match one or multiple @tag / @username prefixes separated by commas or spaces
+    const match = line.match(/^((?:@[a-zA-Z0-9_-]+[,\s]*)+)(.*)$/);
+    if (match && match[1].trim()) {
+      const tagPart = match[1];
       const content = match[2].trim();
-      if (content) {
-        answers[currentTag] = content;
+      const tags = (tagPart.match(/@[a-zA-Z0-9_-]+/g) || []).map(t => t.replace('@', '').toLowerCase());
+      if (tags.length > 0) {
+        currentTags = tags;
+        if (content) {
+          for (const tag of tags) {
+            answers[tag] = content;
+          }
+        }
+        continue;
       }
-    } else {
-      if (!answers[currentTag]) {
-        answers[currentTag] = line;
+    }
+
+    // Continuation line
+    for (const tag of currentTags) {
+      if (!answers[tag]) {
+        answers[tag] = line;
       } else {
-        answers[currentTag] += ' ' + line;
+        answers[tag] += ' ' + line;
       }
     }
   }
@@ -191,8 +256,14 @@ export class TinyLLM {
       all: "im at work, chennai",
       family: "im going for shopping today",
       friends: "im at home with my family",
-      bffs: "im dating with name, quiet a time so far"
+      bffs: "im dating with name, quiet a time so far",
+      marcus: "im at home with my family (hey Marcus! grab a slice if you swing by 🍕)",
+      sarah: "im dating with name, quiet a time so far (tell you all the tea later Sarah! 🤫)"
     });
+
+    // Seed recent unanswered questions so Talk tab displays them first
+    this.addPendingQuestion("What are your plans for this weekend?", "@sarah", false);
+    this.addPendingQuestion("Are you going to the tech meetup tomorrow?", "@marcus", false);
 
     this.answerQuestion("Do you have a girlfriend?", {
       all: "Haha nope, currently single! 100% focused on engineering open-source systems and building Hyperstack right now 🚀",
@@ -382,7 +453,7 @@ export class TinyLLM {
     return bestScore >= 0.70 ? bestItem : null;
   }
 
-  public getContextualAnswer(query: string, audienceRole: string = 'all'): {
+  public getContextualAnswer(query: string, audienceRole: string = 'all', username?: string): {
     matched: boolean;
     isPending: boolean;
     question?: string;
@@ -404,10 +475,27 @@ export class TinyLLM {
       };
     }
 
+    // 1. Exact Username Identification Check (Highest Priority)
+    if (username) {
+      const userKey = username.replace(/^@/, '').toLowerCase().trim();
+      if (userKey && item.answers[userKey]) {
+        return {
+          matched: true,
+          isPending: false,
+          question: item.question,
+          answer: item.answers[userKey],
+          matchedAudience: `@${userKey}`,
+          qaItem: item
+        };
+      }
+    }
+
+    // 2. Collection Role Check (@family, @friends, @bffs, etc.)
     const roleKey = (audienceRole || 'all').toLowerCase() === 'public' ? 'all' : (audienceRole || 'all').toLowerCase();
     let answer = item.answers[roleKey];
     let matchedAudience = roleKey;
 
+    // 3. Fallback to @all (Public general answer)
     if (!answer && item.answers['all']) {
       answer = item.answers['all'];
       matchedAudience = 'all';
@@ -432,6 +520,18 @@ export class TinyLLM {
       matchedAudience: 'none',
       qaItem: item
     };
+  }
+
+  public getUnansweredQuestions(): ContextualQAItem[] {
+    return this.qaStore
+      .filter(q => q.status === 'pending')
+      .sort((a, b) => b.askedAt - a.askedAt);
+  }
+
+  public getAnsweredQuestions(): ContextualQAItem[] {
+    return this.qaStore
+      .filter(q => q.status === 'answered')
+      .sort((a, b) => (b.answeredAt || b.askedAt) - (a.answeredAt || a.askedAt));
   }
 
   // --- 4. Vector Arithmetic & Semantic Embedding ---
@@ -609,7 +709,7 @@ export class TinyLLM {
       .trim();
 
     // 1. Contextual Middleman Q&A Lookup (Direct mapping per audience)
-    const contextual = this.getContextualAnswer(cleanPrompt || prompt, role);
+    const contextual = this.getContextualAnswer(cleanPrompt || prompt, role, options.username);
     if (contextual.matched && !contextual.isPending && contextual.answer) {
       return {
         text: contextual.answer,
@@ -809,5 +909,7 @@ export class TinyLLM {
 if (typeof window !== 'undefined') {
   (window as any).TinyLLM = TinyLLM;
   (window as any).parseAudienceAnswers = parseAudienceAnswers;
+  (window as any).checkUsernameCooldown = checkUsernameCooldown;
+  (window as any).USERNAME_COOLDOWN_MS = USERNAME_COOLDOWN_MS;
   (window as any).$llm = new TinyLLM();
 }

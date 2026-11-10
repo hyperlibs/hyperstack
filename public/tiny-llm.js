@@ -31,26 +31,68 @@
   var exports_tiny_llm = {};
   __export(exports_tiny_llm, {
     parseAudienceAnswers: () => parseAudienceAnswers,
+    checkUsernameCooldown: () => checkUsernameCooldown,
+    USERNAME_COOLDOWN_MS: () => USERNAME_COOLDOWN_MS,
+    USERNAME_COOLDOWN_DAYS: () => USERNAME_COOLDOWN_DAYS,
     TinyLLM: () => TinyLLM
   });
+  var USERNAME_COOLDOWN_DAYS = 365;
+  var USERNAME_COOLDOWN_MS = 365 * 24 * 60 * 60 * 1000;
+  function checkUsernameCooldown(lastChangeTimestamp, now = Date.now()) {
+    if (!lastChangeTimestamp || isNaN(lastChangeTimestamp) || lastChangeTimestamp <= 0) {
+      return {
+        allowed: true,
+        daysRemaining: 0,
+        msRemaining: 0
+      };
+    }
+    const elapsed = now - lastChangeTimestamp;
+    if (elapsed >= USERNAME_COOLDOWN_MS) {
+      return {
+        allowed: true,
+        daysRemaining: 0,
+        msRemaining: 0,
+        lastChangedDate: new Date(lastChangeTimestamp).toLocaleDateString()
+      };
+    }
+    const msRemaining = USERNAME_COOLDOWN_MS - elapsed;
+    const daysRemaining = Math.ceil(msRemaining / (1000 * 60 * 60 * 24));
+    const nextEligibleTime = new Date(lastChangeTimestamp + USERNAME_COOLDOWN_MS);
+    return {
+      allowed: false,
+      daysRemaining,
+      msRemaining,
+      lastChangedDate: new Date(lastChangeTimestamp).toLocaleDateString(),
+      nextEligibleDate: nextEligibleTime.toLocaleDateString(),
+      reason: `Usernames can only be changed once a year. ${daysRemaining} day(s) remaining until ${nextEligibleTime.toLocaleDateString()}.`
+    };
+  }
   function parseAudienceAnswers(rawText) {
     const answers = {};
     const lines = rawText.split(`
 `).map((l) => l.trim()).filter(Boolean);
-    let currentTag = "all";
+    let currentTags = ["all"];
     for (const line of lines) {
-      const match = line.match(/^@([a-zA-Z0-9_-]+)\s*(.*)$/);
-      if (match) {
-        currentTag = match[1].toLowerCase();
+      const match = line.match(/^((?:@[a-zA-Z0-9_-]+[,\s]*)+)(.*)$/);
+      if (match && match[1].trim()) {
+        const tagPart = match[1];
         const content = match[2].trim();
-        if (content) {
-          answers[currentTag] = content;
+        const tags = (tagPart.match(/@[a-zA-Z0-9_-]+/g) || []).map((t) => t.replace("@", "").toLowerCase());
+        if (tags.length > 0) {
+          currentTags = tags;
+          if (content) {
+            for (const tag of tags) {
+              answers[tag] = content;
+            }
+          }
+          continue;
         }
-      } else {
-        if (!answers[currentTag]) {
-          answers[currentTag] = line;
+      }
+      for (const tag of currentTags) {
+        if (!answers[tag]) {
+          answers[tag] = line;
         } else {
-          answers[currentTag] += " " + line;
+          answers[tag] += " " + line;
         }
       }
     }
@@ -115,8 +157,12 @@
         all: "im at work, chennai",
         family: "im going for shopping today",
         friends: "im at home with my family",
-        bffs: "im dating with name, quiet a time so far"
+        bffs: "im dating with name, quiet a time so far",
+        marcus: "im at home with my family (hey Marcus! grab a slice if you swing by \uD83C\uDF55)",
+        sarah: "im dating with name, quiet a time so far (tell you all the tea later Sarah! \uD83E\uDD2B)"
       });
+      this.addPendingQuestion("What are your plans for this weekend?", "@sarah", false);
+      this.addPendingQuestion("Are you going to the tech meetup tomorrow?", "@marcus", false);
       this.answerQuestion("Do you have a girlfriend?", {
         all: "Haha nope, currently single! 100% focused on engineering open-source systems and building Hyperstack right now \uD83D\uDE80",
         bffs: "Haha you know my dating life inside out! Focused on engineering right now \uD83D\uDE09",
@@ -270,7 +316,7 @@
       }
       return bestScore >= 0.7 ? bestItem : null;
     }
-    getContextualAnswer(query, audienceRole = "all") {
+    getContextualAnswer(query, audienceRole = "all", username) {
       const item = this.findQAByQuestion(query);
       if (!item) {
         return { matched: false, isPending: true };
@@ -282,6 +328,19 @@
           question: item.question,
           qaItem: item
         };
+      }
+      if (username) {
+        const userKey = username.replace(/^@/, "").toLowerCase().trim();
+        if (userKey && item.answers[userKey]) {
+          return {
+            matched: true,
+            isPending: false,
+            question: item.question,
+            answer: item.answers[userKey],
+            matchedAudience: `@${userKey}`,
+            qaItem: item
+          };
+        }
       }
       const roleKey = (audienceRole || "all").toLowerCase() === "public" ? "all" : (audienceRole || "all").toLowerCase();
       let answer = item.answers[roleKey];
@@ -308,6 +367,12 @@
         matchedAudience: "none",
         qaItem: item
       };
+    }
+    getUnansweredQuestions() {
+      return this.qaStore.filter((q) => q.status === "pending").sort((a, b) => b.askedAt - a.askedAt);
+    }
+    getAnsweredQuestions() {
+      return this.qaStore.filter((q) => q.status === "answered").sort((a, b) => (b.answeredAt || b.askedAt) - (a.answeredAt || a.askedAt));
     }
     textEmbedding(tokens) {
       const pooled = new Float32Array(this.embeddingDim);
@@ -443,7 +508,7 @@
       const startTime = performance.now();
       const role = options.contextRole ?? "public";
       const cleanPrompt = prompt.replace(/^alex\s*ai\s*[:,]?\s*/i, "").replace(/^alex\s*[:,]?\s*/i, "").replace(/^hey\s*alex\s*[:,]?\s*/i, "").replace(/^hi\s*alex\s*[:,]?\s*/i, "").trim();
-      const contextual = this.getContextualAnswer(cleanPrompt || prompt, role);
+      const contextual = this.getContextualAnswer(cleanPrompt || prompt, role, options.username);
       if (contextual.matched && !contextual.isPending && contextual.answer) {
         return {
           text: contextual.answer,
@@ -619,6 +684,8 @@
   if (typeof window !== "undefined") {
     window.TinyLLM = TinyLLM;
     window.parseAudienceAnswers = parseAudienceAnswers;
+    window.checkUsernameCooldown = checkUsernameCooldown;
+    window.USERNAME_COOLDOWN_MS = USERNAME_COOLDOWN_MS;
     window.$llm = new TinyLLM;
   }
 })();

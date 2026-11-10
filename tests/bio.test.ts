@@ -196,4 +196,48 @@ describe("Link in Bio Mobile-First Application Suite (Light Theme & PWA)", () =>
     expect(html).toContain("submitInboxAnswer");
     expect(html).toContain("Where are you now? 📍");
   });
+
+  test("20. Talk view has 2 sub-tabs: Talk and Talk back", () => {
+    const html = readFileSync(bioHtmlPath, "utf-8");
+    expect(html).toContain('id="talk-subtab-talk"');
+    expect(html).toContain('id="talk-subtab-talkback"');
+    expect(html).toContain("switchTalkSubTab");
+    expect(html).toContain('id="subpane-talk"');
+    expect(html).toContain('id="subpane-talkback"');
+
+    const componentHtml = readFileSync("views/components/bio-talk.html", "utf-8");
+    expect(componentHtml).toContain('id="talk-subtab-talk"');
+    expect(componentHtml).toContain('id="talk-subtab-talkback"');
+  });
+
+  test("21. Talk sub-tab lists recent unanswered questions first and clicking Talk back switches tabs", () => {
+    const html = readFileSync(bioHtmlPath, "utf-8");
+    expect(html).toContain('id="unanswered-questions-section"');
+    expect(html).toContain('id="unanswered-questions-list"');
+    expect(html).toContain("Recent Unanswered Questions");
+    expect(html).toContain("selectQuestionForTalkBack");
+    expect(html).toContain("renderUnansweredQuestions");
+
+    // Verify unanswered questions section appears before talk-stream
+    const unansweredIdx = html.indexOf('id="unanswered-questions-section"');
+    const streamIdx = html.indexOf('id="talk-stream"');
+    expect(unansweredIdx).toBeGreaterThan(-1);
+    expect(streamIdx).toBeGreaterThan(-1);
+    expect(unansweredIdx).toBeLessThan(streamIdx);
+  });
+
+  test("22. Talk back station supports multiple answers to multiple list of people and once-a-year username change", () => {
+    const html = readFileSync(bioHtmlPath, "utf-8");
+    expect(html).toContain('id="talkback-question-select"');
+    expect(html).toContain('id="talkback-answers-editor"');
+    expect(html).toContain("submitTalkBackAnswer");
+    expect(html).toContain("@marcus");
+    expect(html).toContain("@sarah");
+    expect(html).toContain("@priya");
+    expect(html).toContain("@mom");
+    expect(html).toContain('id="username-modal"');
+    expect(html).toContain("checkUsernameCooldown");
+    expect(html).toContain("lastUsernameChange");
+    expect(html).toContain("365");
+  });
 });
