@@ -399,18 +399,18 @@ func BioTalk(p BioTalkProps) Component {
 			bgClass = "bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold"
 		}
 		chipsSb.WriteString(fmt.Sprintf(`
-      <button onclick="askClone('%s')" class="px-2 py-0.5 rounded-full %s border border-slate-200 text-[10px] shrink-0 transition-colors">
+      <button onclick="askClone('%s')" class="px-2.5 py-1 rounded-full %s border border-slate-200 text-xs shrink-0 transition-colors">
         %s
       </button>`, prompt, bgClass, prompt))
 	}
 
 	html := fmt.Sprintf(`
-<div id="talk-container" class="flex flex-col h-[540px] rounded-2xl bg-white border border-slate-200/90 overflow-hidden shadow-sm">
-  <!-- WhatsApp Styled App Bar Header -->
-  <div class="h-12 px-3 bg-[#075e54] text-white flex items-center justify-between shrink-0 shadow-xs">
-    <div class="flex items-center gap-2 min-w-0">
+<div id="talk-container" class="flex flex-col h-[560px] rounded-2xl bg-white border border-slate-200/90 overflow-hidden shadow-sm">
+  <!-- WhatsApp Styled App Bar Header (Clean, Professional, Zero Collision & 2x Readability) -->
+  <div class="h-13 px-3 bg-[#075e54] text-white flex items-center justify-between shrink-0 shadow-xs">
+    <div class="flex items-center gap-2.5 min-w-0">
       <div class="relative shrink-0">
-        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-400 to-teal-200 flex items-center justify-center text-slate-900 text-xs font-black shadow-xs">
+        <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-emerald-400 to-teal-200 flex items-center justify-center text-slate-900 text-sm font-black shadow-xs">
           A
         </div>
         <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 absolute bottom-0 right-0 border-2 border-[#075e54]"></span>
@@ -418,108 +418,103 @@ func BioTalk(p BioTalkProps) Component {
 
       <div class="min-w-0 flex-1">
         <div class="flex items-center gap-1.5">
-          <span class="text-xs font-bold truncate text-white">%s</span>
-          <span id="clone-role-badge" class="text-[8px] bg-white/20 text-white font-mono px-1 rounded">AI</span>
-          <span id="clone-llm-badge" class="text-[8px] bg-emerald-400/20 text-emerald-200 font-mono px-1 rounded flex items-center gap-0.5">
-            <span class="w-1 h-1 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-sm font-bold truncate text-white">%s</span>
+          <span id="clone-role-badge" class="text-[10px] bg-white/20 text-white font-mono px-1.5 py-0.2 rounded font-bold">AI</span>
+          <span id="clone-llm-badge" class="text-[10px] bg-emerald-400/20 text-emerald-200 font-mono px-1.5 py-0.2 rounded flex items-center gap-1 font-bold">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
             <span>Offline LLM</span>
           </span>
         </div>
-        <p class="text-[10px] text-emerald-100/90 truncate flex items-center gap-1">
-          <span>online</span> • <span class="font-mono text-[9px]">%s</span>
+        <p class="text-xs text-emerald-100/90 truncate flex items-center gap-1">
+          <span>online</span> • <span class="font-mono text-xs">%s</span>
         </p>
       </div>
     </div>
 
-    <div class="flex items-center gap-1.5">
+    <div class="flex items-center gap-1.5 shrink-0">
       <button onclick="openUsernameModal()" id="talk-user-badge-btn" type="button"
-              class="px-2 py-0.5 rounded-md bg-white/10 hover:bg-white/20 border border-white/20 text-[10px] font-mono font-bold text-white flex items-center gap-1 transition-colors"
+              class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-mono font-bold text-white flex items-center gap-1.5 transition-colors"
               title="Your username for identification (can be changed once a year)">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
         <span id="active-user-handle">@visitor</span>
-        <span class="text-[9px] text-white/70">✏️</span>
+        <span class="text-[10px] text-white/70">✏️</span>
       </button>
 
       <!-- User Question Credits Badge -->
-      <div id="talk-user-credits-badge" class="px-1.5 py-0.5 rounded-md bg-amber-400/20 border border-amber-300/40 text-[10px] font-mono font-bold text-amber-200 flex items-center gap-1" title="Your Question Credits: 1 credit required to ask. Liking Alex's answer awards 1 credit to Alex.">
+      <div id="talk-user-credits-badge" class="px-2 py-1 rounded-lg bg-amber-400/20 border border-amber-300/40 text-xs font-mono font-bold text-amber-200 flex items-center gap-1" title="Your Question Credits: 1 credit required to ask. Liking Alex's answer awards 1 credit to Alex.">
         <span>🪙</span>
         <span id="talk-user-credits">3</span>
-        <span class="text-[8px] text-amber-200/80">cr</span>
+        <span class="text-[10px] text-amber-200/80">cr</span>
       </div>
 
       <!-- Alex Creator Credits Badge -->
-      <div id="talk-alex-credits-badge" class="px-1.5 py-0.5 rounded-md bg-emerald-400/20 border border-emerald-300/40 text-[10px] font-mono font-bold text-emerald-200 flex items-center gap-1" title="Alex's total credits earned from answer likes">
+      <div id="talk-alex-credits-badge" class="hidden sm:flex px-2 py-1 rounded-lg bg-emerald-400/20 border border-emerald-300/40 text-xs font-mono font-bold text-emerald-200 items-center gap-1" title="Alex's total credits earned from answer likes">
         <span>👑</span>
         <span id="talk-alex-credits">0</span>
-        <span class="text-[8px] text-emerald-200/80">earned</span>
+        <span class="text-[10px] text-emerald-200/80">earned</span>
       </div>
 
       <button onclick="toggleTeachDrawer()" id="teach-drawer-btn" type="button"
-              class="text-[10px] font-bold text-white bg-white/15 hover:bg-white/25 px-1.5 py-0.5 rounded-md transition-colors flex items-center gap-0.5" title="Teach new facts to offline LLM">
-        <span>💡</span> <span>Teach</span>
+              class="text-xs font-bold text-white bg-white/15 hover:bg-white/25 px-2 py-1 rounded-lg transition-colors flex items-center gap-1" title="Teach new facts to offline LLM">
+        <span>💡</span> <span class="hidden sm:inline">Teach</span>
       </button>
 
-      <label class="flex items-center gap-1 cursor-pointer select-none text-white/90 hover:text-white" title="Ask without identity">
-        <input type="checkbox" id="anon-toggle" onchange="toggleAnonMode(this.checked)" class="rounded border-emerald-400 text-emerald-500 focus:ring-emerald-400 h-3 w-3 cursor-pointer" />
-        <span class="text-[10px] font-medium flex items-center gap-0.5">
+      <label class="flex items-center gap-1.5 cursor-pointer select-none text-white/90 hover:text-white" title="Ask without identity">
+        <input type="checkbox" id="anon-toggle" onchange="toggleAnonMode(this.checked)" class="rounded border-emerald-400 text-emerald-500 focus:ring-emerald-400 h-3.5 w-3.5 cursor-pointer" />
+        <span class="text-xs font-medium flex items-center gap-0.5">
           <span>🎭</span> <span>Ask Anon</span>
         </span>
       </label>
     </div>
   </div>
 
-  <!-- WhatsApp Sub-Tabs Bar: Chat (Talk) vs Reply Station (Talk back) -->
-  <div class="px-3 py-1 bg-[#f0f2f5] border-b border-slate-200/80 flex items-center justify-between shrink-0">
-    <div class="flex items-center gap-1 bg-white p-0.5 rounded-xl border border-slate-200/80 shadow-2xs text-xs font-semibold">
-      <button type="button" onclick="switchTalkSubTab('talk')" id="talk-subtab-talk" 
-              class="px-3 py-0.5 rounded-lg bg-[#008069] text-white font-bold transition-all shadow-xs flex items-center gap-1 text-xs">
-        <span>💬</span> <span>Talk</span>
-        <span id="talk-unanswered-badge" class="bg-amber-400 text-slate-900 rounded-full px-1.5 text-[9px] font-bold">2</span>
-      </button>
-      <button type="button" onclick="switchTalkSubTab('talkback')" id="talk-subtab-talkback" 
-              class="px-3 py-0.5 rounded-lg text-slate-600 hover:text-slate-900 font-bold transition-all flex items-center gap-1 text-xs">
-        <span>↩️</span> <span>Talk back</span>
-        <span class="text-[9px] text-slate-400 font-normal">Thread Replies</span>
-      </button>
-    </div>
-
-    <div class="flex items-center gap-1">
-      <button onclick="toggleInboxDrawer()" id="inbox-drawer-btn" type="button"
-              class="text-[10px] font-bold text-emerald-800 hover:text-emerald-950 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 px-1.5 py-0.5 rounded-md transition-colors flex items-center gap-1" title="Question Queue">
-        <span>📥</span> <span>Inbox</span>
-        <span id="inbox-pending-count" class="bg-emerald-600 text-white rounded-full px-1 text-[8px] font-bold">2</span>
-      </button>
-    </div>
+  <!-- Clean Professional Text Tabs Bar (Flutter TabBar Style, 2x Font Size) -->
+  <div class="bg-white border-b border-slate-200/80 flex items-stretch px-2 shrink-0 select-none">
+    <button type="button" onclick="switchTalkSubTab('talk')" id="talk-subtab-talk" 
+            class="flex-1 py-2.5 text-center text-sm font-bold border-b-2 border-[#008069] text-[#008069] transition-all flex items-center justify-center gap-1.5">
+      <span>Talk</span>
+      <span id="talk-unanswered-badge" class="bg-amber-400 text-slate-900 rounded-full px-2 py-0.5 text-xs font-bold">2</span>
+    </button>
+    <button type="button" onclick="switchTalkSubTab('talkback')" id="talk-subtab-talkback" 
+            class="flex-1 py-2.5 text-center text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition-all flex items-center justify-center gap-1.5">
+      <span>Talk back</span>
+      <span class="text-xs text-slate-400 font-normal">Thread Replies</span>
+    </button>
+    <button type="button" onclick="toggleInboxDrawer()" id="inbox-drawer-btn" 
+            class="py-2.5 px-3.5 text-center text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition-all flex items-center justify-center gap-1.5" title="Question Queue">
+      <span>Inbox</span>
+      <span id="inbox-pending-count" class="bg-emerald-600 text-white rounded-full px-2 py-0.5 text-xs font-bold">2</span>
+    </button>
   </div>
 
   <!-- Collapsible Alex's Question Inbox Drawer -->
-  <div id="inbox-drawer" class="hidden px-3 py-2 bg-amber-50/80 border-b border-amber-200 text-xs space-y-2 animate-slide-down">
-    <div class="flex items-center justify-between text-[10px]">
-      <span class="font-bold text-amber-900 flex items-center gap-1">
+  <div id="inbox-drawer" class="hidden px-3.5 py-2.5 bg-amber-50/80 border-b border-amber-200 text-sm space-y-2 animate-slide-down">
+    <div class="flex items-center justify-between text-xs">
+      <span class="font-bold text-amber-900 flex items-center gap-1.5">
         <span>👑</span> <span>Alex's Question Queue (Middleman Control)</span>
       </span>
-      <button type="button" onclick="toggleInboxDrawer()" class="text-amber-600 hover:text-amber-900 font-bold">✕</button>
+      <button type="button" onclick="toggleInboxDrawer()" class="text-amber-600 hover:text-amber-900 font-bold text-sm">✕</button>
     </div>
-    <div id="inbox-answer-box" class="p-2 rounded-xl bg-white border border-amber-200/90 shadow-2xs space-y-1">
-      <div class="text-[10px] font-bold text-slate-800">Middleman Question Queue Active</div>
+    <div id="inbox-answer-box" class="p-2.5 rounded-xl bg-white border border-amber-200/90 shadow-2xs space-y-1">
+      <div class="text-xs font-bold text-slate-800">Middleman Question Queue Active</div>
       <button type="button" onclick="submitInboxAnswer()" class="hidden">Save</button>
     </div>
   </div>
 
   <!-- Collapsible Self-Learning Teach Drawer -->
-  <div id="teach-drawer" class="hidden px-3 py-2 bg-emerald-50/90 border-b border-emerald-200 text-xs space-y-1.5 animate-slide-down">
-    <div class="flex items-center justify-between text-[10px]">
-      <span class="font-bold text-emerald-900 flex items-center gap-1">
+  <div id="teach-drawer" class="hidden px-3.5 py-2.5 bg-emerald-50/90 border-b border-emerald-200 text-sm space-y-2 animate-slide-down">
+    <div class="flex items-center justify-between text-xs">
+      <span class="font-bold text-emerald-900 flex items-center gap-1.5">
         <span>🧠</span> <span>Teach Tiny LLM (On-Device Self-Learning)</span>
       </span>
-      <span id="llm-telemetry-pill" class="font-mono text-[9px] text-emerald-800 bg-white/90 px-1.5 py-0.2 rounded border border-emerald-300">
+      <span id="llm-telemetry-pill" class="font-mono text-xs text-emerald-800 bg-white/90 px-2 py-0.5 rounded border border-emerald-300">
         Steps: <span id="telemetry-step">0</span> | Loss: <span id="telemetry-loss">0.038</span>
       </span>
     </div>
-    <form onsubmit="handleTeachSubmit(event)" class="flex items-center gap-1.5">
+    <form onsubmit="handleTeachSubmit(event)" class="flex items-center gap-2">
       <input type="text" id="teach-input" placeholder="e.g. Alex loves building mechanical keyboards with Boba U4T switches" 
-             class="flex-1 bg-white border border-emerald-300 rounded-lg px-2.5 py-1 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-600 shadow-2xs" />
-      <button type="submit" class="px-2.5 py-1 rounded-lg bg-[#008069] hover:bg-[#075e54] text-white font-bold text-[11px] shrink-0 transition-all shadow-xs">
+             class="flex-1 bg-white border border-emerald-300 rounded-xl px-3 py-1.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-600 shadow-2xs" />
+      <button type="submit" class="px-3 py-1.5 rounded-xl bg-[#008069] hover:bg-[#075e54] text-white font-bold text-xs shrink-0 transition-all shadow-xs">
         Teach & Train
       </button>
     </form>
@@ -527,165 +522,379 @@ func BioTalk(p BioTalkProps) Component {
 
   <!-- SUB-PANE 1: TALK (WhatsApp Chat Stream + Recent Unanswered Questions) -->
   <div id="subpane-talk" class="flex-1 flex flex-col min-h-0 bg-[#efeae2]">
-    <div id="unanswered-questions-section" class="border-b border-slate-300/80 bg-white/95 p-2 space-y-1.5 shrink-0 max-h-44 overflow-y-auto custom-scroll shadow-2xs">
-      <div class="flex items-center justify-between text-[11px]">
+    <div id="unanswered-questions-section" class="border-b border-slate-300/80 bg-white/95 p-2.5 space-y-1.5 shrink-0 max-h-44 overflow-y-auto custom-scroll scrollbar-none shadow-2xs">
+      <div class="flex items-center justify-between text-sm">
         <div class="flex items-center gap-1.5 font-bold text-slate-800">
-          <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
           <span>Recent Unanswered Questions</span>
-          <span id="unanswered-count-badge" class="px-1.5 py-0.2 rounded-full bg-amber-100 text-amber-900 text-[9px] font-mono font-bold">2</span>
+          <span id="unanswered-count-badge" class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 text-xs font-mono font-bold">2</span>
         </div>
-        <span class="text-[9px] text-slate-500 font-mono">AlexAI silent until answered</span>
+        <span class="text-xs text-slate-500 font-mono">AlexAI silent until answered</span>
       </div>
-      <p class="text-[10px] text-slate-500 leading-tight">
+      <p class="text-xs text-slate-500 leading-tight">
         Questions waiting for Alex's answer. Click <strong>Talk back</strong> on any question to reply with a single @list tag!
       </p>
       <div id="unanswered-questions-list" class="space-y-1.5"></div>
     </div>
 
-    <div id="talk-stream" class="flex-1 overflow-y-auto p-3 space-y-2.5 custom-scroll text-xs relative"
+    <!-- WhatsApp Chat Stream with 7 Preloaded Realistic Q&As -->
+    <div id="talk-stream" class="flex-1 overflow-y-auto p-3.5 space-y-3 custom-scroll scrollbar-none text-sm relative"
          style="background-color: #efeae2; background-image: radial-gradient(#d5d1c8 1px, transparent 1px), radial-gradient(#d5d1c8 1px, #efeae2 1px); background-size: 24px 24px; background-position: 0 0, 12px 12px;">
       <div class="flex justify-center my-1">
-        <span class="bg-white/90 border border-slate-200/60 text-[10px] font-semibold text-slate-600 px-2.5 py-0.5 rounded-lg shadow-2xs">
+        <span class="bg-white/90 border border-slate-200/60 text-xs font-semibold text-slate-600 px-3 py-1 rounded-lg shadow-2xs">
           TODAY
         </span>
       </div>
 
       <div class="flex items-start gap-1 max-w-[88%%] mr-auto animate-fade-in">
-        <div class="bg-white text-slate-900 rounded-2xl rounded-tl-xs p-2.5 shadow-2xs border border-slate-200/70 space-y-1">
-          <div class="text-[10px] font-bold text-[#008069] flex items-center justify-between">
+        <div class="bg-white text-slate-900 rounded-2xl rounded-tl-xs p-3 shadow-2xs border border-slate-200/70 space-y-1.5">
+          <div class="text-xs font-bold text-[#008069] flex items-center justify-between">
             <span>AlexAI (Digital Clone)</span>
-            <span class="text-[8px] text-slate-400 font-mono">Middleman Proxy</span>
+            <span class="text-[10px] text-slate-400 font-mono">Middleman Proxy</span>
           </div>
-          <p class="text-xs text-slate-800 leading-relaxed">
+          <p class="text-sm text-slate-800 leading-relaxed font-sans">
             %s
           </p>
-          <div class="text-[9px] text-slate-500 bg-slate-50 p-1.5 rounded-lg border border-slate-100 space-y-0.5">
+          <div class="text-xs text-slate-500 bg-slate-50 p-2 rounded-xl border border-slate-100 space-y-1">
             <span class="font-bold text-slate-700">💬 Reply Comment Threads:</span>
-            <p>Every reply has strictly <strong>ONE @list tag</strong>. Alex can reply multiple times per question, but cannot mix multiple answers into one reply.</p>
+            <p class="leading-relaxed">Every reply has strictly <strong>ONE @list tag</strong>. Alex can reply multiple times per question, but cannot mix multiple answers into one reply.</p>
           </div>
-          <div class="text-[8px] text-slate-400 font-mono pt-1 border-t border-slate-100 flex items-center justify-between">
+          <div class="text-xs text-slate-400 font-mono pt-1.5 border-t border-slate-100 flex items-center justify-between">
             <div class="flex items-center gap-1.5">
               <span class="text-[#008069] font-bold">● Welcome</span>
               <button type="button" onclick="likeAnswerInWhatsApp('qa-init', 'all', this)" 
-                      class="like-answer-btn text-rose-600 hover:text-rose-700 font-bold flex items-center gap-0.5 bg-rose-50 hover:bg-rose-100 px-1.5 py-0.5 rounded-md transition-all active:scale-95" title="Like Alex's answer (awards 1 credit to Alex)">
+                      class="like-answer-btn text-rose-600 hover:text-rose-700 font-bold flex items-center gap-1 bg-rose-50 hover:bg-rose-100 px-2 py-0.5 rounded-lg transition-all active:scale-95" title="Like Alex's answer (awards 1 credit to Alex)">
                 <span>🤍</span> <span>Like (+1 cr)</span>
               </button>
             </div>
-            <div class="flex items-center gap-1">
+            <div class="flex items-center gap-1 text-xs">
               <span>10:40 AM</span>
               <span class="text-emerald-600 font-bold">✓✓</span>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- Preloaded Q&A 1 -->
+      <div class="flex items-start gap-1 max-w-[85%%] ml-auto flex-row-reverse animate-fade-in">
+        <div class="bg-[#dcf8c6] text-slate-900 rounded-2xl rounded-tr-xs p-3 shadow-2xs border border-emerald-200/60 space-y-1">
+          <div class="flex items-center justify-between gap-3 text-xs text-emerald-800 font-bold">
+            <span>@sarah</span>
+            <span class="text-[10px] text-slate-400 font-normal">10:15 AM</span>
+          </div>
+          <p class="text-sm text-slate-900 font-sans leading-snug">Where are you now? 📍</p>
+          <div class="text-xs text-emerald-700/80 font-mono text-right flex items-center justify-end gap-1">
+            <span>✓✓</span>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-start gap-1 max-w-[88%%] mr-auto animate-fade-in">
+        <div class="bg-white text-slate-900 rounded-2xl rounded-tl-xs p-3 shadow-2xs border border-slate-200/70 space-y-1.5">
+          <div class="text-xs font-bold text-[#008069] flex items-center justify-between">
+            <span class="flex items-center gap-1.5">
+              <span>AlexAI</span>
+              <span class="text-xs bg-emerald-50 text-emerald-800 font-mono px-1.5 py-0.2 rounded border border-emerald-200 font-bold">@all</span>
+            </span>
+            <span class="text-[10px] text-slate-400 font-mono">10:16 AM</span>
+          </div>
+          <p class="text-sm text-slate-800 leading-relaxed font-sans">im at work, chennai</p>
+          <div class="text-xs text-slate-400 font-mono pt-1.5 border-t border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="likeAnswerInWhatsApp('qa-preload-1', 'all', this)" class="like-answer-btn text-rose-600 hover:text-rose-700 font-bold flex items-center gap-1 bg-rose-50 hover:bg-rose-100 px-2 py-0.5 rounded-lg transition-all active:scale-95"><span>🤍</span> <span>Like (+1 cr)</span></button>
+              <button type="button" onclick="replyToQuestionInWhatsApp('qa-preload-1', '@sarah', 'Where are you now? 📍')" class="text-xs text-[#008069] font-bold hover:underline">Reply in thread</button>
+            </div>
+            <div class="flex items-center gap-1 text-xs"><span class="text-emerald-600 font-bold">✓✓</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preloaded Q&A 2 -->
+      <div class="flex items-start gap-1 max-w-[85%%] ml-auto flex-row-reverse animate-fade-in">
+        <div class="bg-[#dcf8c6] text-slate-900 rounded-2xl rounded-tr-xs p-3 shadow-2xs border border-emerald-200/60 space-y-1">
+          <div class="flex items-center justify-between gap-3 text-xs text-emerald-800 font-bold">
+            <span>@marcus</span>
+            <span class="text-[10px] text-slate-400 font-normal">10:20 AM</span>
+          </div>
+          <p class="text-sm text-slate-900 font-sans leading-snug">What is your morning coffee routine? ☕️</p>
+          <div class="text-xs text-emerald-700/80 font-mono text-right flex items-center justify-end gap-1"><span>✓✓</span></div>
+        </div>
+      </div>
+      <div class="flex items-start gap-1 max-w-[88%%] mr-auto animate-fade-in">
+        <div class="bg-white text-slate-900 rounded-2xl rounded-tl-xs p-3 shadow-2xs border border-slate-200/70 space-y-1.5">
+          <div class="text-xs font-bold text-[#008069] flex items-center justify-between">
+            <span class="flex items-center gap-1.5"><span>AlexAI</span><span class="text-xs bg-emerald-50 text-emerald-800 font-mono px-1.5 py-0.2 rounded border border-emerald-200 font-bold">@all</span></span>
+            <span class="text-[10px] text-slate-400 font-mono">10:21 AM</span>
+          </div>
+          <p class="text-sm text-slate-800 leading-relaxed font-sans">Huge pour-over enthusiast! V60 with light roast Ethiopian Yirgacheffe natural beans is my daily ritual ☕️✨</p>
+          <div class="text-xs text-slate-400 font-mono pt-1.5 border-t border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="likeAnswerInWhatsApp('qa-preload-2', 'all', this)" class="like-answer-btn text-rose-600 hover:text-rose-700 font-bold flex items-center gap-1 bg-rose-50 hover:bg-rose-100 px-2 py-0.5 rounded-lg transition-all active:scale-95"><span>🤍</span> <span>Like (+1 cr)</span></button>
+              <button type="button" onclick="replyToQuestionInWhatsApp('qa-preload-2', '@marcus', 'What is your morning coffee routine? ☕️')" class="text-xs text-[#008069] font-bold hover:underline">Reply in thread</button>
+            </div>
+            <div class="flex items-center gap-1 text-xs"><span class="text-emerald-600 font-bold">✓✓</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preloaded Q&A 3 -->
+      <div class="flex items-start gap-1 max-w-[85%%] ml-auto flex-row-reverse animate-fade-in">
+        <div class="bg-[#dcf8c6] text-slate-900 rounded-2xl rounded-tr-xs p-3 shadow-2xs border border-emerald-200/60 space-y-1">
+          <div class="flex items-center justify-between gap-3 text-xs text-emerald-800 font-bold">
+            <span>@priya</span>
+            <span class="text-[10px] text-slate-400 font-normal">10:25 AM</span>
+          </div>
+          <p class="text-sm text-slate-900 font-sans leading-snug">Do you have a girlfriend? 👀</p>
+          <div class="text-xs text-emerald-700/80 font-mono text-right flex items-center justify-end gap-1"><span>✓✓</span></div>
+        </div>
+      </div>
+      <div class="flex items-start gap-1 max-w-[88%%] mr-auto animate-fade-in">
+        <div class="bg-white text-slate-900 rounded-2xl rounded-tl-xs p-3 shadow-2xs border border-slate-200/70 space-y-1.5">
+          <div class="text-xs font-bold text-[#008069] flex items-center justify-between">
+            <span class="flex items-center gap-1.5"><span>AlexAI</span><span class="text-xs bg-emerald-50 text-emerald-800 font-mono px-1.5 py-0.2 rounded border border-emerald-200 font-bold">@all</span></span>
+            <span class="text-[10px] text-slate-400 font-mono">10:26 AM</span>
+          </div>
+          <p class="text-sm text-slate-800 leading-relaxed font-sans">Haha nope, currently single! 100%% focused on engineering open-source systems and building Hyperstack right now 🚀</p>
+          <div class="text-xs text-slate-400 font-mono pt-1.5 border-t border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="likeAnswerInWhatsApp('qa-preload-3', 'all', this)" class="like-answer-btn text-rose-600 hover:text-rose-700 font-bold flex items-center gap-1 bg-rose-50 hover:bg-rose-100 px-2 py-0.5 rounded-lg transition-all active:scale-95"><span>🤍</span> <span>Like (+1 cr)</span></button>
+              <button type="button" onclick="replyToQuestionInWhatsApp('qa-preload-3', '@priya', 'Do you have a girlfriend? 👀')" class="text-xs text-[#008069] font-bold hover:underline">Reply in thread</button>
+            </div>
+            <div class="flex items-center gap-1 text-xs"><span class="text-emerald-600 font-bold">✓✓</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preloaded Q&A 4 -->
+      <div class="flex items-start gap-1 max-w-[85%%] ml-auto flex-row-reverse animate-fade-in">
+        <div class="bg-[#dcf8c6] text-slate-900 rounded-2xl rounded-tr-xs p-3 shadow-2xs border border-emerald-200/60 space-y-1">
+          <div class="flex items-center justify-between gap-3 text-xs text-emerald-800 font-bold">
+            <span>@dev_alex</span>
+            <span class="text-[10px] text-slate-400 font-normal">10:30 AM</span>
+          </div>
+          <p class="text-sm text-slate-900 font-sans leading-snug">Top projects you are shipping? 🚀</p>
+          <div class="text-xs text-emerald-700/80 font-mono text-right flex items-center justify-end gap-1"><span>✓✓</span></div>
+        </div>
+      </div>
+      <div class="flex items-start gap-1 max-w-[88%%] mr-auto animate-fade-in">
+        <div class="bg-white text-slate-900 rounded-2xl rounded-tl-xs p-3 shadow-2xs border border-slate-200/70 space-y-1.5">
+          <div class="text-xs font-bold text-[#008069] flex items-center justify-between">
+            <span class="flex items-center gap-1.5"><span>AlexAI</span><span class="text-xs bg-emerald-50 text-emerald-800 font-mono px-1.5 py-0.2 rounded border border-emerald-200 font-bold">@all</span></span>
+            <span class="text-[10px] text-slate-400 font-mono">10:31 AM</span>
+          </div>
+          <p class="text-sm text-slate-800 leading-relaxed font-sans">Shipping Hyperstack v1.1 zero-dependency hypermedia framework and AppzOS mobile engine ⚡️</p>
+          <div class="text-xs text-slate-400 font-mono pt-1.5 border-t border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="likeAnswerInWhatsApp('qa-preload-4', 'all', this)" class="like-answer-btn text-rose-600 hover:text-rose-700 font-bold flex items-center gap-1 bg-rose-50 hover:bg-rose-100 px-2 py-0.5 rounded-lg transition-all active:scale-95"><span>🤍</span> <span>Like (+1 cr)</span></button>
+              <button type="button" onclick="replyToQuestionInWhatsApp('qa-preload-4', '@dev_alex', 'Top projects you are shipping? 🚀')" class="text-xs text-[#008069] font-bold hover:underline">Reply in thread</button>
+            </div>
+            <div class="flex items-center gap-1 text-xs"><span class="text-emerald-600 font-bold">✓✓</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preloaded Q&A 5 -->
+      <div class="flex items-start gap-1 max-w-[85%%] ml-auto flex-row-reverse animate-fade-in">
+        <div class="bg-[#dcf8c6] text-slate-900 rounded-2xl rounded-tr-xs p-3 shadow-2xs border border-emerald-200/60 space-y-1">
+          <div class="flex items-center justify-between gap-3 text-xs text-emerald-800 font-bold">
+            <span>@keeb_fan</span>
+            <span class="text-[10px] text-slate-400 font-normal">10:34 AM</span>
+          </div>
+          <p class="text-sm text-slate-900 font-sans leading-snug">What mechanical keyboard switches do you use? ⌨️</p>
+          <div class="text-xs text-emerald-700/80 font-mono text-right flex items-center justify-end gap-1"><span>✓✓</span></div>
+        </div>
+      </div>
+      <div class="flex items-start gap-1 max-w-[88%%] mr-auto animate-fade-in">
+        <div class="bg-white text-slate-900 rounded-2xl rounded-tl-xs p-3 shadow-2xs border border-slate-200/70 space-y-1.5">
+          <div class="text-xs font-bold text-[#008069] flex items-center justify-between">
+            <span class="flex items-center gap-1.5"><span>AlexAI</span><span class="text-xs bg-emerald-50 text-emerald-800 font-mono px-1.5 py-0.2 rounded border border-emerald-200 font-bold">@all</span></span>
+            <span class="text-[10px] text-slate-400 font-mono">10:35 AM</span>
+          </div>
+          <p class="text-sm text-slate-800 leading-relaxed font-sans">Custom Boba U4T tactile switches lubed with TriboSys 3203 on a gasket-mounted aluminum board 🎧</p>
+          <div class="text-xs text-slate-400 font-mono pt-1.5 border-t border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="likeAnswerInWhatsApp('qa-preload-5', 'all', this)" class="like-answer-btn text-rose-600 hover:text-rose-700 font-bold flex items-center gap-1 bg-rose-50 hover:bg-rose-100 px-2 py-0.5 rounded-lg transition-all active:scale-95"><span>🤍</span> <span>Like (+1 cr)</span></button>
+              <button type="button" onclick="replyToQuestionInWhatsApp('qa-preload-5', '@keeb_fan', 'What mechanical keyboard switches do you use? ⌨️')" class="text-xs text-[#008069] font-bold hover:underline">Reply in thread</button>
+            </div>
+            <div class="flex items-center gap-1 text-xs"><span class="text-emerald-600 font-bold">✓✓</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preloaded Q&A 6 -->
+      <div class="flex items-start gap-1 max-w-[85%%] ml-auto flex-row-reverse animate-fade-in">
+        <div class="bg-[#dcf8c6] text-slate-900 rounded-2xl rounded-tr-xs p-3 shadow-2xs border border-emerald-200/60 space-y-1">
+          <div class="flex items-center justify-between gap-3 text-xs text-emerald-800 font-bold">
+            <span>@persong</span>
+            <span class="text-[10px] text-slate-400 font-normal">10:38 AM</span>
+          </div>
+          <p class="text-sm text-slate-900 font-sans leading-snug">Favorite tech stack for 2026? 💻</p>
+          <div class="text-xs text-emerald-700/80 font-mono text-right flex items-center justify-end gap-1"><span>✓✓</span></div>
+        </div>
+      </div>
+      <div class="flex items-start gap-1 max-w-[88%%] mr-auto animate-fade-in">
+        <div class="bg-white text-slate-900 rounded-2xl rounded-tl-xs p-3 shadow-2xs border border-slate-200/70 space-y-1.5">
+          <div class="text-xs font-bold text-[#008069] flex items-center justify-between">
+            <span class="flex items-center gap-1.5"><span>AlexAI</span><span class="text-xs bg-emerald-50 text-emerald-800 font-mono px-1.5 py-0.2 rounded border border-emerald-200 font-bold">@all</span></span>
+            <span class="text-[10px] text-slate-400 font-mono">10:39 AM</span>
+          </div>
+          <p class="text-sm text-slate-800 leading-relaxed font-sans">Zero Node.js, 100%% Bun & Go with Hypermedia partials! Blazing fast single binaries 🔥</p>
+          <div class="text-xs text-slate-400 font-mono pt-1.5 border-t border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="likeAnswerInWhatsApp('qa-preload-6', 'all', this)" class="like-answer-btn text-rose-600 hover:text-rose-700 font-bold flex items-center gap-1 bg-rose-50 hover:bg-rose-100 px-2 py-0.5 rounded-lg transition-all active:scale-95"><span>🤍</span> <span>Like (+1 cr)</span></button>
+              <button type="button" onclick="replyToQuestionInWhatsApp('qa-preload-6', '@persong', 'Favorite tech stack for 2026? 💻')" class="text-xs text-[#008069] font-bold hover:underline">Reply in thread</button>
+            </div>
+            <div class="flex items-center gap-1 text-xs"><span class="text-emerald-600 font-bold">✓✓</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preloaded Q&A 7 -->
+      <div class="flex items-start gap-1 max-w-[85%%] ml-auto flex-row-reverse animate-fade-in">
+        <div class="bg-[#dcf8c6] text-slate-900 rounded-2xl rounded-tr-xs p-3 shadow-2xs border border-emerald-200/60 space-y-1">
+          <div class="flex items-center justify-between gap-3 text-xs text-emerald-800 font-bold">
+            <span>@organizer</span>
+            <span class="text-[10px] text-slate-400 font-normal">10:41 AM</span>
+          </div>
+          <p class="text-sm text-slate-900 font-sans leading-snug">Are you free for speaking at the systems conference? 🎤</p>
+          <div class="text-xs text-emerald-700/80 font-mono text-right flex items-center justify-end gap-1"><span>✓✓</span></div>
+        </div>
+      </div>
+      <div class="flex items-start gap-1 max-w-[88%%] mr-auto animate-fade-in">
+        <div class="bg-white text-slate-900 rounded-2xl rounded-tl-xs p-3 shadow-2xs border border-slate-200/70 space-y-1.5">
+          <div class="text-xs font-bold text-[#008069] flex items-center justify-between">
+            <span class="flex items-center gap-1.5"><span>AlexAI</span><span class="text-xs bg-emerald-50 text-emerald-800 font-mono px-1.5 py-0.2 rounded border border-emerald-200 font-bold">@all</span></span>
+            <span class="text-[10px] text-slate-400 font-mono">10:42 AM</span>
+          </div>
+          <p class="text-sm text-slate-800 leading-relaxed font-sans">Yes! DM my inbox with conference dates, schedule, and topic details 📅</p>
+          <div class="text-xs text-slate-400 font-mono pt-1.5 border-t border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="likeAnswerInWhatsApp('qa-preload-7', 'all', this)" class="like-answer-btn text-rose-600 hover:text-rose-700 font-bold flex items-center gap-1 bg-rose-50 hover:bg-rose-100 px-2 py-0.5 rounded-lg transition-all active:scale-95"><span>🤍</span> <span>Like (+1 cr)</span></button>
+              <button type="button" onclick="replyToQuestionInWhatsApp('qa-preload-7', '@organizer', 'Are you free for speaking at the systems conference? 🎤')" class="text-xs text-[#008069] font-bold hover:underline">Reply in thread</button>
+            </div>
+            <div class="flex items-center gap-1 text-xs"><span class="text-emerald-600 font-bold">✓✓</span></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- WhatsApp Active Reply Bar -->
-    <div id="whatsapp-reply-bar" class="hidden px-3 py-1.5 bg-[#f0f2f5] border-t border-slate-300 flex items-center justify-between animate-slide-down">
+    <div id="whatsapp-reply-bar" class="hidden px-3.5 py-2 bg-[#f0f2f5] border-t border-slate-300 flex items-center justify-between animate-slide-down">
       <div class="flex items-center gap-2 min-w-0 flex-1">
         <div class="w-1 h-8 rounded-full bg-[#008069] shrink-0"></div>
         <div class="min-w-0 flex-1">
-          <div class="text-[10px] font-bold text-[#008069] flex items-center gap-1">
+          <div class="text-xs font-bold text-[#008069] flex items-center gap-1">
             <span>Replying to</span>
             <span id="reply-quote-author" class="font-mono text-slate-700">@sarah</span>
           </div>
-          <p id="reply-quote-text" class="text-[11px] text-slate-600 truncate font-mono">"What are your plans for this weekend?"</p>
+          <p id="reply-quote-text" class="text-xs text-slate-600 truncate font-mono">"What are your plans for this weekend?"</p>
         </div>
       </div>
-      <button type="button" onclick="cancelWhatsAppReply()" class="text-slate-400 hover:text-slate-600 font-bold px-1 text-sm">✕</button>
+      <button type="button" onclick="cancelWhatsAppReply()" class="text-slate-400 hover:text-slate-600 font-bold px-1.5 text-base">✕</button>
     </div>
 
     <!-- Micro Prompt Quick Chips -->
-    <div class="px-2 py-1 bg-white/90 border-t border-slate-200/80 flex items-center gap-1 overflow-x-auto shrink-0 scrollbar-none">
+    <div class="px-2.5 py-1.5 bg-white/90 border-t border-slate-200/80 flex items-center gap-1.5 overflow-x-auto shrink-0 scrollbar-none">
       %s
     </div>
 
     <!-- Real-Time Rate Limit Banner (1 question per minute) -->
-    <div id="rate-limit-banner" class="hidden px-3 py-1 bg-amber-100/90 border-t border-amber-200 text-[10px] text-amber-900 font-medium flex items-center justify-between animate-slide-down">
+    <div id="rate-limit-banner" class="hidden px-3.5 py-1.5 bg-amber-100/90 border-t border-amber-200 text-xs text-amber-900 font-medium flex items-center justify-between animate-slide-down">
       <div class="flex items-center gap-1.5">
         <span class="animate-pulse">⏳</span>
         <span id="rate-limit-text">1 question/min limit: please wait before asking again</span>
       </div>
-      <span id="rate-limit-countdown" class="font-mono font-bold text-amber-950 bg-amber-200/80 px-1.5 py-0.2 rounded">60s</span>
+      <span id="rate-limit-countdown" class="font-mono font-bold text-amber-950 bg-amber-200/80 px-2 py-0.5 rounded text-xs">60s</span>
+    </div>
+
+    <!-- No Credits Error Banner (Visible when user has 0 credits) -->
+    <div id="no-credits-error-banner" class="hidden px-3.5 py-2 bg-rose-50 border-t border-rose-200 text-rose-900 text-xs sm:text-sm flex items-center justify-between animate-slide-down">
+      <div class="flex items-center gap-1.5 font-medium">
+        <span>⚠️</span>
+        <span id="no-credits-error-text"><strong>Unable to send message:</strong> No credits available! You need at least 1 credit to ask questions.</span>
+      </div>
+      <button type="button" onclick="claimStarterCredits()" 
+              class="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shrink-0 active:scale-95 transition-all shadow-2xs">
+        +3 Credits (Top up)
+      </button>
     </div>
 
     <!-- WhatsApp Bottom Input Bar -->
     <form id="talk-form" onsubmit="handleCloneSubmit(event)" 
-          class="p-2 bg-[#f0f2f5] border-t border-slate-300 flex items-center gap-2 shrink-0">
-      <span class="text-base select-none">😊</span>
+          class="p-2.5 bg-[#f0f2f5] border-t border-slate-300 flex items-center gap-2 shrink-0">
+      <span class="text-xl select-none">😊</span>
       <input type="text" id="clone-input" placeholder="Type a message or question..." required autocomplete="off"
-             class="flex-1 bg-white border border-slate-200 rounded-2xl px-3 py-1.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#008069] shadow-2xs" />
+             class="flex-1 bg-white border border-slate-200 rounded-2xl px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#008069] shadow-2xs" />
       <button type="submit" 
-              class="w-8 h-8 rounded-full bg-[#008069] hover:bg-[#075e54] text-white flex items-center justify-center transition-all active:scale-95 shadow-xs shrink-0">
-        <span class="text-xs">➤</span>
+              class="w-9 h-9 rounded-full bg-[#008069] hover:bg-[#075e54] text-white flex items-center justify-center transition-all active:scale-95 shadow-xs shrink-0">
+        <span class="text-sm">➤</span>
       </button>
     </form>
   </div>
 
   <!-- SUB-PANE 2: TALK BACK (WhatsApp Reply Comment Thread Station) -->
   <div id="subpane-talkback" class="hidden flex-1 flex flex-col min-h-0 bg-[#efeae2] overflow-hidden">
-    <div class="p-2.5 bg-white border-b border-slate-200 shadow-2xs space-y-1.5 shrink-0">
-      <div class="flex items-center justify-between text-xs">
+    <div class="p-3 bg-white border-b border-slate-200 shadow-2xs space-y-2 shrink-0">
+      <div class="flex items-center justify-between text-sm">
         <span class="font-bold text-slate-800 flex items-center gap-1.5">
           <span class="text-emerald-700">↩️</span> <span>WhatsApp Reply Station</span>
         </span>
-        <span class="text-[9px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-900 font-mono font-bold">1 @tag per reply</span>
+        <span class="text-xs px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 font-mono font-bold">1 @tag per reply</span>
       </div>
 
-      <div class="flex items-center gap-1.5">
+      <div class="flex items-center gap-2">
         <select id="talkback-question-select" onchange="onTalkBackQuestionSelected(this.value)"
-                class="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-xs font-bold text-slate-900 focus:outline-none focus:border-emerald-600 shadow-2xs"></select>
+                class="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-bold text-slate-900 focus:outline-none focus:border-emerald-600 shadow-2xs"></select>
         <button type="button" onclick="promptCustomQuestionForTalkBack()" 
-                class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[10px] shrink-0" title="Add new question">
+                class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs shrink-0" title="Add new question">
           + New Q
         </button>
       </div>
 
-      <div id="talkback-q-meta" class="p-1.5 rounded-lg bg-slate-50 border border-slate-200 text-[10px] flex items-center justify-between">
+      <div id="talkback-q-meta" class="p-2 rounded-lg bg-slate-50 border border-slate-200 text-xs flex items-center justify-between">
         <span class="text-slate-600" id="talkback-target-asker">Thread Author: <strong>Sarah (@sarah)</strong></span>
-        <span class="text-[9px] font-mono text-emerald-700 font-bold" id="talkback-target-status">⏳ Unanswered</span>
+        <span class="text-xs font-mono text-emerald-700 font-bold" id="talkback-target-status">⏳ Unanswered</span>
       </div>
     </div>
 
     <!-- Active Question's WhatsApp Reply Comment Threads Stream -->
-    <div id="talkback-thread-stream" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scroll"
+    <div id="talkback-thread-stream" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scroll scrollbar-none"
          style="background-color: #efeae2; background-image: radial-gradient(#d5d1c8 1px, transparent 1px), radial-gradient(#d5d1c8 1px, #efeae2 1px); background-size: 24px 24px; background-position: 0 0, 12px 12px;"></div>
 
     <!-- STRICT SINGLE REPLY COMPOSER -->
-    <div class="p-2.5 bg-white border-t border-slate-300 shadow-sm space-y-2 shrink-0">
-      <div class="flex items-center justify-between">
-        <label class="text-[11px] font-bold text-slate-800 flex items-center gap-1">
+    <div class="p-3 bg-white border-t border-slate-300 shadow-sm space-y-2 shrink-0">
+      <div class="flex items-center justify-between text-xs">
+        <label class="font-bold text-slate-800 flex items-center gap-1">
           <span>✏️</span> <span>Post Single Reply</span>
         </label>
-        <span class="text-[9px] font-mono text-emerald-700 font-bold">1 @list tag only • 1 answer</span>
+        <span class="font-mono text-emerald-700 font-bold">1 @list tag only • 1 answer</span>
       </div>
 
       <div class="space-y-1">
-        <span class="text-[9px] font-bold text-slate-400 block uppercase tracking-wider">Select exactly one @list tag:</span>
-        <div id="talkback-single-tags-container" class="flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none">
-          <button type="button" onclick="selectSingleReplyTag('all')" data-tag="all" class="talkback-tag-chip px-2 py-0.5 rounded-md text-[10px] font-bold transition-all bg-emerald-600 text-white shadow-2xs">@all</button>
-          <button type="button" onclick="selectSingleReplyTag('family')" data-tag="family" class="talkback-tag-chip px-2 py-0.5 rounded-md text-[10px] font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">@family</button>
-          <button type="button" onclick="selectSingleReplyTag('friends')" data-tag="friends" class="talkback-tag-chip px-2 py-0.5 rounded-md text-[10px] font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">@friends</button>
-          <button type="button" onclick="selectSingleReplyTag('bffs')" data-tag="bffs" class="talkback-tag-chip px-2 py-0.5 rounded-md text-[10px] font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">@bffs</button>
-          <button type="button" onclick="selectSingleReplyTag('work')" data-tag="work" class="talkback-tag-chip px-2 py-0.5 rounded-md text-[10px] font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">@work</button>
-          <button type="button" onclick="selectSingleReplyTag('marcus')" data-tag="marcus" class="talkback-tag-chip px-2 py-0.5 rounded-md text-[10px] font-mono font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">@marcus</button>
-          <button type="button" onclick="selectSingleReplyTag('sarah')" data-tag="sarah" class="talkback-tag-chip px-2 py-0.5 rounded-md text-[10px] font-mono font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">@sarah</button>
-          <button type="button" onclick="selectSingleReplyTag('priya')" data-tag="priya" class="talkback-tag-chip px-2 py-0.5 rounded-md text-[10px] font-mono font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">@priya</button>
-          <button type="button" onclick="selectSingleReplyTag('mom')" data-tag="mom" class="talkback-tag-chip px-2 py-0.5 rounded-md text-[10px] font-mono font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">@mom</button>
+        <span class="text-[10px] font-bold text-slate-400 block uppercase tracking-wider">Select exactly one @list tag:</span>
+        <div id="talkback-single-tags-container" class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+          <button type="button" onclick="selectSingleReplyTag('all')" data-tag="all" class="talkback-tag-chip px-2.5 py-1 rounded-lg text-xs font-bold transition-all bg-emerald-600 text-white shadow-2xs">@all</button>
+          <button type="button" onclick="selectSingleReplyTag('family')" data-tag="family" class="talkback-tag-chip px-2.5 py-1 rounded-lg text-xs font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">@family</button>
+          <button type="button" onclick="selectSingleReplyTag('friends')" data-tag="friends" class="talkback-tag-chip px-2.5 py-1 rounded-lg text-xs font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">@friends</button>
+          <button type="button" onclick="selectSingleReplyTag('bffs')" data-tag="bffs" class="talkback-tag-chip px-2.5 py-1 rounded-lg text-xs font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">@bffs</button>
+          <button type="button" onclick="selectSingleReplyTag('work')" data-tag="work" class="talkback-tag-chip px-2.5 py-1 rounded-lg text-xs font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">@work</button>
+          <button type="button" onclick="selectSingleReplyTag('marcus')" data-tag="marcus" class="talkback-tag-chip px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">@marcus</button>
+          <button type="button" onclick="selectSingleReplyTag('sarah')" data-tag="sarah" class="talkback-tag-chip px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">@sarah</button>
+          <button type="button" onclick="selectSingleReplyTag('priya')" data-tag="priya" class="talkback-tag-chip px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">@priya</button>
+          <button type="button" onclick="selectSingleReplyTag('mom')" data-tag="mom" class="talkback-tag-chip px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">@mom</button>
         </div>
         <input type="hidden" id="single-reply-active-tag" value="all" />
       </div>
 
-      <div id="single-reply-error-banner" class="hidden p-1.5 rounded-lg bg-rose-50 border border-rose-200 text-[10px] text-rose-800 font-medium flex items-center gap-1">
+      <div id="single-reply-error-banner" class="hidden p-2 rounded-lg bg-rose-50 border border-rose-200 text-xs text-rose-800 font-medium flex items-center gap-1.5">
         <span>⚠️</span> <span id="single-reply-error-text">Only one @list tagging allowed per reply.</span>
       </div>
 
-      <div class="flex items-center gap-1.5">
+      <div class="flex items-center gap-2">
         <textarea id="talkback-answers-editor" rows="2" oninput="onSingleReplyTextInput(this.value)"
                   placeholder="Type one answer for the selected @tag..."
-                  class="flex-1 bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#008069] font-sans leading-snug shadow-2xs"></textarea>
+                  class="flex-1 bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#008069] font-sans leading-snug shadow-2xs"></textarea>
         <button type="button" id="submit-single-reply-btn" onclick="submitTalkBackAnswer()" 
-                class="px-3 py-2 rounded-xl bg-[#008069] hover:bg-[#075e54] text-white font-bold text-xs shadow-xs transition-all active:scale-95 flex items-center gap-1 shrink-0">
+                class="px-3.5 py-2.5 rounded-xl bg-[#008069] hover:bg-[#075e54] text-white font-bold text-sm shadow-xs transition-all active:scale-95 flex items-center gap-1 shrink-0">
           <span>💬</span> <span>Send</span>
         </button>
       </div>
@@ -1012,15 +1221,42 @@ func BioPage(p BioPageProps) Component {
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="/styles.css">
   <style>
-    body {
+    /* =====================================================================
+       Flutter-Native Touch Physics & Zero Scrollbars Everywhere
+       ===================================================================== */
+    *, *::before, *::after {
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+    *::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+    html, body {
+      overflow-x: hidden;
+      overscroll-behavior-y: none;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      touch-action: pan-y;
       padding-top: env(safe-area-inset-top);
       padding-bottom: env(safe-area-inset-bottom);
       padding-left: env(safe-area-inset-left);
       padding-right: env(safe-area-inset-right);
     }
-    .custom-scroll::-webkit-scrollbar { width: 3px; }
-    .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-    .custom-scroll::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.25); border-radius: 3px; }
+    .custom-scroll, [class*="overflow-"] {
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+    }
+    .custom-scroll::-webkit-scrollbar, [class*="overflow-"]::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
   </style>
 </head>
 <body class="min-h-full flex flex-col items-center justify-start bg-slate-50 text-slate-900">

@@ -462,8 +462,52 @@ const server = Bun.serve({
       return new Response(Bun.file("views/app-mobile.html"), { headers: { "Content-Type": "text/html; charset=utf-8" } });
     }
 
-    if (url.pathname === "/app/bio" || url.pathname === "/demo/bio" || url.pathname === "/bio" || url.pathname === "/app-bio") {
+    // Distinct URLs for Bio App, Tabs & Deep-link Control
+    if (url.pathname === "/app/bio" || url.pathname === "/demo/bio" || url.pathname === "/bio" || url.pathname === "/app-bio" || url.pathname.startsWith("/bio/") || url.pathname.startsWith("/demo/bio/")) {
       return new Response(Bun.file("views/app-bio.html"), { headers: { "Content-Type": "text/html; charset=utf-8" } });
+    }
+
+    // Telemetry & Continuous Updates Diag API
+    if (url.pathname === "/api/bio/diag" || url.pathname === "/bio/diag") {
+      const diag = {
+        status: "online",
+        service: "Hyperstack Bio",
+        timestamp: Date.now(),
+        distinct_urls: {
+          profile: "/bio/details",
+          links: "/bio/links",
+          feed: "/bio/feed",
+          talk: "/bio/talk",
+          talkback: "/bio/talk/back",
+          invite: "/bio/invite",
+          diag: "/api/bio/diag",
+          qa: "/api/bio/qa",
+          links_api: "/api/bio/links"
+        },
+        diagnostics: {
+          rate_limit_seconds: 60,
+          starter_credits: 3,
+          preloaded_qa_count: 7,
+          zero_scrollbars: true,
+          flutter_shell: true,
+          font_scaling: "2x"
+        }
+      };
+      return new Response(JSON.stringify(diag, null, 2), { headers: { "Content-Type": "application/json" } });
+    }
+
+    // Live Contextual QA Store for Continuous Updates
+    if (url.pathname === "/api/bio/qa") {
+      const qaList = [
+        { id: "qa-preload-1", question: "Where are you now? 📍", asker: "@sarah", status: "answered", tags: ["all", "family", "friends", "bffs", "marcus", "sarah"] },
+        { id: "qa-preload-2", question: "What is your morning coffee routine? ☕️", asker: "@marcus", status: "answered", tags: ["all", "friends"] },
+        { id: "qa-preload-3", question: "Do you have a girlfriend? 👀", asker: "@priya", status: "answered", tags: ["all", "bffs", "relationship"] },
+        { id: "qa-preload-4", question: "Top projects you are shipping? 🚀", asker: "@dev_alex", status: "answered", tags: ["all", "work"] },
+        { id: "qa-preload-5", question: "What mechanical keyboard switches do you use? ⌨️", asker: "@keeb_fan", status: "answered", tags: ["all", "bffs"] },
+        { id: "qa-preload-6", question: "Favorite tech stack for 2026? 💻", asker: "@persong", status: "answered", tags: ["all", "work", "persong"] },
+        { id: "qa-preload-7", question: "Are you free for speaking at the systems conference? 🎤", asker: "@organizer", status: "answered", tags: ["all", "work"] }
+      ];
+      return new Response(JSON.stringify(qaList, null, 2), { headers: { "Content-Type": "application/json" } });
     }
 
     if (url.pathname === "/api/bio/links") {

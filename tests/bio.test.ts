@@ -346,4 +346,123 @@ describe("Link in Bio Mobile-First Application Suite (Light Theme & PWA)", () =>
     expect(componentHtml).toContain("like-answer-btn");
     expect(componentHtml).toContain("likeAnswerInWhatsApp");
   });
+  test("27. Clean professional text tabs replace bubbly buttons in Talk subtabs", () => {
+    const html = readFileSync(bioHtmlPath, "utf-8");
+    const componentHtml = readFileSync("views/components/bio-talk.html", "utf-8");
+
+    // Pure text tabs with active border-b-2 indicator
+    expect(html).toContain("border-b-2 border-[#008069] text-[#008069]");
+    expect(html).toContain('id="talk-subtab-talk"');
+    expect(html).toContain('id="talk-subtab-talkback"');
+    expect(html).toContain('id="inbox-drawer-btn"');
+
+    // Verify component partial parity
+    expect(componentHtml).toContain("border-b-2 border-[#008069] text-[#008069]");
+    expect(componentHtml).toContain('id="talk-subtab-talk"');
+    expect(componentHtml).toContain('id="talk-subtab-talkback"');
+  });
+
+  test("28. Zero scrollbars everywhere and Flutter-native mobile ergonomics", () => {
+    const html = readFileSync(bioHtmlPath, "utf-8");
+    const goBio = readFileSync("go/components/bio.go", "utf-8");
+
+    // Complete removal of visible scrollbars
+    expect(html).toContain("scrollbar-width: none !important;");
+    expect(html).toContain("display: none !important;");
+    expect(html).toContain("-webkit-overflow-scrolling: touch;");
+    expect(html).toContain("overscroll-behavior: contain;");
+
+    // Zero scrollbars in Go DSL BioPage
+    expect(goBio).toContain("scrollbar-width: none !important;");
+    expect(goBio).toContain("display: none !important;");
+  });
+
+  test("29. Preloaded 5 to 7 previous realistic questions and answers in talk stream", () => {
+    const html = readFileSync(bioHtmlPath, "utf-8");
+    const componentHtml = readFileSync("views/components/bio-talk.html", "utf-8");
+
+    // Preloaded Questions & Answers in stream
+    const expectedQuestions = [
+      "Where are you now? 📍",
+      "What is your morning coffee routine? ☕️",
+      "Do you have a girlfriend? 👀",
+      "Top projects you are shipping? 🚀",
+      "What mechanical keyboard switches do you use? ⌨️",
+      "Favorite tech stack for 2026? 💻",
+      "Are you free for speaking at the systems conference? 🎤"
+    ];
+
+    expect(expectedQuestions.length).toBeGreaterThanOrEqual(5);
+    expect(expectedQuestions.length).toBeLessThanOrEqual(7);
+
+    for (const q of expectedQuestions) {
+      expect(html).toContain(q);
+      expect(componentHtml).toContain(q);
+    }
+
+    // Preloaded Asker Handles
+    expect(html).toContain("@sarah");
+    expect(html).toContain("@marcus");
+    expect(html).toContain("@priya");
+    expect(html).toContain("@dev_alex");
+    expect(html).toContain("@keeb_fan");
+    expect(html).toContain("@persong");
+    expect(html).toContain("@organizer");
+
+    // Preloaded Answer verification
+    expect(html).toContain("im at work, chennai");
+    expect(html).toContain("Ethiopian Yirgacheffe");
+    expect(html).toContain("currently single");
+    expect(html).toContain("Shipping Hyperstack v1.1");
+    expect(html).toContain("Boba U4T");
+    expect(html).toContain("Zero Node.js, 100% Bun & Go");
+  });
+
+  test("30. Unable to send messages error handling when user has no credits", () => {
+    const html = readFileSync(bioHtmlPath, "utf-8");
+    const componentHtml = readFileSync("views/components/bio-talk.html", "utf-8");
+
+    // Dedicated No Credits Error Banner
+    expect(html).toContain('id="no-credits-error-banner"');
+    expect(html).toContain('id="no-credits-error-text"');
+    expect(html).toContain("Unable to send message:");
+    expect(html).toContain("No credits available");
+    expect(html).toContain("claimStarterCredits");
+    expect(html).toContain("showNoCreditsErrorBanner");
+    expect(html).toContain("hideNoCreditsErrorBanner");
+
+    // Component partial parity
+    expect(componentHtml).toContain('id="no-credits-error-banner"');
+    expect(componentHtml).toContain("Unable to send message:");
+    expect(componentHtml).toContain("No credits available");
+  });
+
+  test("31. Distinct URLs for tabs, deep-linking, diagnosis, continuous updates & 2x font readability", () => {
+    const html = readFileSync(bioHtmlPath, "utf-8");
+    const serverTs = readFileSync("server.ts", "utf-8");
+    const serverGo = readFileSync("server.go", "utf-8");
+
+    // Distinct URLs supported in client routing
+    expect(html).toContain("updateUrlState");
+    expect(html).toContain("handleRouteFromUrl");
+    expect(html).toContain("/bio/details");
+    expect(html).toContain("/bio/links");
+    expect(html).toContain("/bio/feed");
+    expect(html).toContain("/bio/talk");
+    expect(html).toContain("/bio/talk/back");
+    expect(html).toContain("/bio/invite");
+
+    // Distinct URLs supported on Bun and Go servers
+    expect(serverTs).toContain('url.pathname.startsWith("/bio/")');
+    expect(serverTs).toContain('url.pathname === "/api/bio/diag"');
+    expect(serverTs).toContain('url.pathname === "/api/bio/qa"');
+
+    expect(serverGo).toContain('strings.HasPrefix(p, "/bio/")');
+    expect(serverGo).toContain('p == "/api/bio/diag"');
+    expect(serverGo).toContain('p == "/api/bio/qa"');
+
+    // 2x Font size readability scaling
+    expect(html).toContain("text-sm font-bold");
+    expect(html).toContain("text-sm text-slate-800 leading-relaxed font-sans");
+  });
 });

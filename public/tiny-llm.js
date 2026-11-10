@@ -226,7 +226,25 @@
         relationship: "Haha, what a question — you already know you have my whole heart! ❤️ \uD83E\uDD70 So glad you're here chatting with my offline clone."
       });
       this.answerQuestion("What is your morning coffee routine?", {
-        all: "Huge pour-over enthusiast! V60 with light roast Ethiopian Yirgacheffe natural beans is his daily ritual ☕️✨"
+        all: "Huge pour-over enthusiast! V60 with light roast Ethiopian Yirgacheffe natural beans is my daily ritual ☕️✨",
+        friends: "V60 pour-over every single morning, 1:16 ratio with Ethiopian beans! Come over for coffee anytime ☕️"
+      });
+      this.answerQuestion("Top projects you are shipping?", {
+        all: "Shipping Hyperstack v1.1 zero-dependency hypermedia framework and AppzOS mobile engine ⚡️",
+        work: "Focusing on Hyperstack v1.1 release, Go single-binary packaging, and real-time SSE components \uD83D\uDCBC"
+      });
+      this.answerQuestion("What mechanical keyboard switches do you use?", {
+        all: "Custom Boba U4T tactile switches lubed with TriboSys 3203 on a gasket-mounted aluminum board \uD83C\uDFA7",
+        bffs: "Boba U4T 62g tactiles! Still the best typing feel in existence \uD83D\uDD25"
+      });
+      this.answerQuestion("Favorite tech stack for 2026?", {
+        all: "Zero Node.js, 100% Bun & Go with Hypermedia partials! Blazing fast single binaries \uD83D\uDD25",
+        work: "Pure Go DSL components and Bun runtime for blazing fast developer ergonomics \uD83D\uDEE0️",
+        persong: "Zero Node.js, 100% Bun & Go! Thanks for asking @persong \uD83D\uDE4C"
+      });
+      this.answerQuestion("Are you free for speaking at the systems conference?", {
+        all: "Yes! DM my inbox with conference dates, schedule, and topic details \uD83D\uDCC5",
+        work: "I'd love to key-note on zero-dependency hypermedia architectures! Drop me an email \uD83D\uDCEC"
       });
       this.answerQuestion("Where do you live?", {
         all: "Alex lives and works in San Francisco, California \uD83C\uDF09"

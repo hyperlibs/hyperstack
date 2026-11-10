@@ -219,8 +219,56 @@ func main() {
 			return
 		}
 
-		if p == "/bio" || p == "/demo/bio" || p == "/app/bio" || p == "/app-bio" {
+		// Distinct URLs for Bio App, Tabs & Deep-link Control
+		if p == "/bio" || p == "/demo/bio" || p == "/app/bio" || p == "/app-bio" || strings.HasPrefix(p, "/bio/") || strings.HasPrefix(p, "/demo/bio/") {
 			http.ServeFile(w, r, filepath.Join("views", "app-bio.html"))
+			return
+		}
+
+		// Telemetry & Continuous Updates Diag API
+		if p == "/api/bio/diag" || p == "/bio/diag" {
+			w.Header().Set("Content-Type", "application/json")
+			diag := map[string]interface{}{
+				"status":    "online",
+				"service":   "Hyperstack Bio",
+				"timestamp": time.Now().UnixMilli(),
+				"distinct_urls": map[string]string{
+					"profile":   "/bio/details",
+					"links":     "/bio/links",
+					"feed":      "/bio/feed",
+					"talk":      "/bio/talk",
+					"talkback":  "/bio/talk/back",
+					"invite":    "/bio/invite",
+					"diag":      "/api/bio/diag",
+					"qa":        "/api/bio/qa",
+					"links_api": "/api/bio/links",
+				},
+				"diagnostics": map[string]interface{}{
+					"rate_limit_seconds": 60,
+					"starter_credits":    3,
+					"preloaded_qa_count": 7,
+					"zero_scrollbars":    true,
+					"flutter_shell":      true,
+					"font_scaling":       "2x",
+				},
+			}
+			json.NewEncoder(w).Encode(diag)
+			return
+		}
+
+		// Live Contextual QA Store for Continuous Updates
+		if p == "/api/bio/qa" {
+			w.Header().Set("Content-Type", "application/json")
+			qaList := []map[string]interface{}{
+				{"id": "qa-preload-1", "question": "Where are you now? 📍", "asker": "@sarah", "status": "answered"},
+				{"id": "qa-preload-2", "question": "What is your morning coffee routine? ☕️", "asker": "@marcus", "status": "answered"},
+				{"id": "qa-preload-3", "question": "Do you have a girlfriend? 👀", "asker": "@priya", "status": "answered"},
+				{"id": "qa-preload-4", "question": "Top projects you are shipping? 🚀", "asker": "@dev_alex", "status": "answered"},
+				{"id": "qa-preload-5", "question": "What mechanical keyboard switches do you use? ⌨️", "asker": "@keeb_fan", "status": "answered"},
+				{"id": "qa-preload-6", "question": "Favorite tech stack for 2026? 💻", "asker": "@persong", "status": "answered"},
+				{"id": "qa-preload-7", "question": "Are you free for speaking at the systems conference? 🎤", "asker": "@organizer", "status": "answered"},
+			}
+			json.NewEncoder(w).Encode(qaList)
 			return
 		}
 
