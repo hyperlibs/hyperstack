@@ -363,7 +363,7 @@ func BioFeed(p BioFeedProps) Component {
 	return Component{html: html}
 }
 
-// --- 5. Bio Talk Component (Digital Clone AI Agent with Embedded Tiny Self-Learning LLM) ---
+// --- 5. Bio Talk Component (WhatsApp Chat with Reply Comment Threads & Single @list Reply) ---
 
 type BioTalkProps struct {
 	CloneName    string
@@ -378,10 +378,10 @@ func BioTalk(p BioTalkProps) Component {
 		p.CloneName = "Alex's Clone"
 	}
 	if p.Subtitle == "" {
-		p.Subtitle = "Verified answers"
+		p.Subtitle = "online • WhatsApp middleman"
 	}
 	if p.Greeting == "" {
-		p.Greeting = "Hey! 👋 I'm <strong>AlexAI</strong>, Alex Rivera's digital clone middleman. I only respond as per Alex's provided answers for your group.<p class=\"text-slate-500 text-[10px] mt-1\">If Alex hasn't answered a question yet, it is forwarded directly to Alex's inbox 📨. Alex can provide multiple answers per audience tag (@all, @family, @friends, @bffs).</p>"
+		p.Greeting = "Hey! 👋 I'm <strong>AlexAI</strong>, Alex's clone middleman. I reply strictly according to answers provided by Alex for your group or username."
 	}
 	if len(p.QuickPrompts) == 0 {
 		p.QuickPrompts = []string{
@@ -393,177 +393,275 @@ func BioTalk(p BioTalkProps) Component {
 	}
 
 	var chipsSb strings.Builder
-	for _, prompt := range p.QuickPrompts {
+	for i, prompt := range p.QuickPrompts {
+		bgClass := "bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 text-slate-700"
+		if i == 0 {
+			bgClass = "bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold"
+		}
 		chipsSb.WriteString(fmt.Sprintf(`
-    <button class="px-2 py-0.5 rounded-full bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 text-[10px] font-medium text-slate-700 shrink-0 transition-colors">
-      %s
-    </button>`, prompt))
+      <button onclick="askClone('%s')" class="px-2 py-0.5 rounded-full %s border border-slate-200 text-[10px] shrink-0 transition-colors">
+        %s
+      </button>`, prompt, bgClass, prompt))
 	}
 
 	html := fmt.Sprintf(`
-<div id="talk-container" class="flex flex-col h-[520px] rounded-2xl bg-white border border-slate-200/80 overflow-hidden shadow-2xs">
-  <div class="h-10 px-3 bg-slate-50 border-b border-slate-200/70 flex items-center justify-between shrink-0">
-    <div class="flex items-center gap-1.5">
-      <div class="w-5 h-5 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white text-[9px] font-bold">
-        A
+<div id="talk-container" class="flex flex-col h-[540px] rounded-2xl bg-white border border-slate-200/90 overflow-hidden shadow-sm">
+  <!-- WhatsApp Styled App Bar Header -->
+  <div class="h-12 px-3 bg-[#075e54] text-white flex items-center justify-between shrink-0 shadow-xs">
+    <div class="flex items-center gap-2 min-w-0">
+      <div class="relative shrink-0">
+        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-400 to-teal-200 flex items-center justify-center text-slate-900 text-xs font-black shadow-xs">
+          A
+        </div>
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 absolute bottom-0 right-0 border-2 border-[#075e54]"></span>
       </div>
-      <span class="text-xs font-bold text-slate-900">%s</span>
-      <span id="clone-role-badge" class="text-[9px] text-indigo-600 font-mono font-bold bg-indigo-50 px-1 rounded">AI</span>
-      <span id="clone-llm-badge" class="text-[9px] text-emerald-700 font-mono font-bold bg-emerald-50 border border-emerald-200/80 px-1 rounded flex items-center gap-0.5" title="Tiny Self-Learning LLM Middleman Running Locally On-Device">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span>Offline LLM</span>
-      </span>
+
+      <div class="min-w-0 flex-1">
+        <div class="flex items-center gap-1.5">
+          <span class="text-xs font-bold truncate text-white">%s</span>
+          <span id="clone-role-badge" class="text-[8px] bg-white/20 text-white font-mono px-1 rounded">AI</span>
+          <span id="clone-llm-badge" class="text-[8px] bg-emerald-400/20 text-emerald-200 font-mono px-1 rounded flex items-center gap-0.5">
+            <span class="w-1 h-1 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Offline LLM</span>
+          </span>
+        </div>
+        <p class="text-[10px] text-emerald-100/90 truncate flex items-center gap-1">
+          <span>online</span> • <span class="font-mono text-[9px]">%s</span>
+        </p>
+      </div>
     </div>
 
     <div class="flex items-center gap-1.5">
       <button onclick="openUsernameModal()" id="talk-user-badge-btn" type="button"
-              class="px-2 py-0.5 rounded-md bg-white hover:bg-slate-100 border border-slate-200 text-[10px] font-mono font-bold text-slate-700 flex items-center gap-1 transition-colors shadow-2xs"
+              class="px-2 py-0.5 rounded-md bg-white/10 hover:bg-white/20 border border-white/20 text-[10px] font-mono font-bold text-white flex items-center gap-1 transition-colors"
               title="Your username for identification (can be changed once a year)">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
         <span id="active-user-handle">@visitor</span>
-        <span class="text-[9px] text-slate-400">✏️</span>
-      </button>
-
-      <button onclick="toggleInboxDrawer()" id="inbox-drawer-btn" type="button"
-              class="text-[10px] font-bold text-amber-700 hover:text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 px-1.5 py-0.5 rounded-md transition-colors flex items-center gap-1" title="Alex's Question Inbox (Middleman Control)">
-        <span>📥</span> <span>Inbox</span>
-        <span id="inbox-pending-count" class="bg-amber-600 text-white rounded-full px-1 text-[8px] font-bold">2</span>
+        <span class="text-[9px] text-white/70">✏️</span>
       </button>
 
       <button onclick="toggleTeachDrawer()" id="teach-drawer-btn" type="button"
-              class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-1.5 py-0.5 rounded-md transition-colors flex items-center gap-0.5" title="Teach new facts to the self-learning LLM">
+              class="text-[10px] font-bold text-white bg-white/15 hover:bg-white/25 px-1.5 py-0.5 rounded-md transition-colors flex items-center gap-0.5" title="Teach new facts to offline LLM">
         <span>💡</span> <span>Teach</span>
       </button>
 
-      <label class="flex items-center gap-1 cursor-pointer select-none" title="Ask without identity">
-        <input type="checkbox" id="anon-toggle" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-3 w-3 cursor-pointer" />
-        <span class="text-[10px] font-medium text-slate-600 flex items-center gap-0.5">
+      <label class="flex items-center gap-1 cursor-pointer select-none text-white/90 hover:text-white" title="Ask without identity">
+        <input type="checkbox" id="anon-toggle" onchange="toggleAnonMode(this.checked)" class="rounded border-emerald-400 text-emerald-500 focus:ring-emerald-400 h-3 w-3 cursor-pointer" />
+        <span class="text-[10px] font-medium flex items-center gap-0.5">
           <span>🎭</span> <span>Ask Anon</span>
         </span>
       </label>
     </div>
   </div>
 
-  <!-- 2 Sub-Tabs Controller: Talk | Talk back -->
-  <div class="px-3 py-1.5 bg-slate-100/70 border-b border-slate-200 flex items-center justify-between shrink-0">
+  <!-- WhatsApp Sub-Tabs Bar: Chat (Talk) vs Reply Station (Talk back) -->
+  <div class="px-3 py-1 bg-[#f0f2f5] border-b border-slate-200/80 flex items-center justify-between shrink-0">
     <div class="flex items-center gap-1 bg-white p-0.5 rounded-xl border border-slate-200/80 shadow-2xs text-xs font-semibold">
       <button type="button" onclick="switchTalkSubTab('talk')" id="talk-subtab-talk" 
-              class="px-3 py-1 rounded-lg bg-slate-900 text-white font-bold transition-all shadow-xs flex items-center gap-1.5 text-xs">
+              class="px-3 py-0.5 rounded-lg bg-[#008069] text-white font-bold transition-all shadow-xs flex items-center gap-1 text-xs">
         <span>💬</span> <span>Talk</span>
-        <span id="talk-unanswered-badge" class="bg-amber-500 text-white rounded-full px-1.5 text-[9px] font-bold">2</span>
+        <span id="talk-unanswered-badge" class="bg-amber-400 text-slate-900 rounded-full px-1.5 text-[9px] font-bold">2</span>
       </button>
       <button type="button" onclick="switchTalkSubTab('talkback')" id="talk-subtab-talkback" 
-              class="px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 font-bold transition-all flex items-center gap-1.5 text-xs">
+              class="px-3 py-0.5 rounded-lg text-slate-600 hover:text-slate-900 font-bold transition-all flex items-center gap-1 text-xs">
         <span>↩️</span> <span>Talk back</span>
-        <span class="text-[9px] text-slate-400 font-normal">Alex Answers</span>
+        <span class="text-[9px] text-slate-400 font-normal">Thread Replies</span>
+      </button>
+    </div>
+
+    <div class="flex items-center gap-1">
+      <button onclick="toggleInboxDrawer()" id="inbox-drawer-btn" type="button"
+              class="text-[10px] font-bold text-emerald-800 hover:text-emerald-950 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 px-1.5 py-0.5 rounded-md transition-colors flex items-center gap-1" title="Question Queue">
+        <span>📥</span> <span>Inbox</span>
+        <span id="inbox-pending-count" class="bg-emerald-600 text-white rounded-full px-1 text-[8px] font-bold">2</span>
       </button>
     </div>
   </div>
 
   <!-- Collapsible Alex's Question Inbox Drawer -->
-  <div id="inbox-drawer" class="hidden px-3 py-2 bg-amber-50/70 border-b border-amber-200/80 text-xs space-y-2 animate-slide-down">
+  <div id="inbox-drawer" class="hidden px-3 py-2 bg-amber-50/80 border-b border-amber-200 text-xs space-y-2 animate-slide-down">
     <div class="flex items-center justify-between text-[10px]">
       <span class="font-bold text-amber-900 flex items-center gap-1">
-        <span>👑</span> <span>Alex's Inbox (Middleman Control)</span>
+        <span>👑</span> <span>Alex's Question Queue (Middleman Control)</span>
       </span>
-      <button type="button" onclick="toggleInboxDrawer()" class="text-amber-600 hover:text-amber-900 ml-1 font-bold">✕</button>
+      <button type="button" onclick="toggleInboxDrawer()" class="text-amber-600 hover:text-amber-900 font-bold">✕</button>
     </div>
-    <div id="inbox-answer-box" class="p-2 rounded-xl bg-white border border-amber-200/90 shadow-2xs space-y-1.5">
+    <div id="inbox-answer-box" class="p-2 rounded-xl bg-white border border-amber-200/90 shadow-2xs space-y-1">
       <div class="text-[10px] font-bold text-slate-800">Middleman Question Queue Active</div>
       <button type="button" onclick="submitInboxAnswer()" class="hidden">Save</button>
     </div>
   </div>
 
   <!-- Collapsible Self-Learning Teach Drawer -->
-  <div id="teach-drawer" class="hidden px-3 py-2 bg-indigo-50/70 border-b border-indigo-100 text-xs space-y-1.5 animate-slide-down">
+  <div id="teach-drawer" class="hidden px-3 py-2 bg-emerald-50/90 border-b border-emerald-200 text-xs space-y-1.5 animate-slide-down">
     <div class="flex items-center justify-between text-[10px]">
-      <span class="font-bold text-indigo-900 flex items-center gap-1">
+      <span class="font-bold text-emerald-900 flex items-center gap-1">
         <span>🧠</span> <span>Teach Tiny LLM (On-Device Self-Learning)</span>
       </span>
-      <span id="llm-telemetry-pill" class="font-mono text-[9px] text-indigo-700 bg-white/80 px-1.5 py-0.2 rounded border border-indigo-200">
+      <span id="llm-telemetry-pill" class="font-mono text-[9px] text-emerald-800 bg-white/90 px-1.5 py-0.2 rounded border border-emerald-300">
         Steps: <span id="telemetry-step">0</span> | Loss: <span id="telemetry-loss">0.038</span>
       </span>
     </div>
     <form onsubmit="handleTeachSubmit(event)" class="flex items-center gap-1.5">
       <input type="text" id="teach-input" placeholder="e.g. Alex loves building mechanical keyboards with Boba U4T switches" 
-             class="flex-1 bg-white border border-indigo-200 rounded-lg px-2.5 py-1 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 shadow-2xs" />
-      <button type="submit" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[11px] shrink-0 transition-all shadow-xs">
+             class="flex-1 bg-white border border-emerald-300 rounded-lg px-2.5 py-1 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-600 shadow-2xs" />
+      <button type="submit" class="px-2.5 py-1 rounded-lg bg-[#008069] hover:bg-[#075e54] text-white font-bold text-[11px] shrink-0 transition-all shadow-xs">
         Teach & Train
       </button>
     </form>
   </div>
 
-  <!-- SUB-PANE 1: TALK (Recent Unanswered Questions FIRST + Chat Stream) -->
-  <div id="subpane-talk" class="flex-1 flex flex-col min-h-0">
-    <div id="unanswered-questions-section" class="border-b border-amber-200/80 bg-amber-50/40 p-2.5 space-y-1.5 shrink-0 max-h-48 overflow-y-auto custom-scroll">
+  <!-- SUB-PANE 1: TALK (WhatsApp Chat Stream + Recent Unanswered Questions) -->
+  <div id="subpane-talk" class="flex-1 flex flex-col min-h-0 bg-[#efeae2]">
+    <div id="unanswered-questions-section" class="border-b border-slate-300/80 bg-white/95 p-2 space-y-1.5 shrink-0 max-h-44 overflow-y-auto custom-scroll shadow-2xs">
       <div class="flex items-center justify-between text-[11px]">
-        <div class="flex items-center gap-1.5 font-bold text-amber-950">
+        <div class="flex items-center gap-1.5 font-bold text-slate-800">
           <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
           <span>Recent Unanswered Questions</span>
-          <span id="unanswered-count-badge" class="px-1.5 py-0.2 rounded-full bg-amber-200 text-amber-900 text-[9px] font-mono font-bold">2</span>
+          <span id="unanswered-count-badge" class="px-1.5 py-0.2 rounded-full bg-amber-100 text-amber-900 text-[9px] font-mono font-bold">2</span>
         </div>
-        <span class="text-[9px] text-amber-800 font-mono">AlexAI silent until answered</span>
+        <span class="text-[9px] text-slate-500 font-mono">AlexAI silent until answered</span>
       </div>
+      <p class="text-[10px] text-slate-500 leading-tight">
+        Questions waiting for Alex's answer. Click <strong>Talk back</strong> on any question to reply with a single @list tag!
+      </p>
       <div id="unanswered-questions-list" class="space-y-1.5"></div>
     </div>
 
-    <div id="talk-stream" class="flex-1 overflow-y-auto p-2.5 space-y-2 bg-slate-50/40 custom-scroll text-xs">
-      <div class="flex items-start gap-1.5 max-w-[92%%]">
-        <div class="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center text-white text-[9px] font-bold shrink-0">A</div>
-        <div class="p-2 rounded-xl rounded-tl-xs bg-white border border-slate-200/80 text-xs text-slate-800 leading-snug shadow-2xs">
-          %s
-          <div class="text-[8px] text-slate-400 text-right mt-1 font-mono flex items-center justify-end gap-1">
-            <span class="text-emerald-600">● Middleman Proxy</span> • <span>Multi-Audience</span>
+    <div id="talk-stream" class="flex-1 overflow-y-auto p-3 space-y-2.5 custom-scroll text-xs relative"
+         style="background-color: #efeae2; background-image: radial-gradient(#d5d1c8 1px, transparent 1px), radial-gradient(#d5d1c8 1px, #efeae2 1px); background-size: 24px 24px; background-position: 0 0, 12px 12px;">
+      <div class="flex justify-center my-1">
+        <span class="bg-white/90 border border-slate-200/60 text-[10px] font-semibold text-slate-600 px-2.5 py-0.5 rounded-lg shadow-2xs">
+          TODAY
+        </span>
+      </div>
+
+      <div class="flex items-start gap-1 max-w-[88%%] mr-auto animate-fade-in">
+        <div class="bg-white text-slate-900 rounded-2xl rounded-tl-xs p-2.5 shadow-2xs border border-slate-200/70 space-y-1">
+          <div class="text-[10px] font-bold text-[#008069] flex items-center justify-between">
+            <span>AlexAI (Digital Clone)</span>
+            <span class="text-[8px] text-slate-400 font-mono">Middleman Proxy</span>
+          </div>
+          <p class="text-xs text-slate-800 leading-relaxed">
+            %s
+          </p>
+          <div class="text-[9px] text-slate-500 bg-slate-50 p-1.5 rounded-lg border border-slate-100 space-y-0.5">
+            <span class="font-bold text-slate-700">💬 Reply Comment Threads:</span>
+            <p>Every reply has strictly <strong>ONE @list tag</strong>. Alex can reply multiple times per question, but cannot mix multiple answers into one reply.</p>
+          </div>
+          <div class="text-[8px] text-slate-400 text-right font-mono pt-0.5 flex items-center justify-end gap-1">
+            <span>10:40 AM</span>
+            <span class="text-emerald-600">✓✓</span>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="px-2 py-1 bg-white border-t border-slate-200/70 flex items-center gap-1 overflow-x-auto shrink-0 scrollbar-none">
+    <!-- WhatsApp Active Reply Bar -->
+    <div id="whatsapp-reply-bar" class="hidden px-3 py-1.5 bg-[#f0f2f5] border-t border-slate-300 flex items-center justify-between animate-slide-down">
+      <div class="flex items-center gap-2 min-w-0 flex-1">
+        <div class="w-1 h-8 rounded-full bg-[#008069] shrink-0"></div>
+        <div class="min-w-0 flex-1">
+          <div class="text-[10px] font-bold text-[#008069] flex items-center gap-1">
+            <span>Replying to</span>
+            <span id="reply-quote-author" class="font-mono text-slate-700">@sarah</span>
+          </div>
+          <p id="reply-quote-text" class="text-[11px] text-slate-600 truncate font-mono">"What are your plans for this weekend?"</p>
+        </div>
+      </div>
+      <button type="button" onclick="cancelWhatsAppReply()" class="text-slate-400 hover:text-slate-600 font-bold px-1 text-sm">✕</button>
+    </div>
+
+    <!-- Micro Prompt Quick Chips -->
+    <div class="px-2 py-1 bg-white/90 border-t border-slate-200/80 flex items-center gap-1 overflow-x-auto shrink-0 scrollbar-none">
       %s
     </div>
 
-    <form id="talk-form" onsubmit="handleCloneSubmit(event)" class="p-1.5 bg-white border-t border-slate-200/70 flex items-center gap-1.5 shrink-0">
-      <input type="text" id="clone-input" placeholder="Ask Alex's offline clone anything..." class="flex-1 bg-slate-50 border border-slate-200/80 rounded-lg px-2.5 py-1 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 shadow-2xs" />
-      <button type="submit" class="px-3 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs transition-all">
-        ➤
+    <!-- WhatsApp Bottom Input Bar -->
+    <form id="talk-form" onsubmit="handleCloneSubmit(event)" 
+          class="p-2 bg-[#f0f2f5] border-t border-slate-300 flex items-center gap-2 shrink-0">
+      <span class="text-base select-none">😊</span>
+      <input type="text" id="clone-input" placeholder="Type a message or question..." required autocomplete="off"
+             class="flex-1 bg-white border border-slate-200 rounded-2xl px-3 py-1.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#008069] shadow-2xs" />
+      <button type="submit" 
+              class="w-8 h-8 rounded-full bg-[#008069] hover:bg-[#075e54] text-white flex items-center justify-center transition-all active:scale-95 shadow-xs shrink-0">
+        <span class="text-xs">➤</span>
       </button>
     </form>
   </div>
 
-  <!-- SUB-PANE 2: TALK BACK (Answer Station: Multi-People & Usernames) -->
-  <div id="subpane-talkback" class="hidden flex-1 flex flex-col min-h-0 bg-slate-50/50 overflow-y-auto custom-scroll p-3 space-y-3">
-    <div class="p-2.5 rounded-xl bg-white border border-amber-200 shadow-2xs space-y-2">
+  <!-- SUB-PANE 2: TALK BACK (WhatsApp Reply Comment Thread Station) -->
+  <div id="subpane-talkback" class="hidden flex-1 flex flex-col min-h-0 bg-[#efeae2] overflow-hidden">
+    <div class="p-2.5 bg-white border-b border-slate-200 shadow-2xs space-y-1.5 shrink-0">
       <div class="flex items-center justify-between text-xs">
-        <span class="font-bold text-amber-950 flex items-center gap-1.5">
-          <span>👑</span> <span>Talk back — Alex's Answer Station</span>
+        <span class="font-bold text-slate-800 flex items-center gap-1.5">
+          <span class="text-emerald-700">↩️</span> <span>WhatsApp Reply Station</span>
         </span>
-        <span class="text-[9px] px-1.5 py-0.2 rounded bg-amber-100 text-amber-900 font-mono font-bold">Middleman Mode</span>
+        <span class="text-[9px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-900 font-mono font-bold">1 @tag per reply</span>
       </div>
-      <div class="space-y-1">
-        <select id="talkback-question-select" onchange="onTalkBackQuestionSelected(this.value)" class="w-full bg-amber-50/70 border border-amber-300 rounded-lg px-2 py-1 text-xs font-bold text-slate-900"></select>
+
+      <div class="flex items-center gap-1.5">
+        <select id="talkback-question-select" onchange="onTalkBackQuestionSelected(this.value)"
+                class="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-xs font-bold text-slate-900 focus:outline-none focus:border-emerald-600 shadow-2xs"></select>
+        <button type="button" onclick="promptCustomQuestionForTalkBack()" 
+                class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[10px] shrink-0" title="Add new question">
+          + New Q
+        </button>
+      </div>
+
+      <div id="talkback-q-meta" class="p-1.5 rounded-lg bg-slate-50 border border-slate-200 text-[10px] flex items-center justify-between">
+        <span class="text-slate-600" id="talkback-target-asker">Thread Author: <strong>Sarah (@sarah)</strong></span>
+        <span class="text-[9px] font-mono text-emerald-700 font-bold" id="talkback-target-status">⏳ Unanswered</span>
       </div>
     </div>
 
-    <div class="p-3 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-2.5">
-      <div class="flex items-center gap-1 flex-wrap text-[10px]">
-        <span class="font-bold text-slate-600">People:</span>
-        <span class="font-mono text-emerald-800 bg-emerald-50 px-1 rounded">@marcus</span>
-        <span class="font-mono text-purple-800 bg-purple-50 px-1 rounded">@sarah</span>
-        <span class="font-mono text-blue-800 bg-blue-50 px-1 rounded">@priya</span>
-        <span class="font-mono text-rose-800 bg-rose-50 px-1 rounded">@mom</span>
+    <!-- Active Question's WhatsApp Reply Comment Threads Stream -->
+    <div id="talkback-thread-stream" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scroll"
+         style="background-color: #efeae2; background-image: radial-gradient(#d5d1c8 1px, transparent 1px), radial-gradient(#d5d1c8 1px, #efeae2 1px); background-size: 24px 24px; background-position: 0 0, 12px 12px;"></div>
+
+    <!-- STRICT SINGLE REPLY COMPOSER -->
+    <div class="p-2.5 bg-white border-t border-slate-300 shadow-sm space-y-2 shrink-0">
+      <div class="flex items-center justify-between">
+        <label class="text-[11px] font-bold text-slate-800 flex items-center gap-1">
+          <span>✏️</span> <span>Post Single Reply</span>
+        </label>
+        <span class="text-[9px] font-mono text-emerald-700 font-bold">1 @list tag only • 1 answer</span>
       </div>
-      <textarea id="talkback-answers-editor" rows="4" placeholder="@all im at work, chennai&#10;@friends, @marcus im at home with my family" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 font-mono"></textarea>
-      <div class="flex items-center justify-end">
-        <button type="button" onclick="submitTalkBackAnswer()" class="px-3 py-1.5 rounded-xl bg-amber-600 text-white font-bold text-xs shadow-xs">
-          💾 Save Answers & Publish to AlexAI
+
+      <div class="space-y-1">
+        <span class="text-[9px] font-bold text-slate-400 block uppercase tracking-wider">Select exactly one @list tag:</span>
+        <div id="talkback-single-tags-container" class="flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none">
+          <button type="button" onclick="selectSingleReplyTag('all')" data-tag="all" class="talkback-tag-chip px-2 py-0.5 rounded-md text-[10px] font-bold transition-all bg-emerald-600 text-white shadow-2xs">@all</button>
+          <button type="button" onclick="selectSingleReplyTag('family')" data-tag="family" class="talkback-tag-chip px-2 py-0.5 rounded-md text-[10px] font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">@family</button>
+          <button type="button" onclick="selectSingleReplyTag('friends')" data-tag="friends" class="talkback-tag-chip px-2 py-0.5 rounded-md text-[10px] font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">@friends</button>
+          <button type="button" onclick="selectSingleReplyTag('bffs')" data-tag="bffs" class="talkback-tag-chip px-2 py-0.5 rounded-md text-[10px] font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">@bffs</button>
+          <button type="button" onclick="selectSingleReplyTag('work')" data-tag="work" class="talkback-tag-chip px-2 py-0.5 rounded-md text-[10px] font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">@work</button>
+          <button type="button" onclick="selectSingleReplyTag('marcus')" data-tag="marcus" class="talkback-tag-chip px-2 py-0.5 rounded-md text-[10px] font-mono font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">@marcus</button>
+          <button type="button" onclick="selectSingleReplyTag('sarah')" data-tag="sarah" class="talkback-tag-chip px-2 py-0.5 rounded-md text-[10px] font-mono font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">@sarah</button>
+          <button type="button" onclick="selectSingleReplyTag('priya')" data-tag="priya" class="talkback-tag-chip px-2 py-0.5 rounded-md text-[10px] font-mono font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">@priya</button>
+          <button type="button" onclick="selectSingleReplyTag('mom')" data-tag="mom" class="talkback-tag-chip px-2 py-0.5 rounded-md text-[10px] font-mono font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">@mom</button>
+        </div>
+        <input type="hidden" id="single-reply-active-tag" value="all" />
+      </div>
+
+      <div id="single-reply-error-banner" class="hidden p-1.5 rounded-lg bg-rose-50 border border-rose-200 text-[10px] text-rose-800 font-medium flex items-center gap-1">
+        <span>⚠️</span> <span id="single-reply-error-text">Only one @list tagging allowed per reply.</span>
+      </div>
+
+      <div class="flex items-center gap-1.5">
+        <textarea id="talkback-answers-editor" rows="2" oninput="onSingleReplyTextInput(this.value)"
+                  placeholder="Type one answer for the selected @tag..."
+                  class="flex-1 bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#008069] font-sans leading-snug shadow-2xs"></textarea>
+        <button type="button" id="submit-single-reply-btn" onclick="submitTalkBackAnswer()" 
+                class="px-3 py-2 rounded-xl bg-[#008069] hover:bg-[#075e54] text-white font-bold text-xs shadow-xs transition-all active:scale-95 flex items-center gap-1 shrink-0">
+          <span>💬</span> <span>Send</span>
         </button>
       </div>
     </div>
 
-    <div id="talkback-answered-directory" class="space-y-1.5"></div>
+    <div id="talkback-answered-directory" class="hidden"></div>
   </div>
-</div>`, p.CloneName, p.Greeting, chipsSb.String())
+</div>`, p.CloneName, p.Subtitle, p.Greeting, chipsSb.String())
 
 	return Component{html: html}
 }

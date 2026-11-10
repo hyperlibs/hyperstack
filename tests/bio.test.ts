@@ -240,4 +240,56 @@ describe("Link in Bio Mobile-First Application Suite (Light Theme & PWA)", () =>
     expect(html).toContain("lastUsernameChange");
     expect(html).toContain("365");
   });
+  test("23. Talk section looks like a WhatsApp chat with reply comment threads", () => {
+    const html = readFileSync(bioHtmlPath, "utf-8");
+    const componentHtml = readFileSync("views/components/bio-talk.html", "utf-8");
+
+    // WhatsApp styling: teal header, beige background, checkmarks
+    expect(html).toContain("bg-[#075e54]");
+    expect(html).toContain("online");
+    expect(html).toContain("WhatsApp middleman");
+    expect(html).toContain("#efeae2");
+    expect(html).toContain("TODAY");
+    expect(html).toContain("✓✓");
+
+    // WhatsApp quoted reply bar and thread actions
+    expect(html).toContain('id="whatsapp-reply-bar"');
+    expect(html).toContain("replyToQuestionInWhatsApp");
+    expect(html).toContain("cancelWhatsAppReply");
+    expect(html).toContain("Reply in thread");
+    expect(html).toContain("border-[#008069]");
+
+    // Verify component partial parity
+    expect(componentHtml).toContain("bg-[#075e54]");
+    expect(componentHtml).toContain('id="whatsapp-reply-bar"');
+    expect(componentHtml).toContain("WhatsApp middleman");
+    expect(componentHtml).toContain("Reply Comment Threads");
+  });
+
+  test("24. Strict Single Reply & Single @list Tagging enforcement", () => {
+    const html = readFileSync(bioHtmlPath, "utf-8");
+    const componentHtml = readFileSync("views/components/bio-talk.html", "utf-8");
+
+    // Single @list tag selector & exclusive chip container
+    expect(html).toContain('id="talkback-single-tags-container"');
+    expect(html).toContain('id="single-reply-active-tag"');
+    expect(html).toContain("selectSingleReplyTag");
+    expect(html).toContain("Select exactly one @list tag");
+
+    // Single reply error banner (rejects multiple answers / multiple @list tags)
+    expect(html).toContain('id="single-reply-error-banner"');
+    expect(html).toContain('id="single-reply-error-text"');
+    expect(html).toContain("onSingleReplyTextInput");
+    expect(html).toContain("1 @list tag only • 1 answer");
+
+    // Thread stream rendering active question replies
+    expect(html).toContain('id="talkback-thread-stream"');
+    expect(html).toContain("renderTalkBackThreads");
+
+    // Check component partial parity
+    expect(componentHtml).toContain('id="talkback-single-tags-container"');
+    expect(componentHtml).toContain('id="single-reply-error-banner"');
+    expect(componentHtml).toContain('id="talkback-thread-stream"');
+    expect(componentHtml).toContain("1 @list tag only • 1 answer");
+  });
 });

@@ -143,6 +143,22 @@ func TestBioComponents(t *testing.T) {
 		if !strings.Contains(html, "Do you have a girlfriend? 👀") {
 			t.Errorf("expected prompt chip for girlfriend query, got %s", html)
 		}
+		// WhatsApp specific UI validations
+		if !strings.Contains(html, "bg-[#075e54]") {
+			t.Errorf("expected WhatsApp teal header bg-[#075e54], got %s", html)
+		}
+		if !strings.Contains(html, "whatsapp-reply-bar") {
+			t.Errorf("expected whatsapp-reply-bar element, got %s", html)
+		}
+		if !strings.Contains(html, "talkback-thread-stream") {
+			t.Errorf("expected talkback-thread-stream element, got %s", html)
+		}
+		if !strings.Contains(html, "single-reply-error-banner") {
+			t.Errorf("expected single-reply-error-banner element, got %s", html)
+		}
+		if !strings.Contains(html, "1 @list tag only") {
+			t.Errorf("expected 1 @list tag only prompt, got %s", html)
+		}
 	})
 
 	t.Run("BioInvite renders collections and access rule controls", func(t *testing.T) {

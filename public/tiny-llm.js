@@ -30,6 +30,7 @@
   // src/tiny-llm.ts
   var exports_tiny_llm = {};
   __export(exports_tiny_llm, {
+    validateSingleReply: () => validateSingleReply,
     parseAudienceAnswers: () => parseAudienceAnswers,
     checkUsernameCooldown: () => checkUsernameCooldown,
     USERNAME_COOLDOWN_MS: () => USERNAME_COOLDOWN_MS,
@@ -65,6 +66,55 @@
       lastChangedDate: new Date(lastChangeTimestamp).toLocaleDateString(),
       nextEligibleDate: nextEligibleTime.toLocaleDateString(),
       reason: `Usernames can only be changed once a year. ${daysRemaining} day(s) remaining until ${nextEligibleTime.toLocaleDateString()}.`
+    };
+  }
+  function validateSingleReply(rawText, explicitTag) {
+    const trimmed = rawText.trim();
+    if (!trimmed) {
+      return { valid: false, error: "Reply text cannot be empty" };
+    }
+    const lines = trimmed.split(`
+`).map((l) => l.trim()).filter(Boolean);
+    let tagLinesCount = 0;
+    for (const line of lines) {
+      if (line.startsWith("@")) {
+        tagLinesCount++;
+      }
+    }
+    if (tagLinesCount > 1 || lines.length > 1) {
+      return {
+        valid: false,
+        error: "Multiple answers in a single reply are not allowed. Please submit one answer per reply."
+      };
+    }
+    const allTags = (trimmed.match(/@[a-zA-Z0-9_-]+/g) || []).map((t) => t.replace("@", "").toLowerCase());
+    const uniqueTags = Array.from(new Set(allTags));
+    const hasExplicitTag = Boolean(explicitTag && explicitTag.trim());
+    const cleanExplicitTag = hasExplicitTag ? explicitTag.replace(/^@/, "").toLowerCase().trim() : "";
+    if (uniqueTags.length > 1) {
+      return {
+        valid: false,
+        error: "Each reply can have only one @list tagging"
+      };
+    }
+    if (hasExplicitTag && uniqueTags.length === 1 && uniqueTags[0] !== cleanExplicitTag) {
+      return {
+        valid: false,
+        error: "Conflicting tags: inline tag does not match selected tag"
+      };
+    }
+    const selectedTag = cleanExplicitTag || (uniqueTags[0] || "all");
+    let cleanAnswer = trimmed;
+    if (uniqueTags.length === 1) {
+      cleanAnswer = cleanAnswer.replace(new RegExp(`@${uniqueTags[0]}\\s*`, "i"), "").trim();
+    }
+    if (!cleanAnswer) {
+      return { valid: false, error: "Please provide an answer for this reply" };
+    }
+    return {
+      valid: true,
+      tag: selectedTag,
+      answer: cleanAnswer
     };
   }
   function parseAudienceAnswers(rawText) {
@@ -264,6 +314,7 @@
           tokens,
           tokenSet: new Set(tokens),
           answers: answersObj,
+          replies: [],
           status: "answered",
           askedBy: "Visitor",
           isAnon: false,
@@ -275,6 +326,23 @@
         item.answers = { ...item.answers, ...answersObj };
         item.status = "answered";
         item.answeredAt = Date.now();
+      }
+      if (!item.replies)
+        item.replies = [];
+      for (const [tag, ans] of Object.entries(answersObj)) {
+        const existingRep = item.replies.find((r) => r.tag === tag);
+        if (existingRep) {
+          existingRep.text = ans;
+          existingRep.timestamp = Date.now();
+        } else {
+          item.replies.push({
+            id: `rep-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+            tag,
+            text: ans,
+            author: "Alex",
+            timestamp: Date.now()
+          });
+        }
       }
       for (const [tag, ans] of Object.entries(item.answers)) {
         this.learnFact(`[${tag}] ${item.question} -> ${ans}`, "qa", false);
@@ -373,6 +441,65 @@
     }
     getAnsweredQuestions() {
       return this.qaStore.filter((q) => q.status === "answered").sort((a, b) => (b.answeredAt || b.askedAt) - (a.answeredAt || a.askedAt));
+    }
+    addSingleReply(questionIdOrText, replyText, explicitTag, author = "Alex") {
+      const validation = validateSingleReply(replyText, explicitTag);
+      if (!validation.valid || !validation.tag || !validation.answer) {
+        throw new Error(validation.error || "Invalid reply");
+      }
+      let item = this.qaStore.find((q) => q.id === questionIdOrText);
+      if (!item) {
+        item = this.findQAByQuestion(questionIdOrText);
+      }
+      if (!item) {
+        const cleanQ = questionIdOrText.trim();
+        const tokens = this.tokenize(cleanQ);
+        item = {
+          id: `qa-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+          question: cleanQ,
+          tokens,
+          tokenSet: new Set(tokens),
+          answers: {},
+          replies: [],
+          status: "answered",
+          askedBy: "Visitor",
+          isAnon: false,
+          askedAt: Date.now(),
+          answeredAt: Date.now()
+        };
+        this.qaStore.unshift(item);
+      }
+      if (!item.replies) {
+        item.replies = [];
+      }
+      const threadReply = {
+        id: `rep-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        tag: validation.tag,
+        text: validation.answer,
+        author,
+        timestamp: Date.now()
+      };
+      item.replies.push(threadReply);
+      item.answers[validation.tag] = validation.answer;
+      item.status = "answered";
+      item.answeredAt = Date.now();
+      this.learnFact(`[${validation.tag}] ${item.question} -> ${validation.answer}`, "qa", false);
+      this.persistState();
+      return threadReply;
+    }
+    getQuestionReplies(questionIdOrText) {
+      const item = this.qaStore.find((q) => q.id === questionIdOrText) || this.findQAByQuestion(questionIdOrText);
+      if (!item)
+        return [];
+      if (item.replies && item.replies.length > 0)
+        return item.replies;
+      return Object.entries(item.answers).map(([tag, text], idx) => ({
+        id: `rep-legacy-${idx}`,
+        tag,
+        text,
+        author: "Alex",
+        timestamp: item.answeredAt || item.askedAt
+      }));
     }
     textEmbedding(tokens) {
       const pooled = new Float32Array(this.embeddingDim);
@@ -686,6 +813,7 @@
     window.parseAudienceAnswers = parseAudienceAnswers;
     window.checkUsernameCooldown = checkUsernameCooldown;
     window.USERNAME_COOLDOWN_MS = USERNAME_COOLDOWN_MS;
+    window.validateSingleReply = validateSingleReply;
     window.$llm = new TinyLLM;
   }
 })();

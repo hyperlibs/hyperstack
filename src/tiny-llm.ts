@@ -65,6 +65,89 @@ export function checkUsernameCooldown(lastChangeTimestamp?: number, now: number 
   };
 }
 
+export interface ThreadReply {
+  id: string;
+  tag: string; // Exactly one @list tag, e.g. 'all', 'family', 'friends', 'marcus'
+  text: string;
+  author: string; // 'Alex' or username
+  timestamp: number;
+}
+
+export interface SingleReplyValidation {
+  valid: boolean;
+  tag?: string;
+  answer?: string;
+  error?: string;
+}
+
+/**
+ * Validates a single reply strictly following directives:
+ * 1. "dont allow multiple answers in single reply."
+ * 2. "each reply can have only one @list tagging"
+ */
+export function validateSingleReply(rawText: string, explicitTag?: string): SingleReplyValidation {
+  const trimmed = rawText.trim();
+  if (!trimmed) {
+    return { valid: false, error: 'Reply text cannot be empty' };
+  }
+
+  // Rule 2: dont allow multiple answers in single reply
+  const lines = trimmed.split('\n').map(l => l.trim()).filter(Boolean);
+  let tagLinesCount = 0;
+  for (const line of lines) {
+    if (line.startsWith('@')) {
+      tagLinesCount++;
+    }
+  }
+  if (tagLinesCount > 1 || lines.length > 1) {
+    return {
+      valid: false,
+      error: 'Multiple answers in a single reply are not allowed. Please submit one answer per reply.'
+    };
+  }
+
+  // Extract all @tags across the reply
+  const allTags = (trimmed.match(/@[a-zA-Z0-9_-]+/g) || []).map(t => t.replace('@', '').toLowerCase());
+  const uniqueTags = Array.from(new Set(allTags));
+
+  const hasExplicitTag = Boolean(explicitTag && explicitTag.trim());
+  const cleanExplicitTag = hasExplicitTag ? explicitTag!.replace(/^@/, '').toLowerCase().trim() : '';
+
+  // Rule 1: each reply can have only one @list tagging
+  if (uniqueTags.length > 1) {
+    return {
+      valid: false,
+      error: 'Each reply can have only one @list tagging'
+    };
+  }
+
+  if (hasExplicitTag && uniqueTags.length === 1 && uniqueTags[0] !== cleanExplicitTag) {
+    return {
+      valid: false,
+      error: 'Conflicting tags: inline tag does not match selected tag'
+    };
+  }
+
+  // Determine the single active tag
+  const selectedTag = cleanExplicitTag || (uniqueTags[0] || 'all');
+
+  // Strip the single tag from text if present at start or inline
+  let cleanAnswer = trimmed;
+  if (uniqueTags.length === 1) {
+    cleanAnswer = cleanAnswer.replace(new RegExp(`@${uniqueTags[0]}\\s*`, 'i'), '').trim();
+  }
+
+  if (!cleanAnswer) {
+    return { valid: false, error: 'Please provide an answer for this reply' };
+  }
+
+  return {
+    valid: true,
+    tag: selectedTag,
+    answer: cleanAnswer
+  };
+}
+
 export interface GenerationResult {
   text: string;
   tokens: string[];
@@ -104,6 +187,7 @@ export interface ContextualQAItem {
   tokens: string[];
   tokenSet: Set<string>;
   answers: AudienceAnswers; // e.g. { all: 'im at work, chennai', family: 'im going for shopping today' }
+  replies?: ThreadReply[]; // WhatsApp reply comment threads
   status: 'pending' | 'answered';
   askedBy: string;
   isAnon: boolean;
@@ -383,6 +467,7 @@ export class TinyLLM {
         tokens,
         tokenSet: new Set(tokens),
         answers: answersObj,
+        replies: [],
         status: 'answered',
         askedBy: 'Visitor',
         isAnon: false,
@@ -394,6 +479,23 @@ export class TinyLLM {
       item.answers = { ...item.answers, ...answersObj };
       item.status = 'answered';
       item.answeredAt = Date.now();
+    }
+
+    if (!item.replies) item.replies = [];
+    for (const [tag, ans] of Object.entries(answersObj)) {
+      const existingRep = item.replies.find(r => r.tag === tag);
+      if (existingRep) {
+        existingRep.text = ans;
+        existingRep.timestamp = Date.now();
+      } else {
+        item.replies.push({
+          id: `rep-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+          tag,
+          text: ans,
+          author: 'Alex',
+          timestamp: Date.now()
+        });
+      }
     }
 
     // Hebbian learning on contextual answers
@@ -532,6 +634,83 @@ export class TinyLLM {
     return this.qaStore
       .filter(q => q.status === 'answered')
       .sort((a, b) => (b.answeredAt || b.askedAt) - (a.answeredAt || a.askedAt));
+  }
+
+  /**
+   * Adds a discrete single reply to a question's WhatsApp reply comment thread.
+   * Strictly enforces:
+   * - "dont allow multiple answers in single reply."
+   * - "each reply can have only one @list tagging"
+   */
+  public addSingleReply(
+    questionIdOrText: string,
+    replyText: string,
+    explicitTag?: string,
+    author: string = 'Alex'
+  ): ThreadReply {
+    const validation = validateSingleReply(replyText, explicitTag);
+    if (!validation.valid || !validation.tag || !validation.answer) {
+      throw new Error(validation.error || 'Invalid reply');
+    }
+
+    let item = this.qaStore.find(q => q.id === questionIdOrText);
+    if (!item) {
+      item = this.findQAByQuestion(questionIdOrText);
+    }
+
+    if (!item) {
+      const cleanQ = questionIdOrText.trim();
+      const tokens = this.tokenize(cleanQ);
+      item = {
+        id: `qa-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        question: cleanQ,
+        tokens,
+        tokenSet: new Set(tokens),
+        answers: {},
+        replies: [],
+        status: 'answered',
+        askedBy: 'Visitor',
+        isAnon: false,
+        askedAt: Date.now(),
+        answeredAt: Date.now()
+      };
+      this.qaStore.unshift(item);
+    }
+
+    if (!item.replies) {
+      item.replies = [];
+    }
+
+    const threadReply: ThreadReply = {
+      id: `rep-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      tag: validation.tag,
+      text: validation.answer,
+      author,
+      timestamp: Date.now()
+    };
+
+    item.replies.push(threadReply);
+    item.answers[validation.tag] = validation.answer;
+    item.status = 'answered';
+    item.answeredAt = Date.now();
+
+    this.learnFact(`[${validation.tag}] ${item.question} -> ${validation.answer}`, 'qa', false);
+    this.persistState();
+
+    return threadReply;
+  }
+
+  public getQuestionReplies(questionIdOrText: string): ThreadReply[] {
+    const item = this.qaStore.find(q => q.id === questionIdOrText) || this.findQAByQuestion(questionIdOrText);
+    if (!item) return [];
+    if (item.replies && item.replies.length > 0) return item.replies;
+    return Object.entries(item.answers).map(([tag, text], idx) => ({
+      id: `rep-legacy-${idx}`,
+      tag,
+      text,
+      author: 'Alex',
+      timestamp: item.answeredAt || item.askedAt
+    }));
   }
 
   // --- 4. Vector Arithmetic & Semantic Embedding ---
@@ -911,5 +1090,6 @@ if (typeof window !== 'undefined') {
   (window as any).parseAudienceAnswers = parseAudienceAnswers;
   (window as any).checkUsernameCooldown = checkUsernameCooldown;
   (window as any).USERNAME_COOLDOWN_MS = USERNAME_COOLDOWN_MS;
+  (window as any).validateSingleReply = validateSingleReply;
   (window as any).$llm = new TinyLLM();
 }

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { TinyLLM, checkUsernameCooldown, USERNAME_COOLDOWN_DAYS, USERNAME_COOLDOWN_MS } from "../src/tiny-llm";
+import { TinyLLM, checkUsernameCooldown, USERNAME_COOLDOWN_DAYS, USERNAME_COOLDOWN_MS, validateSingleReply, ThreadReply } from "../src/tiny-llm";
 
 describe("TinyLLM Embedded On-Device Self-Learning Language Model", () => {
   test("1. Model initializes with baseline vocab, embeddings, and parameters", () => {
@@ -215,5 +215,80 @@ describe("TinyLLM Embedded On-Device Self-Learning Language Model", () => {
     const allowedCheck = checkUsernameCooldown(overOneYearAgo);
     expect(allowedCheck.allowed).toBe(true);
     expect(allowedCheck.daysRemaining).toBe(0);
+  });
+  test("13. validateSingleReply enforces strictly one answer and only one @list tag per reply", () => {
+    // 1. Multiple @list tags in single string -> REJECT
+    const multiTagRes = validateSingleReply("@family, @friends im going out today");
+    expect(multiTagRes.valid).toBe(false);
+    expect(multiTagRes.error).toContain("Each reply can have only one @list tagging");
+
+    // 2. Multiple answers in separate lines -> REJECT
+    const multiAnswerRes = validateSingleReply("@all im at work\n@family im shopping");
+    expect(multiAnswerRes.valid).toBe(false);
+    expect(multiAnswerRes.error).toContain("Multiple answers in a single reply are not allowed");
+
+    // 3. Valid single reply with inline @list tag -> ACCEPT
+    const validInlineRes = validateSingleReply("@family im going for shopping today");
+    expect(validInlineRes.valid).toBe(true);
+    expect(validInlineRes.tag).toBe("family");
+    expect(validInlineRes.answer).toBe("im going for shopping today");
+
+    // 4. Valid single reply with explicit tag button -> ACCEPT
+    const validExplicitRes = validateSingleReply("im dating with name, quiet a time so far", "bffs");
+    expect(validExplicitRes.valid).toBe(true);
+    expect(validExplicitRes.tag).toBe("bffs");
+    expect(validExplicitRes.answer).toBe("im dating with name, quiet a time so far");
+
+    // 5. Conflicting explicit tag vs inline tag -> REJECT
+    const conflictRes = validateSingleReply("@family at home", "friends");
+    expect(conflictRes.valid).toBe(false);
+    expect(conflictRes.error).toContain("Conflicting tags");
+  });
+
+  test("14. addSingleReply appends reply comment threads to questions and routes contextually", async () => {
+    const llm = new TinyLLM();
+    const q = "Where are you spending the holidays?";
+
+    // Post single reply 1 for @all
+    const r1 = llm.addSingleReply(q, "@all im at work, chennai");
+    expect(r1.tag).toBe("all");
+    expect(r1.text).toBe("im at work, chennai");
+    expect(r1.author).toBe("Alex");
+
+    // Post single reply 2 for @family
+    const r2 = llm.addSingleReply(q, "im going for shopping today", "family");
+    expect(r2.tag).toBe("family");
+    expect(r2.text).toBe("im going for shopping today");
+
+    // Post single reply 3 for @friends
+    const r3 = llm.addSingleReply(q, "@friends im at home with my family");
+    expect(r3.tag).toBe("friends");
+
+    // Post single reply 4 for @bffs
+    const r4 = llm.addSingleReply(q, "im dating with name, quiet a time so far", "bffs");
+    expect(r4.tag).toBe("bffs");
+
+    // Attempting to post multiple answers in one reply must throw
+    expect(() => {
+      llm.addSingleReply(q, "@all line 1\n@family line 2");
+    }).toThrow("Multiple answers in a single reply are not allowed");
+
+    // Retrieve thread replies
+    const thread = llm.getQuestionReplies(q);
+    expect(thread.length).toBe(4);
+    expect(thread.map(t => t.tag)).toEqual(["all", "family", "friends", "bffs"]);
+
+    // Verify contextual generation routes properly
+    const familyQuery = await llm.generate(q, { contextRole: "family" });
+    expect(familyQuery.text).toBe("im going for shopping today");
+
+    const friendsQuery = await llm.generate(q, { contextRole: "friends" });
+    expect(friendsQuery.text).toBe("im at home with my family");
+
+    const bffsQuery = await llm.generate(q, { contextRole: "bffs" });
+    expect(bffsQuery.text).toBe("im dating with name, quiet a time so far");
+
+    const publicQuery = await llm.generate(q, { contextRole: "public" });
+    expect(publicQuery.text).toBe("im at work, chennai");
   });
 });
