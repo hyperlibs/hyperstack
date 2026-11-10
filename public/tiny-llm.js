@@ -30,8 +30,35 @@
   // src/tiny-llm.ts
   var exports_tiny_llm = {};
   __export(exports_tiny_llm, {
+    parseAudienceAnswers: () => parseAudienceAnswers,
     TinyLLM: () => TinyLLM
   });
+  function parseAudienceAnswers(rawText) {
+    const answers = {};
+    const lines = rawText.split(`
+`).map((l) => l.trim()).filter(Boolean);
+    let currentTag = "all";
+    for (const line of lines) {
+      const match = line.match(/^@([a-zA-Z0-9_-]+)\s*(.*)$/);
+      if (match) {
+        currentTag = match[1].toLowerCase();
+        const content = match[2].trim();
+        if (content) {
+          answers[currentTag] = content;
+        }
+      } else {
+        if (!answers[currentTag]) {
+          answers[currentTag] = line;
+        } else {
+          answers[currentTag] += " " + line;
+        }
+      }
+    }
+    if (Object.keys(answers).length === 0 && rawText.trim()) {
+      answers["all"] = rawText.trim();
+    }
+    return answers;
+  }
 
   class TinyLLM {
     vocab = new Map;
@@ -44,6 +71,7 @@
     transitions = new Map;
     contextWeights;
     memoryStore = [];
+    qaStore = [];
     trainingSteps = 0;
     runningLoss = 0.45;
     storageKey = "hyperstack:tiny_llm_state";
@@ -83,6 +111,24 @@
       }
     }
     seedAlexKnowledge() {
+      this.answerQuestion("Where are you now?", {
+        all: "im at work, chennai",
+        family: "im going for shopping today",
+        friends: "im at home with my family",
+        bffs: "im dating with name, quiet a time so far"
+      });
+      this.answerQuestion("Do you have a girlfriend?", {
+        all: "Haha nope, currently single! 100% focused on engineering open-source systems and building Hyperstack right now \uD83D\uDE80",
+        bffs: "Haha you know my dating life inside out! Focused on engineering right now \uD83D\uDE09",
+        relationship: "Haha, what a question — you already know you have my whole heart! ❤️ \uD83E\uDD70 So glad you're here chatting with my offline clone."
+      });
+      this.answerQuestion("What is your morning coffee routine?", {
+        all: "Huge pour-over enthusiast! V60 with light roast Ethiopian Yirgacheffe natural beans is his daily ritual ☕️✨"
+      });
+      this.answerQuestion("Where do you live?", {
+        all: "Alex lives and works in San Francisco, California \uD83C\uDF09"
+      });
+      this.addPendingQuestion("What are your plans for this weekend?", "Anonymous", true);
       const baselineFacts = [
         {
           fact: "Alex Rivera is a systems architect building Hyperstack with zero Virtual DOM and zero Node.js footprint.",
@@ -128,6 +174,140 @@
       for (const b of baselineFacts) {
         this.learnFact(b.fact, b.category, false);
       }
+    }
+    getQAStore() {
+      return this.qaStore;
+    }
+    getPendingCount() {
+      return this.qaStore.filter((q) => q.status === "pending").length;
+    }
+    addPendingQuestion(question, askedBy = "Anonymous", isAnon = true) {
+      const cleanQ = question.trim();
+      const existing = this.findQAByQuestion(cleanQ);
+      if (existing) {
+        return existing;
+      }
+      const tokens = this.tokenize(cleanQ);
+      const item = {
+        id: `qa-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        question: cleanQ,
+        tokens,
+        tokenSet: new Set(tokens),
+        answers: {},
+        status: "pending",
+        askedBy: isAnon ? "Anonymous" : askedBy || "Visitor",
+        isAnon,
+        askedAt: Date.now()
+      };
+      this.qaStore.unshift(item);
+      this.persistState();
+      return item;
+    }
+    answerQuestion(questionIdOrText, answersInput) {
+      let item = this.qaStore.find((q) => q.id === questionIdOrText);
+      if (!item) {
+        item = this.findQAByQuestion(questionIdOrText);
+      }
+      const answersObj = typeof answersInput === "string" ? parseAudienceAnswers(answersInput) : answersInput;
+      if (!item) {
+        const cleanQ = questionIdOrText.trim();
+        const tokens = this.tokenize(cleanQ);
+        item = {
+          id: `qa-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+          question: cleanQ,
+          tokens,
+          tokenSet: new Set(tokens),
+          answers: answersObj,
+          status: "answered",
+          askedBy: "Visitor",
+          isAnon: false,
+          askedAt: Date.now(),
+          answeredAt: Date.now()
+        };
+        this.qaStore.unshift(item);
+      } else {
+        item.answers = { ...item.answers, ...answersObj };
+        item.status = "answered";
+        item.answeredAt = Date.now();
+      }
+      for (const [tag, ans] of Object.entries(item.answers)) {
+        this.learnFact(`[${tag}] ${item.question} -> ${ans}`, "qa", false);
+      }
+      this.persistState();
+      return item;
+    }
+    normalizeQuestion(q) {
+      return q.toLowerCase().replace(/^alex\s*ai\s*[:,]?\s*/i, "").replace(/^alex\s*[:,]?\s*/i, "").replace(/^hey\s*alex\s*[:,]?\s*/i, "").replace(/^hi\s*alex\s*[:,]?\s*/i, "").replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, " ").trim();
+    }
+    findQAByQuestion(query) {
+      const normQuery = this.normalizeQuestion(query);
+      if (!normQuery)
+        return null;
+      for (const item of this.qaStore) {
+        if (this.normalizeQuestion(item.question) === normQuery) {
+          return item;
+        }
+      }
+      const queryTokens = this.tokenize(normQuery);
+      if (queryTokens.length === 0)
+        return null;
+      let bestItem = null;
+      let bestScore = 0;
+      for (const item of this.qaStore) {
+        const itemTokens = this.tokenize(this.normalizeQuestion(item.question));
+        if (itemTokens.length === 0)
+          continue;
+        let overlap = 0;
+        for (const t of queryTokens) {
+          if (item.tokenSet.has(t))
+            overlap++;
+        }
+        const score = overlap / Math.max(queryTokens.length, itemTokens.length);
+        if (score > bestScore) {
+          bestScore = score;
+          bestItem = item;
+        }
+      }
+      return bestScore >= 0.7 ? bestItem : null;
+    }
+    getContextualAnswer(query, audienceRole = "all") {
+      const item = this.findQAByQuestion(query);
+      if (!item) {
+        return { matched: false, isPending: true };
+      }
+      if (item.status === "pending") {
+        return {
+          matched: true,
+          isPending: true,
+          question: item.question,
+          qaItem: item
+        };
+      }
+      const roleKey = (audienceRole || "all").toLowerCase() === "public" ? "all" : (audienceRole || "all").toLowerCase();
+      let answer = item.answers[roleKey];
+      let matchedAudience = roleKey;
+      if (!answer && item.answers["all"]) {
+        answer = item.answers["all"];
+        matchedAudience = "all";
+      }
+      if (answer) {
+        return {
+          matched: true,
+          isPending: false,
+          question: item.question,
+          answer,
+          matchedAudience,
+          qaItem: item
+        };
+      }
+      return {
+        matched: true,
+        isPending: false,
+        question: item.question,
+        answer: "Alex hasn't shared an answer for your group on this question yet.",
+        matchedAudience: "none",
+        qaItem: item
+      };
     }
     textEmbedding(tokens) {
       const pooled = new Float32Array(this.embeddingDim);
@@ -261,58 +441,35 @@
     }
     async generate(prompt, options = {}) {
       const startTime = performance.now();
-      const temp = options.temperature ?? 0.65;
       const role = options.contextRole ?? "public";
-      const lowerPrompt = prompt.toLowerCase();
-      if (role === "relationship" && (lowerPrompt.includes("girlfriend") || lowerPrompt.includes("dating") || lowerPrompt.includes("love") || lowerPrompt.includes("relationship"))) {
-        const answer = "Haha, what a question — you already know you have my whole heart! ❤️ \uD83E\uDD70 So glad you're here chatting with my offline clone.";
+      const cleanPrompt = prompt.replace(/^alex\s*ai\s*[:,]?\s*/i, "").replace(/^alex\s*[:,]?\s*/i, "").replace(/^hey\s*alex\s*[:,]?\s*/i, "").replace(/^hi\s*alex\s*[:,]?\s*/i, "").trim();
+      const contextual = this.getContextualAnswer(cleanPrompt || prompt, role);
+      if (contextual.matched && !contextual.isPending && contextual.answer) {
         return {
-          text: answer,
-          tokens: this.tokenize(answer),
-          confidence: 0.99,
+          text: contextual.answer,
+          tokens: this.tokenize(contextual.answer),
+          confidence: 1,
           trainingStep: this.trainingSteps,
-          retrievedMemory: "Partner / Significant Other Relationship",
+          retrievedMemory: `Contextual Answer (@${contextual.matchedAudience})`,
           loss: this.runningLoss,
-          latencyMs: Math.round(performance.now() - startTime)
+          latencyMs: Math.round(performance.now() - startTime),
+          isPending: false,
+          matchedAudience: contextual.matchedAudience
         };
       }
-      if (lowerPrompt.includes("girlfriend") || lowerPrompt.includes("dating") || lowerPrompt.includes("single")) {
-        const answer = "Haha nope, currently single! 100% focused on engineering open-source systems and building Hyperstack right now \uD83D\uDE80";
+      if (contextual.matched && contextual.isPending) {
         return {
-          text: answer,
-          tokens: this.tokenize(answer),
-          confidence: 0.98,
+          text: "",
+          tokens: [],
+          confidence: 0,
           trainingStep: this.trainingSteps,
-          retrievedMemory: "Relationship Status: Single",
+          retrievedMemory: null,
           loss: this.runningLoss,
-          latencyMs: Math.round(performance.now() - startTime)
+          latencyMs: Math.round(performance.now() - startTime),
+          isPending: true
         };
       }
-      if (lowerPrompt.includes("coffee") || lowerPrompt.includes("v60") || lowerPrompt.includes("morning") && lowerPrompt.includes("routine")) {
-        const answer = "Huge pour-over enthusiast! V60 with light roast Ethiopian Yirgacheffe natural beans is his daily ritual ☕️✨";
-        return {
-          text: answer,
-          tokens: this.tokenize(answer),
-          confidence: 0.98,
-          trainingStep: this.trainingSteps,
-          retrievedMemory: "Daily Coffee Ritual: Ethiopian V60",
-          loss: this.runningLoss,
-          latencyMs: Math.round(performance.now() - startTime)
-        };
-      }
-      if (lowerPrompt.includes("where") || lowerPrompt.includes("live") || lowerPrompt.includes("location")) {
-        const answer = "Alex lives and works in San Francisco, California \uD83C\uDF09";
-        return {
-          text: answer,
-          tokens: this.tokenize(answer),
-          confidence: 0.98,
-          trainingStep: this.trainingSteps,
-          retrievedMemory: "Location: San Francisco, CA",
-          loss: this.runningLoss,
-          latencyMs: Math.round(performance.now() - startTime)
-        };
-      }
-      const queryTokens = this.tokenize(prompt);
+      const queryTokens = this.tokenize(cleanPrompt || prompt);
       const queryIds = queryTokens.map((t) => this.getOrAddToken(t));
       const queryTokenSet = new Set(queryIds);
       const queryEmb = this.textEmbedding(queryIds);
@@ -325,25 +482,29 @@
           bestMem = mem;
         }
       }
-      let responseText = "";
-      if (bestMem && maxRel > 0.12) {
-        responseText = this.synthesizeFromMemory(prompt, bestMem.fact);
-      } else {
-        responseText = this.predictSequence(queryIds, temp);
+      if (bestMem && maxRel >= 0.28 && (bestMem.category === "custom" || bestMem.category === "hobby")) {
+        const responseText = this.synthesizeFromMemory(cleanPrompt || prompt, bestMem.fact);
+        return {
+          text: responseText,
+          tokens: this.tokenize(responseText),
+          confidence: Math.min(0.98, maxRel),
+          trainingStep: this.trainingSteps,
+          retrievedMemory: bestMem.fact,
+          loss: this.runningLoss,
+          latencyMs: Math.round(performance.now() - startTime),
+          isPending: false
+        };
       }
-      if (!responseText || responseText.length < 5) {
-        responseText = "Alex's offline clone is continuously learning! Ask about his projects (Hyperstack, Hypersheet), morning routine, or hobbies ☕️\uD83D\uDE80";
-      }
-      this.learnFact(`${prompt} -> ${responseText}`, "conversation", true);
-      const latencyMs = Math.round(performance.now() - startTime);
+      this.addPendingQuestion(cleanPrompt || prompt, options.contextRole || "public", options.isAnon ?? false);
       return {
-        text: responseText,
-        tokens: this.tokenize(responseText),
-        confidence: Math.max(0.65, Math.min(0.98, maxRel > 0 ? maxRel : 0.7)),
+        text: "",
+        tokens: [],
+        confidence: 0,
         trainingStep: this.trainingSteps,
-        retrievedMemory: bestMem ? bestMem.fact : null,
+        retrievedMemory: null,
         loss: this.runningLoss,
-        latencyMs
+        latencyMs: Math.round(performance.now() - startTime),
+        isPending: true
       };
     }
     synthesizeFromMemory(prompt, fact) {
@@ -359,47 +520,6 @@
       }
       return `${fact} \uD83D\uDCA1`;
     }
-    predictSequence(seedTokens, temperature) {
-      if (seedTokens.length === 0)
-        return "";
-      const generated = [];
-      let currentId = seedTokens[seedTokens.length - 1];
-      const maxGen = 14;
-      for (let step = 0;step < maxGen; step++) {
-        const trans = this.transitions.get(currentId);
-        if (!trans || trans.size === 0)
-          break;
-        const entries = Array.from(trans.entries());
-        const logits = [];
-        let sumExp = 0;
-        for (const [nextId, count] of entries) {
-          const score = count / temperature;
-          const expScore = Math.exp(Math.min(10, score));
-          logits.push({ id: nextId, prob: expScore });
-          sumExp += expScore;
-        }
-        if (sumExp === 0)
-          break;
-        let r = Math.random() * sumExp;
-        let selectedId = entries[0][0];
-        for (const l of logits) {
-          r -= l.prob;
-          if (r <= 0) {
-            selectedId = l.id;
-            break;
-          }
-        }
-        const word = this.invVocab.get(selectedId);
-        if (!word || word === "</s>" || word === "<pad>")
-          break;
-        generated.push(word);
-        currentId = selectedId;
-      }
-      if (generated.length === 0) {
-        return "Alex lives in San Francisco and builds Hyperstack ⚡";
-      }
-      return generated.join(" ");
-    }
     getStats() {
       let totalParams = 0;
       totalParams += this.vocab.size * this.embeddingDim;
@@ -414,7 +534,9 @@
         trainingSteps: this.trainingSteps,
         runningLoss: parseFloat(this.runningLoss.toFixed(4)),
         isOffline: true,
-        version: "1.0.0-tiny"
+        version: "1.0.0-tiny",
+        pendingQuestions: this.getPendingCount(),
+        answeredQuestions: this.qaStore.filter((q) => q.status === "answered").length
       };
     }
     persistState() {
@@ -430,6 +552,17 @@
             category: m.category,
             weight: m.weight,
             learnedAt: m.learnedAt
+          })),
+          qaStore: this.qaStore.map((q) => ({
+            id: q.id,
+            question: q.question,
+            tokens: q.tokens,
+            answers: q.answers,
+            status: q.status,
+            askedBy: q.askedBy,
+            isAnon: q.isAnon,
+            askedAt: q.askedAt,
+            answeredAt: q.answeredAt
           }))
         };
         localStorage.setItem(this.storageKey, JSON.stringify(state));
@@ -454,6 +587,22 @@
             }
           }
         }
+        if (Array.isArray(parsed.qaStore)) {
+          for (const q of parsed.qaStore) {
+            if (q.question && q.answers) {
+              const existing = this.qaStore.find((item) => item.id === q.id || item.question.toLowerCase() === q.question.toLowerCase());
+              if (existing) {
+                existing.answers = q.answers;
+                existing.status = q.status;
+              } else {
+                this.qaStore.push({
+                  ...q,
+                  tokenSet: new Set(q.tokens || this.tokenize(q.question))
+                });
+              }
+            }
+          }
+        }
       } catch {}
     }
     resetMemory() {
@@ -461,6 +610,7 @@
         localStorage.removeItem(this.storageKey);
       }
       this.memoryStore = [];
+      this.qaStore = [];
       this.runningLoss = 0.45;
       this.seedAlexKnowledge();
       this.trainingSteps = 0;
@@ -468,6 +618,7 @@
   }
   if (typeof window !== "undefined") {
     window.TinyLLM = TinyLLM;
+    window.parseAudienceAnswers = parseAudienceAnswers;
     window.$llm = new TinyLLM;
   }
 })();

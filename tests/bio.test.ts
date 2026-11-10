@@ -185,4 +185,15 @@ describe("Link in Bio Mobile-First Application Suite (Light Theme & PWA)", () =>
     const sw = readFileSync("public/sw.js", "utf-8");
     expect(sw).toContain("/tiny-llm.js");
   });
+
+  test("19. AlexAI acts as middleman with Question Inbox and multi-audience contextual answering", () => {
+    const html = readFileSync(bioHtmlPath, "utf-8");
+    expect(html).toContain('id="inbox-drawer-btn"');
+    expect(html).toContain('id="inbox-pending-count"');
+    expect(html).toContain('id="inbox-drawer"');
+    expect(html).toContain('id="inbox-answer-box"');
+    expect(html).toContain("toggleInboxDrawer");
+    expect(html).toContain("submitInboxAnswer");
+    expect(html).toContain("Where are you now? 📍");
+  });
 });

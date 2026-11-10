@@ -1,10 +1,12 @@
 /**
- * TinyLLM — Embedded On-Device Self-Learning Language Model
+ * TinyLLM — Embedded On-Device Self-Learning Language Model & Middleman Agent
  * 
  * Hyperstack Architecture:
  * - 100% Zero-Dependency Strict TypeScript
  * - 100% Client-Side & Fully Offline Capable (No external API calls)
- * - Self-Learning: Dynamic On-Device Online Weight Updates, Hebbian Association & RAG Memory
+ * - Middleman Agent: AlexAI responds strictly as per Alex's provided answers
+ * - Contextual Multi-Audience Dispatch: @all, @family, @friends, @bffs, @work, etc.
+ * - Dynamic On-Device Online Weight Updates, Hebbian Association & RAG Memory
  * - Compact & Fast: Sub-5ms inference on mobile CPUs with Float32Array tensor arithmetic
  */
 
@@ -24,6 +26,8 @@ export interface GenerationResult {
   retrievedMemory?: string | null;
   loss: number;
   latencyMs: number;
+  isPending?: boolean;
+  matchedAudience?: string;
 }
 
 export interface LearningResult {
@@ -45,6 +49,21 @@ export interface MemoryNode {
   learnedAt: number;
 }
 
+export type AudienceAnswers = Record<string, string>;
+
+export interface ContextualQAItem {
+  id: string;
+  question: string;
+  tokens: string[];
+  tokenSet: Set<string>;
+  answers: AudienceAnswers; // e.g. { all: 'im at work, chennai', family: 'im going for shopping today' }
+  status: 'pending' | 'answered';
+  askedBy: string;
+  isAnon: boolean;
+  askedAt: number;
+  answeredAt?: number;
+}
+
 export interface TinyLLMStats {
   parameters: number;
   vocabSize: number;
@@ -53,6 +72,44 @@ export interface TinyLLMStats {
   runningLoss: number;
   isOffline: boolean;
   version: string;
+  pendingQuestions: number;
+  answeredQuestions: number;
+}
+
+/**
+ * Parses multi-audience answers in format:
+ * @all im at work, chennai
+ * @family im going for shopping today
+ * @friends im at home with my family
+ * @bffs im dating with name, quiet a time so far
+ */
+export function parseAudienceAnswers(rawText: string): AudienceAnswers {
+  const answers: AudienceAnswers = {};
+  const lines = rawText.split('\n').map(l => l.trim()).filter(Boolean);
+  let currentTag = 'all';
+
+  for (const line of lines) {
+    const match = line.match(/^@([a-zA-Z0-9_-]+)\s*(.*)$/);
+    if (match) {
+      currentTag = match[1].toLowerCase();
+      const content = match[2].trim();
+      if (content) {
+        answers[currentTag] = content;
+      }
+    } else {
+      if (!answers[currentTag]) {
+        answers[currentTag] = line;
+      } else {
+        answers[currentTag] += ' ' + line;
+      }
+    }
+  }
+
+  // Fallback: If no tags were found at all, map entire text to 'all'
+  if (Object.keys(answers).length === 0 && rawText.trim()) {
+    answers['all'] = rawText.trim();
+  }
+  return answers;
 }
 
 export class TinyLLM {
@@ -72,6 +129,9 @@ export class TinyLLM {
 
   // Episodic Memory Graph (RAG)
   private memoryStore: MemoryNode[] = [];
+
+  // Contextual Q&A Middleman Store
+  private qaStore: ContextualQAItem[] = [];
 
   // Training state
   private trainingSteps: number = 0;
@@ -123,9 +183,35 @@ export class TinyLLM {
     }
   }
 
-  // --- 2. Initial Alex Persona Knowledge Grounding ---
+  // --- 2. Initial Alex Persona Knowledge Grounding & Middleman Store ---
 
   private seedAlexKnowledge(): void {
+    // 1. Pre-seed Contextual Q&A with the user's exact multi-audience specification
+    this.answerQuestion("Where are you now?", {
+      all: "im at work, chennai",
+      family: "im going for shopping today",
+      friends: "im at home with my family",
+      bffs: "im dating with name, quiet a time so far"
+    });
+
+    this.answerQuestion("Do you have a girlfriend?", {
+      all: "Haha nope, currently single! 100% focused on engineering open-source systems and building Hyperstack right now 🚀",
+      bffs: "Haha you know my dating life inside out! Focused on engineering right now 😉",
+      relationship: "Haha, what a question — you already know you have my whole heart! ❤️ 🥰 So glad you're here chatting with my offline clone."
+    });
+
+    this.answerQuestion("What is your morning coffee routine?", {
+      all: "Huge pour-over enthusiast! V60 with light roast Ethiopian Yirgacheffe natural beans is his daily ritual ☕️✨"
+    });
+
+    this.answerQuestion("Where do you live?", {
+      all: "Alex lives and works in San Francisco, California 🌉"
+    });
+
+    // Seed a pending question so Alex's Inbox has an active item ready for review
+    this.addPendingQuestion("What are your plans for this weekend?", "Anonymous", true);
+
+    // 2. Pre-seed baseline facts
     const baselineFacts = [
       {
         fact: "Alex Rivera is a systems architect building Hyperstack with zero Virtual DOM and zero Node.js footprint.",
@@ -174,7 +260,181 @@ export class TinyLLM {
     }
   }
 
-  // --- 3. Vector Arithmetic & Semantic Embedding ---
+  // --- 3. Middleman Q&A Management ---
+
+  public getQAStore(): ContextualQAItem[] {
+    return this.qaStore;
+  }
+
+  public getPendingCount(): number {
+    return this.qaStore.filter(q => q.status === 'pending').length;
+  }
+
+  public addPendingQuestion(question: string, askedBy: string = 'Anonymous', isAnon: boolean = true): ContextualQAItem {
+    const cleanQ = question.trim();
+    const existing = this.findQAByQuestion(cleanQ);
+    if (existing) {
+      return existing;
+    }
+    const tokens = this.tokenize(cleanQ);
+    const item: ContextualQAItem = {
+      id: `qa-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      question: cleanQ,
+      tokens,
+      tokenSet: new Set(tokens),
+      answers: {},
+      status: 'pending',
+      askedBy: isAnon ? 'Anonymous' : (askedBy || 'Visitor'),
+      isAnon,
+      askedAt: Date.now()
+    };
+    this.qaStore.unshift(item);
+    this.persistState();
+    return item;
+  }
+
+  public answerQuestion(questionIdOrText: string, answersInput: string | AudienceAnswers): ContextualQAItem {
+    let item = this.qaStore.find(q => q.id === questionIdOrText);
+    if (!item) {
+      item = this.findQAByQuestion(questionIdOrText);
+    }
+
+    const answersObj = typeof answersInput === 'string'
+      ? parseAudienceAnswers(answersInput)
+      : answersInput;
+
+    if (!item) {
+      const cleanQ = questionIdOrText.trim();
+      const tokens = this.tokenize(cleanQ);
+      item = {
+        id: `qa-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        question: cleanQ,
+        tokens,
+        tokenSet: new Set(tokens),
+        answers: answersObj,
+        status: 'answered',
+        askedBy: 'Visitor',
+        isAnon: false,
+        askedAt: Date.now(),
+        answeredAt: Date.now()
+      };
+      this.qaStore.unshift(item);
+    } else {
+      item.answers = { ...item.answers, ...answersObj };
+      item.status = 'answered';
+      item.answeredAt = Date.now();
+    }
+
+    // Hebbian learning on contextual answers
+    for (const [tag, ans] of Object.entries(item.answers)) {
+      this.learnFact(`[${tag}] ${item.question} -> ${ans}`, 'qa', false);
+    }
+
+    this.persistState();
+    return item;
+  }
+
+  private normalizeQuestion(q: string): string {
+    return q
+      .toLowerCase()
+      .replace(/^alex\s*ai\s*[:,]?\s*/i, '')
+      .replace(/^alex\s*[:,]?\s*/i, '')
+      .replace(/^hey\s*alex\s*[:,]?\s*/i, '')
+      .replace(/^hi\s*alex\s*[:,]?\s*/i, '')
+      .replace(/[^a-z0-9\s]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  private findQAByQuestion(query: string): ContextualQAItem | null {
+    const normQuery = this.normalizeQuestion(query);
+    if (!normQuery) return null;
+
+    // 1. Exact normalized match
+    for (const item of this.qaStore) {
+      if (this.normalizeQuestion(item.question) === normQuery) {
+        return item;
+      }
+    }
+
+    // 2. High-precision fuzzy match (threshold 0.70)
+    const queryTokens = this.tokenize(normQuery);
+    if (queryTokens.length === 0) return null;
+
+    let bestItem: ContextualQAItem | null = null;
+    let bestScore = 0;
+
+    for (const item of this.qaStore) {
+      const itemTokens = this.tokenize(this.normalizeQuestion(item.question));
+      if (itemTokens.length === 0) continue;
+
+      let overlap = 0;
+      for (const t of queryTokens) {
+        if (item.tokenSet.has(t)) overlap++;
+      }
+      const score = overlap / Math.max(queryTokens.length, itemTokens.length);
+      if (score > bestScore) {
+        bestScore = score;
+        bestItem = item;
+      }
+    }
+
+    return bestScore >= 0.70 ? bestItem : null;
+  }
+
+  public getContextualAnswer(query: string, audienceRole: string = 'all'): {
+    matched: boolean;
+    isPending: boolean;
+    question?: string;
+    answer?: string;
+    matchedAudience?: string;
+    qaItem?: ContextualQAItem;
+  } {
+    const item = this.findQAByQuestion(query);
+    if (!item) {
+      return { matched: false, isPending: true };
+    }
+
+    if (item.status === 'pending') {
+      return {
+        matched: true,
+        isPending: true,
+        question: item.question,
+        qaItem: item
+      };
+    }
+
+    const roleKey = (audienceRole || 'all').toLowerCase() === 'public' ? 'all' : (audienceRole || 'all').toLowerCase();
+    let answer = item.answers[roleKey];
+    let matchedAudience = roleKey;
+
+    if (!answer && item.answers['all']) {
+      answer = item.answers['all'];
+      matchedAudience = 'all';
+    }
+
+    if (answer) {
+      return {
+        matched: true,
+        isPending: false,
+        question: item.question,
+        answer,
+        matchedAudience,
+        qaItem: item
+      };
+    }
+
+    return {
+      matched: true,
+      isPending: false,
+      question: item.question,
+      answer: "Alex hasn't shared an answer for your group on this question yet.",
+      matchedAudience: 'none',
+      qaItem: item
+    };
+  }
+
+  // --- 4. Vector Arithmetic & Semantic Embedding ---
 
   private textEmbedding(tokens: number[]): Float32Array {
     const pooled = new Float32Array(this.embeddingDim);
@@ -229,7 +489,7 @@ export class TinyLLM {
     return (jaccard * 0.75) + (cosine * 0.25);
   }
 
-  // --- 4. Continuous Online Self-Learning Engine ---
+  // --- 5. Continuous Online Self-Learning Engine ---
 
   /**
    * Learns a new fact in real time, updating neural embeddings and associative memories.
@@ -295,11 +555,10 @@ export class TinyLLM {
       });
     }
 
-    // 3. Online Gradient Step (Adjust embeddings towards contextual coherence)
+    // 3. Online Gradient Step
     this.onlineGradientStep(tokenIds);
 
     this.trainingSteps++;
-    // Running loss decay
     this.runningLoss = Math.max(0.015, this.runningLoss * 0.98);
 
     if (persist) {
@@ -315,9 +574,6 @@ export class TinyLLM {
     };
   }
 
-  /**
-   * Performs an online gradient descent step on token embeddings given a sequence.
-   */
   private onlineGradientStep(tokens: number[]): void {
     const lr = this.learningRate;
     for (let i = 0; i < tokens.length - 1; i++) {
@@ -333,82 +589,61 @@ export class TinyLLM {
     }
   }
 
-  /**
-   * Reinforces a conversation turn with positive or negative reward.
-   */
   public feedback(turnPrompt: string, turnResponse: string, reward: number = 1.0): LearningResult {
     const text = `${turnPrompt} ${turnResponse}`;
     return this.learnFact(text, 'reinforcement', true);
   }
 
-  // --- 5. Text Generation & Reasoning ---
+  // --- 6. Text Generation & Middleman Reasoning ---
 
   public async generate(prompt: string, options: GenerationOptions = {}): Promise<GenerationResult> {
     const startTime = performance.now();
-    const temp = options.temperature ?? 0.65;
     const role = options.contextRole ?? 'public';
-    const lowerPrompt = prompt.toLowerCase();
+    
+    // Clean prompt: strip leading "alexai", "alex ai", "hey alex", "hi alex", etc.
+    const cleanPrompt = prompt
+      .replace(/^alex\s*ai\s*[:,]?\s*/i, '')
+      .replace(/^alex\s*[:,]?\s*/i, '')
+      .replace(/^hey\s*alex\s*[:,]?\s*/i, '')
+      .replace(/^hi\s*alex\s*[:,]?\s*/i, '')
+      .trim();
 
-    // 1. Special Relationship Persona Override
-    if (role === 'relationship' && (lowerPrompt.includes('girlfriend') || lowerPrompt.includes('dating') || lowerPrompt.includes('love') || lowerPrompt.includes('relationship'))) {
-      const answer = "Haha, what a question — you already know you have my whole heart! ❤️ 🥰 So glad you're here chatting with my offline clone.";
+    // 1. Contextual Middleman Q&A Lookup (Direct mapping per audience)
+    const contextual = this.getContextualAnswer(cleanPrompt || prompt, role);
+    if (contextual.matched && !contextual.isPending && contextual.answer) {
       return {
-        text: answer,
-        tokens: this.tokenize(answer),
-        confidence: 0.99,
+        text: contextual.answer,
+        tokens: this.tokenize(contextual.answer),
+        confidence: 1.0,
         trainingStep: this.trainingSteps,
-        retrievedMemory: "Partner / Significant Other Relationship",
+        retrievedMemory: `Contextual Answer (@${contextual.matchedAudience})`,
         loss: this.runningLoss,
-        latencyMs: Math.round(performance.now() - startTime)
+        latencyMs: Math.round(performance.now() - startTime),
+        isPending: false,
+        matchedAudience: contextual.matchedAudience
       };
     }
 
-    // 2. Direct Persona Queries
-    if (lowerPrompt.includes('girlfriend') || lowerPrompt.includes('dating') || lowerPrompt.includes('single')) {
-      const answer = "Haha nope, currently single! 100% focused on engineering open-source systems and building Hyperstack right now 🚀";
+    // 2. If it is already marked pending, AlexAI does NOT reply at all
+    if (contextual.matched && contextual.isPending) {
       return {
-        text: answer,
-        tokens: this.tokenize(answer),
-        confidence: 0.98,
+        text: "",
+        tokens: [],
+        confidence: 0,
         trainingStep: this.trainingSteps,
-        retrievedMemory: "Relationship Status: Single",
+        retrievedMemory: null,
         loss: this.runningLoss,
-        latencyMs: Math.round(performance.now() - startTime)
+        latencyMs: Math.round(performance.now() - startTime),
+        isPending: true
       };
     }
 
-    if (lowerPrompt.includes('coffee') || lowerPrompt.includes('v60') || (lowerPrompt.includes('morning') && lowerPrompt.includes('routine'))) {
-      const answer = "Huge pour-over enthusiast! V60 with light roast Ethiopian Yirgacheffe natural beans is his daily ritual ☕️✨";
-      return {
-        text: answer,
-        tokens: this.tokenize(answer),
-        confidence: 0.98,
-        trainingStep: this.trainingSteps,
-        retrievedMemory: "Daily Coffee Ritual: Ethiopian V60",
-        loss: this.runningLoss,
-        latencyMs: Math.round(performance.now() - startTime)
-      };
-    }
-
-    if (lowerPrompt.includes('where') || lowerPrompt.includes('live') || lowerPrompt.includes('location')) {
-      const answer = "Alex lives and works in San Francisco, California 🌉";
-      return {
-        text: answer,
-        tokens: this.tokenize(answer),
-        confidence: 0.98,
-        trainingStep: this.trainingSteps,
-        retrievedMemory: "Location: San Francisco, CA",
-        loss: this.runningLoss,
-        latencyMs: Math.round(performance.now() - startTime)
-      };
-    }
-
-    const queryTokens = this.tokenize(prompt);
+    // 3. Check Episodic RAG Memory (for facts taught via 💡 Teach)
+    const queryTokens = this.tokenize(cleanPrompt || prompt);
     const queryIds = queryTokens.map(t => this.getOrAddToken(t));
     const queryTokenSet = new Set(queryIds);
     const queryEmb = this.textEmbedding(queryIds);
 
-    // 3. RAG Retrieval from Episodic Memory
     let bestMem: MemoryNode | null = null;
     let maxRel = -1;
 
@@ -420,31 +655,35 @@ export class TinyLLM {
       }
     }
 
-    let responseText = "";
-
-    if (bestMem && maxRel > 0.12) {
-      responseText = this.synthesizeFromMemory(prompt, bestMem.fact);
-    } else {
-      responseText = this.predictSequence(queryIds, temp);
+    // If there is high-confidence episodic match from manually taught facts via Teach drawer
+    if (bestMem && maxRel >= 0.28 && (bestMem.category === 'custom' || bestMem.category === 'hobby')) {
+      const responseText = this.synthesizeFromMemory(cleanPrompt || prompt, bestMem.fact);
+      return {
+        text: responseText,
+        tokens: this.tokenize(responseText),
+        confidence: Math.min(0.98, maxRel),
+        trainingStep: this.trainingSteps,
+        retrievedMemory: bestMem.fact,
+        loss: this.runningLoss,
+        latencyMs: Math.round(performance.now() - startTime),
+        isPending: false
+      };
     }
 
-    if (!responseText || responseText.length < 5) {
-      responseText = "Alex's offline clone is continuously learning! Ask about his projects (Hyperstack, Hypersheet), morning routine, or hobbies ☕️🚀";
-    }
-
-    // Auto-learning from interaction: self-learns the conversation pattern
-    this.learnFact(`${prompt} -> ${responseText}`, 'conversation', true);
-
-    const latencyMs = Math.round(performance.now() - startTime);
+    // 4. Unknown question with no Alex answer:
+    // ALEXAI SHOULD NOT REPLY AT ALL!
+    // Forward the question to Alex's Inbox queue
+    this.addPendingQuestion(cleanPrompt || prompt, options.contextRole || 'public', options.isAnon ?? false);
 
     return {
-      text: responseText,
-      tokens: this.tokenize(responseText),
-      confidence: Math.max(0.65, Math.min(0.98, maxRel > 0 ? maxRel : 0.7)),
+      text: "",
+      tokens: [],
+      confidence: 0,
       trainingStep: this.trainingSteps,
-      retrievedMemory: bestMem ? bestMem.fact : null,
+      retrievedMemory: null,
       loss: this.runningLoss,
-      latencyMs
+      latencyMs: Math.round(performance.now() - startTime),
+      isPending: true
     };
   }
 
@@ -459,59 +698,10 @@ export class TinyLLM {
     if (lower.includes('hobby') || lower.includes('chess') || lower.includes('keyboard')) {
       return "Pour-over coffee ☕️, morning 5km runs 🏃‍♂️, blitz chess (1800 Elo) ♟️, and custom mechanical keyboards ⌨️!";
     }
-
-    // Dynamic taught fact synthesis: returns the fact directly with synthesized tone
     return `${fact} 💡`;
   }
 
-  private predictSequence(seedTokens: number[], temperature: number): string {
-    if (seedTokens.length === 0) return "";
-    const generated: string[] = [];
-    let currentId = seedTokens[seedTokens.length - 1];
-
-    const maxGen = 14;
-    for (let step = 0; step < maxGen; step++) {
-      const trans = this.transitions.get(currentId);
-      if (!trans || trans.size === 0) break;
-
-      const entries = Array.from(trans.entries());
-      const logits: { id: number; prob: number }[] = [];
-      let sumExp = 0;
-
-      for (const [nextId, count] of entries) {
-        const score = count / temperature;
-        const expScore = Math.exp(Math.min(10, score));
-        logits.push({ id: nextId, prob: expScore });
-        sumExp += expScore;
-      }
-
-      if (sumExp === 0) break;
-
-      let r = Math.random() * sumExp;
-      let selectedId = entries[0][0];
-      for (const l of logits) {
-        r -= l.prob;
-        if (r <= 0) {
-          selectedId = l.id;
-          break;
-        }
-      }
-
-      const word = this.invVocab.get(selectedId);
-      if (!word || word === '</s>' || word === '<pad>') break;
-
-      generated.push(word);
-      currentId = selectedId;
-    }
-
-    if (generated.length === 0) {
-      return "Alex lives in San Francisco and builds Hyperstack ⚡";
-    }
-
-    return generated.join(' ');
-  }
-
-  // --- 6. Stats & Diagnostics ---
+  // --- 7. Stats & Diagnostics ---
 
   public getStats(): TinyLLMStats {
     let totalParams = 0;
@@ -528,11 +718,13 @@ export class TinyLLM {
       trainingSteps: this.trainingSteps,
       runningLoss: parseFloat(this.runningLoss.toFixed(4)),
       isOffline: true,
-      version: "1.0.0-tiny"
+      version: "1.0.0-tiny",
+      pendingQuestions: this.getPendingCount(),
+      answeredQuestions: this.qaStore.filter(q => q.status === 'answered').length
     };
   }
 
-  // --- 7. Local Persistence Across Sessions ---
+  // --- 8. Local Persistence Across Sessions ---
 
   private persistState(): void {
     if (typeof localStorage === 'undefined') return;
@@ -546,6 +738,17 @@ export class TinyLLM {
           category: m.category,
           weight: m.weight,
           learnedAt: m.learnedAt
+        })),
+        qaStore: this.qaStore.map(q => ({
+          id: q.id,
+          question: q.question,
+          tokens: q.tokens,
+          answers: q.answers,
+          status: q.status,
+          askedBy: q.askedBy,
+          isAnon: q.isAnon,
+          askedAt: q.askedAt,
+          answeredAt: q.answeredAt
         }))
       };
       localStorage.setItem(this.storageKey, JSON.stringify(state));
@@ -569,6 +772,22 @@ export class TinyLLM {
           }
         }
       }
+      if (Array.isArray(parsed.qaStore)) {
+        for (const q of parsed.qaStore) {
+          if (q.question && q.answers) {
+            const existing = this.qaStore.find(item => item.id === q.id || item.question.toLowerCase() === q.question.toLowerCase());
+            if (existing) {
+              existing.answers = q.answers;
+              existing.status = q.status;
+            } else {
+              this.qaStore.push({
+                ...q,
+                tokenSet: new Set(q.tokens || this.tokenize(q.question))
+              });
+            }
+          }
+        }
+      }
     } catch {
       // Ignore corrupted state
     }
@@ -579,6 +798,7 @@ export class TinyLLM {
       localStorage.removeItem(this.storageKey);
     }
     this.memoryStore = [];
+    this.qaStore = [];
     this.runningLoss = 0.45;
     this.seedAlexKnowledge();
     this.trainingSteps = 0;
@@ -588,5 +808,6 @@ export class TinyLLM {
 // Global browser attachment
 if (typeof window !== 'undefined') {
   (window as any).TinyLLM = TinyLLM;
+  (window as any).parseAudienceAnswers = parseAudienceAnswers;
   (window as any).$llm = new TinyLLM();
 }

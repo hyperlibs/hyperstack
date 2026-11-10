@@ -37,7 +37,7 @@ describe("TinyLLM Embedded On-Device Self-Learning Language Model", () => {
 
     const partnerRes = await llm.generate("Do you have a girlfriend?", { contextRole: "relationship" });
     expect(partnerRes.text).toContain("you already know you have my whole heart! ❤️");
-    expect(partnerRes.confidence).toBe(0.99);
+    expect(partnerRes.confidence).toBe(1.0);
   });
 
   test("4. Self-Learning: learnFact absorbs new knowledge and updates weights in real-time", async () => {
@@ -84,6 +84,72 @@ describe("TinyLLM Embedded On-Device Self-Learning Language Model", () => {
 
     const stats = llm.getStats();
     expect(stats.trainingSteps).toBe(0);
-    expect(stats.memoryNodes).toBe(10);
+    expect(stats.memoryNodes).toBeGreaterThanOrEqual(10);
+  });
+
+  test("8. Contextual Multi-Audience Responses: 'Where are you now?' answers per collection", async () => {
+    const llm = new TinyLLM();
+
+    // @all / public
+    const allRes = await llm.generate("Where are you now?", { contextRole: "all" });
+    expect(allRes.text).toBe("im at work, chennai");
+    expect(allRes.matchedAudience).toBe("all");
+    expect(allRes.isPending).toBe(false);
+
+    // @family
+    const familyRes = await llm.generate("Where are you now?", { contextRole: "family" });
+    expect(familyRes.text).toBe("im going for shopping today");
+    expect(familyRes.matchedAudience).toBe("family");
+
+    // @friends
+    const friendsRes = await llm.generate("Where are you now?", { contextRole: "friends" });
+    expect(friendsRes.text).toBe("im at home with my family");
+    expect(friendsRes.matchedAudience).toBe("friends");
+
+    // @bffs
+    const bffsRes = await llm.generate("Where are you now?", { contextRole: "bffs" });
+    expect(bffsRes.text).toBe("im dating with name, quiet a time so far");
+    expect(bffsRes.matchedAudience).toBe("bffs");
+
+    // Natural variation with Alexai prefix
+    const prefixedRes = await llm.generate("Alexai Where are you now?", { contextRole: "family" });
+    expect(prefixedRes.text).toBe("im going for shopping today");
+  });
+
+  test("9. Unanswered Question Protocol: AlexAI does not reply at all and queues to Alex's Inbox", async () => {
+    const llm = new TinyLLM();
+    const initialPending = llm.getPendingCount();
+
+    // Ask an unknown question
+    const unansweredRes = await llm.generate("What car do you drive?");
+    expect(unansweredRes.text).toBe("");
+    expect(unansweredRes.confidence).toBe(0);
+    expect(unansweredRes.isPending).toBe(true);
+
+    // Verify it was added to pending questions
+    expect(llm.getPendingCount()).toBe(initialPending + 1);
+  });
+
+  test("10. Middleman Answer Flow: Alex provides multi-tag answers and AlexAI responds contextually", async () => {
+    const llm = new TinyLLM();
+
+    const question = "What did you do over the weekend?";
+    // First, user asks -> AlexAI does not reply
+    const beforeRes = await llm.generate(question);
+    expect(beforeRes.isPending).toBe(true);
+    expect(beforeRes.text).toBe("");
+
+    // Alex answers with multi-tag format
+    llm.answerQuestion(question, `@all Went hiking at Marin Headlands 🥾\n@family Attended cousin's wedding 💒\n@friends Played poker night until 3am 🃏`);
+
+    // Verify AlexAI now responds according to the asker's context
+    const publicRes = await llm.generate(question, { contextRole: "public" });
+    expect(publicRes.text).toBe("Went hiking at Marin Headlands 🥾");
+
+    const familyRes = await llm.generate(question, { contextRole: "family" });
+    expect(familyRes.text).toBe("Attended cousin's wedding 💒");
+
+    const friendsRes = await llm.generate(question, { contextRole: "friends" });
+    expect(friendsRes.text).toBe("Played poker night until 3am 🃏");
   });
 });

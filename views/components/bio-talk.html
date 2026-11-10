@@ -2,25 +2,34 @@
   Component: bio-talk.html
   Theme: Ultra-Compact Minimalist Light
   Purpose: "Talk - a chat ui where users can talk to my digital clone ai"
-           Connected to a Tiny On-Device Self-Learning LLM that runs 100% offline.
+           AlexAI acts as the Middleman. Alex cannot chat directly with users.
+           Alex answers questions with multi-audience tags (@all, @family, @friends, @bffs).
+           AlexAI only responds when Alex provides an answer, dispatching contextually.
 -->
 <div id="talk-container" 
-     class="flex flex-col h-[420px] rounded-2xl bg-white border border-slate-200/80 overflow-hidden shadow-2xs">
+     class="flex flex-col h-[430px] rounded-2xl bg-white border border-slate-200/80 overflow-hidden shadow-2xs">
   
-  <!-- Digital Clone Header with Offline LLM Telemetry -->
+  <!-- Digital Clone Header with Offline LLM Telemetry & Alex's Inbox -->
   <div class="h-10 px-3 bg-slate-50 border-b border-slate-200/70 flex items-center justify-between shrink-0">
     <div class="flex items-center gap-1.5">
       <div class="w-5 h-5 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white text-[9px] font-bold">
         A
       </div>
       <span class="text-xs font-bold text-slate-900">Alex's Clone</span>
-      <span id="clone-llm-badge" class="text-[9px] text-emerald-700 font-mono font-bold bg-emerald-50 border border-emerald-200/80 px-1 rounded flex items-center gap-0.5" title="Tiny Self-Learning LLM Running Locally On-Device">
+      <span id="clone-llm-badge" class="text-[9px] text-emerald-700 font-mono font-bold bg-emerald-50 border border-emerald-200/80 px-1 rounded flex items-center gap-0.5" title="Tiny Self-Learning LLM Middleman Running Locally On-Device">
         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
         <span>Offline LLM</span>
       </span>
     </div>
 
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-1.5">
+      <!-- Alex's Inbox Trigger (Middleman Control) -->
+      <button onclick="toggleInboxDrawer()" id="inbox-drawer-btn" type="button"
+              class="text-[10px] font-bold text-amber-700 hover:text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 px-1.5 py-0.5 rounded-md transition-colors flex items-center gap-1" title="Alex's Question Inbox (Middleman Control)">
+        <span>📥</span> <span>Inbox</span>
+        <span id="inbox-pending-count" class="bg-amber-600 text-white rounded-full px-1 text-[8px] font-bold">1</span>
+      </button>
+
       <!-- Teach Trigger -->
       <button onclick="toggleTeachDrawer()" id="teach-drawer-btn" type="button"
               class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-1.5 py-0.5 rounded-md transition-colors flex items-center gap-0.5" title="Teach new facts to the self-learning LLM">
@@ -34,6 +43,60 @@
           <span>🎭</span> <span>Ask Anon</span>
         </span>
       </label>
+    </div>
+  </div>
+
+  <!-- Collapsible Alex's Question Inbox Drawer (Middleman Board) -->
+  <div id="inbox-drawer" class="hidden px-3 py-2 bg-amber-50/70 border-b border-amber-200/80 text-xs space-y-2 animate-slide-down">
+    <div class="flex items-center justify-between text-[10px]">
+      <span class="font-bold text-amber-900 flex items-center gap-1">
+        <span>👑</span> <span>Alex's Inbox (Middleman Control)</span>
+      </span>
+      <div class="flex items-center gap-1">
+        <button type="button" onclick="renderInboxList('pending')" id="inbox-tab-pending" class="px-1.5 py-0.5 rounded bg-amber-200/80 text-amber-900 font-bold text-[9px]">
+          Pending (<span id="inbox-tab-count">1</span>)
+        </button>
+        <button type="button" onclick="renderInboxList('answered')" id="inbox-tab-answered" class="px-1.5 py-0.5 rounded text-amber-800 hover:bg-amber-100 text-[9px] font-medium">
+          Answered
+        </button>
+        <button type="button" onclick="toggleInboxDrawer()" class="text-amber-600 hover:text-amber-900 ml-1 font-bold">✕</button>
+      </div>
+    </div>
+
+    <!-- Questions List View -->
+    <div id="inbox-list-container" class="space-y-1.5 max-h-44 overflow-y-auto custom-scroll pr-1">
+      <!-- Dynamic list of questions rendered by JS -->
+    </div>
+
+    <!-- Contextual Answer Editor Box (Hidden until question selected) -->
+    <div id="inbox-answer-box" class="hidden p-2 rounded-xl bg-white border border-amber-200/90 shadow-2xs space-y-1.5">
+      <div class="flex items-center justify-between text-[10px]">
+        <span class="font-bold text-slate-800 flex items-center gap-1 truncate max-w-[80%]">
+          <span>✏️</span> <span id="inbox-answer-target-q" class="truncate font-mono">Where are you now?</span>
+        </span>
+        <button type="button" onclick="closeAnswerBox()" class="text-slate-400 hover:text-slate-600 text-xs">✕</button>
+      </div>
+      <p class="text-[9px] text-slate-500 leading-tight">
+        Add multiple contextual answers per audience tag (@all, @family, @friends, @bffs):
+      </p>
+      <!-- Tag Insert Chips -->
+      <div class="flex items-center gap-1 overflow-x-auto py-0.5">
+        <span class="text-[9px] text-slate-400 shrink-0">Tags:</span>
+        <button type="button" onclick="insertAnswerTag('@all ')" class="px-1.5 py-0.2 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 text-[9px] font-bold shrink-0">@all</button>
+        <button type="button" onclick="insertAnswerTag('@family ')" class="px-1.5 py-0.2 rounded bg-amber-100 hover:bg-amber-200 text-amber-800 text-[9px] font-bold shrink-0">@family</button>
+        <button type="button" onclick="insertAnswerTag('@friends ')" class="px-1.5 py-0.2 rounded bg-indigo-100 hover:bg-indigo-200 text-indigo-800 text-[9px] font-bold shrink-0">@friends</button>
+        <button type="button" onclick="insertAnswerTag('@bffs ')" class="px-1.5 py-0.2 rounded bg-pink-100 hover:bg-pink-200 text-pink-800 text-[9px] font-bold shrink-0">@bffs</button>
+        <button type="button" onclick="insertAnswerTag('@work ')" class="px-1.5 py-0.2 rounded bg-teal-100 hover:bg-teal-200 text-teal-800 text-[9px] font-bold shrink-0">@work</button>
+      </div>
+      <textarea id="inbox-answer-text" rows="3" 
+                placeholder="@all im at work, chennai&#10;@family im going for shopping today&#10;@friends im at home with my family&#10;@bffs im dating with name, quiet a time so far"
+                class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-amber-500 font-mono text-[11px]"></textarea>
+      <div class="flex items-center justify-end gap-1.5">
+        <button type="button" onclick="closeAnswerBox()" class="px-2 py-0.5 rounded-lg bg-slate-100 text-slate-600 text-[10px] font-medium">Cancel</button>
+        <button type="button" onclick="submitInboxAnswer()" class="px-2.5 py-0.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-[10px] font-bold shadow-xs flex items-center gap-1">
+          <span>💾</span> <span>Save & Teach AlexAI</span>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -64,12 +127,12 @@
     <div class="flex items-start gap-1.5 max-w-[92%]">
       <div class="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center text-white text-[9px] font-bold shrink-0">A</div>
       <div class="p-2 rounded-xl rounded-tl-xs bg-white border border-slate-200/80 text-xs text-slate-800 leading-snug shadow-2xs">
-        Hey! 👋 I'm <strong>Alex's Digital Clone AI</strong>, powered by an embedded <strong>Tiny Self-Learning LLM</strong> running 100% locally on your device.
+        Hey! 👋 I'm <strong>AlexAI</strong>, Alex Rivera's digital clone middleman. I only respond as per Alex's provided answers for your group.
         <p class="text-slate-500 text-[10px] mt-1">
-          I work offline without external APIs. Ask me anything, or tap <strong>💡 Teach</strong> to train me on new facts!
+          If Alex hasn't answered a question yet, it is forwarded directly to Alex's inbox 📨. Alex can provide multiple answers per audience tag (@all, @family, @friends, @bffs).
         </p>
         <div class="text-[8px] text-slate-400 text-right mt-1 font-mono flex items-center justify-end gap-1">
-          <span class="text-emerald-600">● 100% Offline</span> • <span>Self-Learning</span>
+          <span class="text-emerald-600">● Middleman Proxy</span> • <span>Multi-Audience</span>
         </div>
       </div>
     </div>
@@ -77,6 +140,10 @@
 
   <!-- Micro Prompts Chips -->
   <div class="px-2 py-1 bg-white border-t border-slate-200/70 flex items-center gap-1 overflow-x-auto shrink-0 scrollbar-none">
+    <button onclick="askClone('Where are you now? 📍')" 
+            class="px-2 py-0.5 rounded-full bg-amber-50 hover:bg-amber-100 border border-amber-200 text-[10px] font-bold text-amber-800 shrink-0 transition-colors">
+      Where are you now? 📍
+    </button>
     <button onclick="askClone('Do you have a girlfriend? 👀')" 
             class="px-2 py-0.5 rounded-full bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 text-[10px] font-medium text-slate-700 shrink-0 transition-colors">
       Do you have a girlfriend? 👀
@@ -84,10 +151,6 @@
     <button onclick="askClone('Top projects? 🚀')" 
             class="px-2 py-0.5 rounded-full bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 text-[10px] font-medium text-slate-700 shrink-0 transition-colors">
       Top projects? 🚀
-    </button>
-    <button onclick="askClone('Where do you live? 📍')" 
-            class="px-2 py-0.5 rounded-full bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 text-[10px] font-medium text-slate-700 shrink-0 transition-colors">
-      Where do you live? 📍
     </button>
     <button onclick="askClone('What is your morning coffee ritual? ☕️')" 
             class="px-2 py-0.5 rounded-full bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 text-[10px] font-medium text-slate-700 shrink-0 transition-colors">

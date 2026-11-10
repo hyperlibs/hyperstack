@@ -381,13 +381,13 @@ func BioTalk(p BioTalkProps) Component {
 		p.Subtitle = "Verified answers"
 	}
 	if p.Greeting == "" {
-		p.Greeting = "Hey! 👋 I'm <strong>Alex's Digital Clone AI</strong>, powered by an embedded <strong>Tiny Self-Learning LLM</strong> running 100% locally on your device."
+		p.Greeting = "Hey! 👋 I'm <strong>AlexAI</strong>, Alex Rivera's digital clone middleman. I only respond as per Alex's provided answers for your group.<p class=\"text-slate-500 text-[10px] mt-1\">If Alex hasn't answered a question yet, it is forwarded directly to Alex's inbox 📨. Alex can provide multiple answers per audience tag (@all, @family, @friends, @bffs).</p>"
 	}
 	if len(p.QuickPrompts) == 0 {
 		p.QuickPrompts = []string{
+			"Where are you now? 📍",
 			"Do you have a girlfriend? 👀",
 			"Top projects? 🚀",
-			"Where do you live? 📍",
 			"Coffee ritual ☕️",
 		}
 	}
@@ -401,7 +401,7 @@ func BioTalk(p BioTalkProps) Component {
 	}
 
 	html := fmt.Sprintf(`
-<div id="talk-container" class="flex flex-col h-[420px] rounded-2xl bg-white border border-slate-200/80 overflow-hidden shadow-2xs">
+<div id="talk-container" class="flex flex-col h-[430px] rounded-2xl bg-white border border-slate-200/80 overflow-hidden shadow-2xs">
   <div class="h-10 px-3 bg-slate-50 border-b border-slate-200/70 flex items-center justify-between shrink-0">
     <div class="flex items-center gap-1.5">
       <div class="w-5 h-5 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white text-[9px] font-bold">
@@ -409,13 +409,19 @@ func BioTalk(p BioTalkProps) Component {
       </div>
       <span class="text-xs font-bold text-slate-900">%s</span>
       <span id="clone-role-badge" class="text-[9px] text-indigo-600 font-mono font-bold bg-indigo-50 px-1 rounded">AI</span>
-      <span id="clone-llm-badge" class="text-[9px] text-emerald-700 font-mono font-bold bg-emerald-50 border border-emerald-200/80 px-1 rounded flex items-center gap-0.5" title="Tiny Self-Learning LLM Running Locally On-Device">
+      <span id="clone-llm-badge" class="text-[9px] text-emerald-700 font-mono font-bold bg-emerald-50 border border-emerald-200/80 px-1 rounded flex items-center gap-0.5" title="Tiny Self-Learning LLM Middleman Running Locally On-Device">
         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
         <span>Offline LLM</span>
       </span>
     </div>
 
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-1.5">
+      <button onclick="toggleInboxDrawer()" id="inbox-drawer-btn" type="button"
+              class="text-[10px] font-bold text-amber-700 hover:text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 px-1.5 py-0.5 rounded-md transition-colors flex items-center gap-1" title="Alex's Question Inbox (Middleman Control)">
+        <span>📥</span> <span>Inbox</span>
+        <span id="inbox-pending-count" class="bg-amber-600 text-white rounded-full px-1 text-[8px] font-bold">1</span>
+      </button>
+
       <button onclick="toggleTeachDrawer()" id="teach-drawer-btn" type="button"
               class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-1.5 py-0.5 rounded-md transition-colors flex items-center gap-0.5" title="Teach new facts to the self-learning LLM">
         <span>💡</span> <span>Teach</span>
@@ -427,6 +433,45 @@ func BioTalk(p BioTalkProps) Component {
           <span>🎭</span> <span>Ask Anon</span>
         </span>
       </label>
+    </div>
+  </div>
+
+  <!-- Collapsible Alex's Question Inbox Drawer -->
+  <div id="inbox-drawer" class="hidden px-3 py-2 bg-amber-50/70 border-b border-amber-200/80 text-xs space-y-2 animate-slide-down">
+    <div class="flex items-center justify-between text-[10px]">
+      <span class="font-bold text-amber-900 flex items-center gap-1">
+        <span>👑</span> <span>Alex's Inbox (Middleman Control)</span>
+      </span>
+      <div class="flex items-center gap-1">
+        <button type="button" onclick="renderInboxList('pending')" id="inbox-tab-pending" class="px-1.5 py-0.5 rounded bg-amber-200/80 text-amber-900 font-bold text-[9px]">
+          Pending (<span id="inbox-tab-count">1</span>)
+        </button>
+        <button type="button" onclick="renderInboxList('answered')" id="inbox-tab-answered" class="px-1.5 py-0.5 rounded text-amber-800 hover:bg-amber-100 text-[9px] font-medium">
+          Answered
+        </button>
+        <button type="button" onclick="toggleInboxDrawer()" class="text-amber-600 hover:text-amber-900 ml-1 font-bold">✕</button>
+      </div>
+    </div>
+    <div id="inbox-list-container" class="space-y-1.5 max-h-44 overflow-y-auto custom-scroll pr-1"></div>
+    <div id="inbox-answer-box" class="hidden p-2 rounded-xl bg-white border border-amber-200/90 shadow-2xs space-y-1.5">
+      <div class="flex items-center justify-between text-[10px]">
+        <span class="font-bold text-slate-800 flex items-center gap-1 truncate max-w-[80%%]">
+          <span>✏️</span> <span id="inbox-answer-target-q" class="truncate font-mono">Where are you now?</span>
+        </span>
+        <button type="button" onclick="closeAnswerBox()" class="text-slate-400 hover:text-slate-600 text-xs">✕</button>
+      </div>
+      <p class="text-[9px] text-slate-500 leading-tight">Add multiple contextual answers per audience tag (@all, @family, @friends, @bffs):</p>
+      <div class="flex items-center gap-1 overflow-x-auto py-0.5">
+        <button type="button" onclick="insertAnswerTag('@all ')" class="px-1.5 py-0.2 rounded bg-slate-100 text-slate-700 text-[9px] font-bold shrink-0">@all</button>
+        <button type="button" onclick="insertAnswerTag('@family ')" class="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 text-[9px] font-bold shrink-0">@family</button>
+        <button type="button" onclick="insertAnswerTag('@friends ')" class="px-1.5 py-0.2 rounded bg-indigo-100 text-indigo-800 text-[9px] font-bold shrink-0">@friends</button>
+        <button type="button" onclick="insertAnswerTag('@bffs ')" class="px-1.5 py-0.2 rounded bg-pink-100 text-pink-800 text-[9px] font-bold shrink-0">@bffs</button>
+      </div>
+      <textarea id="inbox-answer-text" rows="3" placeholder="@all im at work, chennai&#10;@family im going for shopping today" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs text-slate-900 font-mono text-[11px]"></textarea>
+      <div class="flex items-center justify-end gap-1.5">
+        <button type="button" onclick="closeAnswerBox()" class="px-2 py-0.5 rounded-lg bg-slate-100 text-slate-600 text-[10px] font-medium">Cancel</button>
+        <button type="button" onclick="submitInboxAnswer()" class="px-2.5 py-0.5 rounded-lg bg-amber-600 text-white text-[10px] font-bold shadow-xs">Save & Teach AlexAI</button>
+      </div>
     </div>
   </div>
 
@@ -458,7 +503,7 @@ func BioTalk(p BioTalkProps) Component {
       <div class="p-2 rounded-xl rounded-tl-xs bg-white border border-slate-200/80 text-xs text-slate-800 leading-snug shadow-2xs">
         %s
         <div class="text-[8px] text-slate-400 text-right mt-1 font-mono flex items-center justify-end gap-1">
-          <span class="text-emerald-600">● 100%% Offline</span> • <span>Self-Learning</span>
+          <span class="text-emerald-600">● Middleman Proxy</span> • <span>Multi-Audience</span>
         </div>
       </div>
     </div>
@@ -468,7 +513,7 @@ func BioTalk(p BioTalkProps) Component {
     %s
   </div>
 
-  <form id="clone-form" onsubmit="handleCloneSubmit(event)" class="p-1.5 bg-white border-t border-slate-200/70 flex items-center gap-1.5 shrink-0">
+  <form id="talk-form" onsubmit="handleCloneSubmit(event)" class="p-1.5 bg-white border-t border-slate-200/70 flex items-center gap-1.5 shrink-0">
     <input type="text" id="clone-input" placeholder="Ask Alex's offline clone anything..." class="flex-1 bg-slate-50 border border-slate-200/80 rounded-lg px-2.5 py-1 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 shadow-2xs" />
     <button type="submit" class="px-3 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs transition-all">
       ➤
