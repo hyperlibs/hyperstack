@@ -13,7 +13,7 @@
   <link rel="apple-touch-icon" href="/icons/icon-192.svg">
   <meta name="theme-color" content="#f8fafc">
 
-  <title>Alex Rivera • Bio, Feed & Talk</title>
+  <title>Alex Rivera • Bio, Links, Feed & Talk</title>
 
   <!-- Hyperstack Lean Core -->
   <script src="/vendor/htmx.min.js"></script>
@@ -38,7 +38,7 @@
 <body class="min-h-full flex flex-col items-center justify-start bg-slate-50 text-slate-900">
 
   <!-- Mobile-First Minimalist App Shell -->
-  <app-shellui view-mode="Mob-P" class="w-full max-w-sm flex-1 flex flex-col items-center justify-start pb-20">
+  <app-shellui view-mode="Mob-P" class="w-full max-w-sm flex-1 flex flex-col items-center justify-start pb-28">
 
     <!-- Ultra-Compact PWA App Bar -->
     <app-bar class="w-full sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200/70 px-3.5 h-11 flex items-center justify-between">
@@ -53,14 +53,21 @@
         </span>
       </div>
 
+      <!-- App Bar Actions: Persona Switcher & Invite Trigger -->
       <div class="flex items-center gap-1.5">
-        <span id="pwa-status-pill" class="inline-flex items-center gap-1 text-[9px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.2 rounded-full">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>Online</span>
-        </span>
-        <button onclick="triggerPwaInstall()" id="top-install-btn" title="Install PWA"
-                class="px-2 py-0.5 rounded-lg bg-slate-900 text-white text-[10px] font-semibold flex items-center gap-1 active:scale-95 transition-all">
-          <span>📲</span> <span>Install</span>
+        <!-- View As Persona Dropdown -->
+        <div class="flex items-center gap-1 bg-slate-100 border border-slate-200/80 rounded-lg px-2 py-0.5" title="Switch your view to test collection access rules">
+          <span class="text-[9px] text-slate-400 font-bold">Role:</span>
+          <select id="persona-select" onchange="changePersona(this.value)" 
+                  class="bg-transparent text-[10px] font-bold text-indigo-700 cursor-pointer focus:outline-none">
+            <option value="public">🌐 Public</option>
+            <!-- Dynamically populated options -->
+          </select>
+        </div>
+
+        <button onclick="openInviteModal()" id="top-invite-btn" title="Invite People & Collections"
+                class="px-2 py-0.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold flex items-center gap-0.5 active:scale-95 transition-all shadow-2xs">
+          <span>👥</span> <span>Invite</span>
         </button>
       </div>
     </app-bar>
@@ -99,15 +106,21 @@
             <a href="https://x.com/" target="_blank" rel="noopener noreferrer" class="hover:text-slate-900 transition-colors" title="Twitter / X">𝕏 Twitter</a>
             <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" class="hover:text-slate-900 transition-colors" title="LinkedIn">💼 LinkedIn</a>
           </div>
-          <a href="mailto:alex@hyperstack.dev" class="text-indigo-600 font-medium hover:underline text-[11px]">alex@hyperstack.dev</a>
+          <button onclick="openInviteModal()" class="text-indigo-600 font-bold hover:underline text-[10px] flex items-center gap-0.5">
+            <span>+</span> <span>Invite</span>
+          </button>
         </div>
       </div>
 
-      <!-- Segmented Tabs: Bio | Feed | Talk (Ultra-Compact) -->
+      <!-- Segmented Tabs: Bio | Links | Feed | Talk -->
       <div class="flex items-center p-0.5 bg-slate-200/60 rounded-xl text-xs font-semibold">
         <button onclick="switchTab('bio')" id="tab-btn-bio" 
                 class="flex-1 py-1 rounded-lg bg-white text-slate-900 font-bold transition-all shadow-xs flex items-center justify-center gap-1">
-          <span>🔗</span> <span>Bio</span>
+          <span>👤</span> <span>Bio</span>
+        </button>
+        <button onclick="switchTab('links')" id="tab-btn-links" 
+                class="flex-1 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1">
+          <span>🔗</span> <span>Links</span>
         </button>
         <button onclick="switchTab('feed')" id="tab-btn-feed" 
                 class="flex-1 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1">
@@ -120,237 +133,367 @@
       </div>
 
       <!-- ================================================================= -->
-      <!-- TAB 1: BIO (Ultra-Compact Links) -->
+      <!-- TAB 1: BIO (Name, Relation with you, Hobbies, Interests, Goals, Achievements) -->
       <!-- ================================================================= -->
-      <section id="pane-bio" class="space-y-1.5">
-        <!-- 0ms Search Filter -->
-        <div class="relative">
-          <input type="text" id="link-search" oninput="filterLinks(this.value)" placeholder="Filter links..." 
-                 class="w-full bg-white border border-slate-200/80 rounded-xl pl-7 pr-3 py-1.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 shadow-2xs" />
-          <span class="absolute left-2.5 top-1.5 text-[11px] text-slate-400">🔍</span>
+      <section id="pane-bio" class="space-y-2">
+        <div id="locked-bio" class="hidden p-6 rounded-2xl bg-white border border-slate-200/80 text-center space-y-2 shadow-2xs">
+          <span class="text-3xl block">🔒</span>
+          <h3 class="text-xs font-bold text-slate-900">Bio is Restricted</h3>
+          <p class="text-[11px] text-slate-500 max-w-xs mx-auto">This section is not accessible to your collection role. Switch role or enter an invite code.</p>
+          <button onclick="openInviteModal()" class="mt-2 px-3 py-1 rounded-xl bg-slate-900 text-white text-xs font-bold">Request Access</button>
         </div>
 
-        <!-- Curated Links Stack (Ultra-Compact) -->
-        <div id="links-container" class="space-y-1.5">
-
-          <a href="https://github.com/hyperlibs/hyperstack" target="_blank" rel="noopener noreferrer"
-             class="bio-link-item group flex items-center gap-2.5 px-3 py-2 rounded-xl bg-white border border-slate-200/80 hover:border-indigo-400 hover:bg-slate-50/50 transition-all active:scale-[0.99] shadow-2xs"
-             data-search="hyperstack framework htmx go reactive zero vdom github">
-            <span class="text-base shrink-0">⚡</span>
-            <div class="flex-1 min-w-0 text-left">
-              <div class="flex items-center gap-1.5">
-                <h2 class="font-bold text-xs text-slate-900 group-hover:text-indigo-600 transition-colors truncate">Hyperstack Framework</h2>
-                <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-indigo-50 text-indigo-700 border border-indigo-200">v1.0</span>
-              </div>
-              <p class="text-[10px] text-slate-500 truncate">HTMX on Steroids • Zero Virtual DOM</p>
+        <div id="content-bio" class="space-y-2.5">
+          <!-- Relation With You Card -->
+          <div class="p-3 rounded-2xl bg-gradient-to-r from-indigo-50/80 to-purple-50/80 border border-indigo-100 shadow-2xs">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-bold text-indigo-600 uppercase tracking-wider flex items-center gap-1">
+                <span>🤝</span> <span>Relation with You</span>
+              </span>
+              <span id="bio-relation-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white text-indigo-700 border border-indigo-200 shadow-2xs">
+                Visitor (Public)
+              </span>
             </div>
-            <span class="text-slate-300 group-hover:text-indigo-600 text-xs transition-colors shrink-0">↗</span>
-          </a>
+            <p id="bio-relation-desc" class="text-xs text-slate-700 mt-1.5 leading-relaxed font-medium">
+              You are viewing Alex's bio as a <strong>public visitor</strong>. If you received an invite code, enter it to reveal your personalized connection.
+            </p>
+          </div>
 
-          <a href="/demo/hypersheet" target="_blank"
-             class="bio-link-item group flex items-center gap-2.5 px-3 py-2 rounded-xl bg-white border border-slate-200/80 hover:border-emerald-400 hover:bg-slate-50/50 transition-all active:scale-[0.99] shadow-2xs"
-             data-search="hypersheet spreadsheet dag reactive live demo table">
-            <span class="text-base shrink-0">📊</span>
-            <div class="flex-1 min-w-0 text-left">
-              <div class="flex items-center gap-1.5">
-                <h2 class="font-bold text-xs text-slate-900 group-hover:text-emerald-600 transition-colors truncate">Hypersheet Live Cloud</h2>
-                <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">Demo</span>
-              </div>
-              <p class="text-[10px] text-slate-500 truncate">Zero-NPM Reactive Spreadsheet Core</p>
+          <!-- Hobbies & Daily Rituals -->
+          <div class="p-3 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-1.5">
+            <h3 class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+              <span>☕️</span> <span>Hobbies & Rituals</span>
+            </h3>
+            <div class="flex flex-wrap gap-1.5 pt-0.5">
+              <span class="px-2 py-1 rounded-lg bg-slate-100 text-slate-700 text-[11px] font-medium">☕️ Pour-over coffee (V60 Ethiopian)</span>
+              <span class="px-2 py-1 rounded-lg bg-slate-100 text-slate-700 text-[11px] font-medium">🏃‍♂️ Morning 5km runs around the bay</span>
+              <span class="px-2 py-1 rounded-lg bg-slate-100 text-slate-700 text-[11px] font-medium">♟️ Blitz Chess (1800 Elo)</span>
+              <span class="px-2 py-1 rounded-lg bg-slate-100 text-slate-700 text-[11px] font-medium">⌨️ Custom mechanical keyboards</span>
             </div>
-            <span class="text-slate-300 group-hover:text-emerald-600 text-xs transition-colors shrink-0">↗</span>
-          </a>
+          </div>
 
-          <a href="/demo/mobile" target="_blank"
-             class="bio-link-item group flex items-center gap-2.5 px-3 py-2 rounded-xl bg-white border border-slate-200/80 hover:border-purple-400 hover:bg-slate-50/50 transition-all active:scale-[0.99] shadow-2xs"
-             data-search="appzos mobile platform spatial operating system">
-            <span class="text-base shrink-0">📱</span>
-            <div class="flex-1 min-w-0 text-left">
-              <div class="flex items-center gap-1.5">
-                <h2 class="font-bold text-xs text-slate-900 group-hover:text-purple-600 transition-colors truncate">AppzOS Mobile Platform</h2>
-                <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-purple-50 text-purple-700 border border-purple-200">Mobile</span>
-              </div>
-              <p class="text-[10px] text-slate-500 truncate">8 Viewport Modes • 0–9 Z-Index Layers</p>
+          <!-- Core Interests -->
+          <div class="p-3 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-1.5">
+            <h3 class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+              <span>🔬</span> <span>Interests</span>
+            </h3>
+            <div class="flex flex-wrap gap-1.5 pt-0.5">
+              <span class="px-2 py-1 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-100 text-[11px] font-medium">⚡ Hypermedia & Zero-VDOM</span>
+              <span class="px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100 text-[11px] font-medium">🌐 Distributed Consensus & Raft</span>
+              <span class="px-2 py-1 rounded-lg bg-purple-50 text-purple-700 border border-purple-100 text-[11px] font-medium">📱 Local-First & Spatial Operating Systems</span>
+              <span class="px-2 py-1 rounded-lg bg-slate-100 text-slate-700 text-[11px] font-medium">📚 Hard Sci-Fi Literature</span>
             </div>
-            <span class="text-slate-300 group-hover:text-purple-600 text-xs transition-colors shrink-0">↗</span>
-          </a>
+          </div>
 
-          <a href="https://discord.gg/" target="_blank" rel="noopener noreferrer"
-             class="bio-link-item group flex items-center gap-2.5 px-3 py-2 rounded-xl bg-white border border-slate-200/80 hover:border-indigo-400 hover:bg-slate-50/50 transition-all active:scale-[0.99] shadow-2xs"
-             data-search="discord community chat developers builders">
-            <span class="text-base shrink-0">💬</span>
-            <div class="flex-1 min-w-0 text-left">
-              <div class="flex items-center gap-1.5">
-                <h2 class="font-bold text-xs text-slate-900 group-hover:text-indigo-600 transition-colors truncate">Hypermedia Discord</h2>
+          <!-- Future Goals -->
+          <div class="p-3 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-1.5">
+            <h3 class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+              <span>🎯</span> <span>2026 Goals</span>
+            </h3>
+            <ul class="space-y-1 text-xs text-slate-700">
+              <li class="flex items-start gap-1.5">
+                <span class="text-indigo-600 font-bold shrink-0">▹</span>
+                <span>Empower 10,000+ developers to build hyperreactive web apps without Node.js or heavy SPAs.</span>
+              </li>
+              <li class="flex items-start gap-1.5">
+                <span class="text-indigo-600 font-bold shrink-0">▹</span>
+                <span>Run a sub-3:30 marathon in San Francisco.</span>
+              </li>
+              <li class="flex items-start gap-1.5">
+                <span class="text-indigo-600 font-bold shrink-0">▹</span>
+                <span>Ship Hyperstack v2.0 single-binary full-stack runtime with instant zero-allocation clustering.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Key Achievements -->
+          <div class="p-3 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-1.5">
+            <h3 class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+              <span>🏆</span> <span>Achievements</span>
+            </h3>
+            <div class="space-y-1.5">
+              <div class="p-2 rounded-xl bg-slate-50 border border-slate-200/70 flex items-start gap-2">
+                <span class="text-base shrink-0">⚡</span>
+                <div>
+                  <div class="text-xs font-bold text-slate-900">Created Hyperstack Framework</div>
+                  <p class="text-[10px] text-slate-500 mt-0.5">Brought reactive signals, zero-eval runtime, and spatial layouts to HTMX with 0 Node.js footprint.</p>
+                </div>
               </div>
-              <p class="text-[10px] text-slate-500 truncate">Connect with 3,400+ hyperstack developers</p>
-            </div>
-            <span class="text-slate-300 group-hover:text-indigo-600 text-xs transition-colors shrink-0">↗</span>
-          </a>
-
-          <a href="https://github.com/hyperlibs/hyperstack" target="_blank" rel="noopener noreferrer"
-             class="bio-link-item group flex items-center gap-2.5 px-3 py-2 rounded-xl bg-white border border-slate-200/80 hover:border-slate-400 hover:bg-slate-50/50 transition-all active:scale-[0.99] shadow-2xs"
-             data-search="website blog essays articles engineering">
-            <span class="text-base shrink-0">🌐</span>
-            <div class="flex-1 min-w-0 text-left">
-              <div class="flex items-center gap-1.5">
-                <h2 class="font-bold text-xs text-slate-900 group-hover:text-slate-700 transition-colors truncate">Personal Website & Blog</h2>
+              <div class="p-2 rounded-xl bg-slate-50 border border-slate-200/70 flex items-start gap-2">
+                <span class="text-base shrink-0">📊</span>
+                <div>
+                  <div class="text-xs font-bold text-slate-900">Authored Hypersheet DAG Core</div>
+                  <p class="text-[10px] text-slate-500 mt-0.5">High-performance topological spreadsheet engine in Go with sub-millisecond recalculations.</p>
+                </div>
               </div>
-              <p class="text-[10px] text-slate-500 truncate">Essays on Go, hypermedia, and systems engineering</p>
+              <div class="p-2 rounded-xl bg-slate-50 border border-slate-200/70 flex items-start gap-2">
+                <span class="text-base shrink-0">🚀</span>
+                <div>
+                  <div class="text-xs font-bold text-slate-900">Scaled Systems to 1,000,000 RPS</div>
+                  <p class="text-[10px] text-slate-500 mt-0.5">Engineered zero-allocation SSE streaming architecture in Go with kernel-level zero-copy sockets.</p>
+                </div>
+              </div>
             </div>
-            <span class="text-slate-300 group-hover:text-slate-700 text-xs transition-colors shrink-0">↗</span>
-          </a>
-
+          </div>
         </div>
       </section>
 
       <!-- ================================================================= -->
-      <!-- TAB 2: FEED (Ultra-Compact What I Do Now - Text + Emojis) -->
+      <!-- TAB 2: LINKS (Dedicated Links Stack & 0ms Filter) -->
+      <!-- ================================================================= -->
+      <section id="pane-links" class="hidden space-y-1.5">
+        <div id="locked-links" class="hidden p-6 rounded-2xl bg-white border border-slate-200/80 text-center space-y-2 shadow-2xs">
+          <span class="text-3xl block">🔒</span>
+          <h3 class="text-xs font-bold text-slate-900">Links are Restricted</h3>
+          <p class="text-[11px] text-slate-500 max-w-xs mx-auto">Links are restricted for your active collection role.</p>
+          <button onclick="openInviteModal()" class="mt-2 px-3 py-1 rounded-xl bg-slate-900 text-white text-xs font-bold">Request Access</button>
+        </div>
+
+        <div id="content-links" class="space-y-1.5">
+          <!-- 0ms Search Filter -->
+          <div class="relative">
+            <input type="text" id="link-search" oninput="filterLinks(this.value)" placeholder="Filter links & resources..." 
+                   class="w-full bg-white border border-slate-200/80 rounded-xl pl-7 pr-3 py-1.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 shadow-2xs" />
+            <span class="absolute left-2.5 top-1.5 text-[11px] text-slate-400">🔍</span>
+          </div>
+
+          <!-- Curated Links Stack (Ultra-Compact) -->
+          <div id="links-container" class="space-y-1.5">
+
+            <a href="https://github.com/hyperlibs/hyperstack" target="_blank" rel="noopener noreferrer"
+               class="bio-link-item group flex items-center gap-2.5 px-3 py-2 rounded-xl bg-white border border-slate-200/80 hover:border-indigo-400 hover:bg-slate-50/50 transition-all active:scale-[0.99] shadow-2xs"
+               data-search="hyperstack framework htmx go reactive zero vdom github">
+              <span class="text-base shrink-0">⚡</span>
+              <div class="flex-1 min-w-0 text-left">
+                <div class="flex items-center gap-1.5">
+                  <h2 class="font-bold text-xs text-slate-900 group-hover:text-indigo-600 transition-colors truncate">Hyperstack Framework</h2>
+                  <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-indigo-50 text-indigo-700 border border-indigo-200">v1.0</span>
+                </div>
+                <p class="text-[10px] text-slate-500 truncate">HTMX on Steroids • Zero Virtual DOM</p>
+              </div>
+              <span class="text-slate-300 group-hover:text-indigo-600 text-xs transition-colors shrink-0">↗</span>
+            </a>
+
+            <a href="/demo/hypersheet" target="_blank"
+               class="bio-link-item group flex items-center gap-2.5 px-3 py-2 rounded-xl bg-white border border-slate-200/80 hover:border-emerald-400 hover:bg-slate-50/50 transition-all active:scale-[0.99] shadow-2xs"
+               data-search="hypersheet spreadsheet dag reactive live demo table">
+              <span class="text-base shrink-0">📊</span>
+              <div class="flex-1 min-w-0 text-left">
+                <div class="flex items-center gap-1.5">
+                  <h2 class="font-bold text-xs text-slate-900 group-hover:text-emerald-600 transition-colors truncate">Hypersheet Live Cloud</h2>
+                  <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">Demo</span>
+                </div>
+                <p class="text-[10px] text-slate-500 truncate">Zero-NPM Reactive Spreadsheet Core</p>
+              </div>
+              <span class="text-slate-300 group-hover:text-emerald-600 text-xs transition-colors shrink-0">↗</span>
+            </a>
+
+            <a href="/demo/mobile" target="_blank"
+               class="bio-link-item group flex items-center gap-2.5 px-3 py-2 rounded-xl bg-white border border-slate-200/80 hover:border-purple-400 hover:bg-slate-50/50 transition-all active:scale-[0.99] shadow-2xs"
+               data-search="appzos mobile platform spatial operating system">
+              <span class="text-base shrink-0">📱</span>
+              <div class="flex-1 min-w-0 text-left">
+                <div class="flex items-center gap-1.5">
+                  <h2 class="font-bold text-xs text-slate-900 group-hover:text-purple-600 transition-colors truncate">AppzOS Mobile Platform</h2>
+                  <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-purple-50 text-purple-700 border border-purple-200">Mobile</span>
+                </div>
+                <p class="text-[10px] text-slate-500 truncate">8 Viewport Modes • 0–9 Z-Index Layers</p>
+              </div>
+              <span class="text-slate-300 group-hover:text-purple-600 text-xs transition-colors shrink-0">↗</span>
+            </a>
+
+            <a href="https://discord.gg/" target="_blank" rel="noopener noreferrer"
+               class="bio-link-item group flex items-center gap-2.5 px-3 py-2 rounded-xl bg-white border border-slate-200/80 hover:border-indigo-400 hover:bg-slate-50/50 transition-all active:scale-[0.99] shadow-2xs"
+               data-search="discord community chat developers builders">
+              <span class="text-base shrink-0">💬</span>
+              <div class="flex-1 min-w-0 text-left">
+                <div class="flex items-center gap-1.5">
+                  <h2 class="font-bold text-xs text-slate-900 group-hover:text-indigo-600 transition-colors truncate">Hypermedia Discord</h2>
+                </div>
+                <p class="text-[10px] text-slate-500 truncate">Connect with 3,400+ hyperstack developers</p>
+              </div>
+              <span class="text-slate-300 group-hover:text-indigo-600 text-xs transition-colors shrink-0">↗</span>
+            </a>
+
+            <a href="https://github.com/hyperlibs/hyperstack" target="_blank" rel="noopener noreferrer"
+               class="bio-link-item group flex items-center gap-2.5 px-3 py-2 rounded-xl bg-white border border-slate-200/80 hover:border-slate-400 hover:bg-slate-50/50 transition-all active:scale-[0.99] shadow-2xs"
+               data-search="website blog essays articles engineering">
+              <span class="text-base shrink-0">🌐</span>
+              <div class="flex-1 min-w-0 text-left">
+                <div class="flex items-center gap-1.5">
+                  <h2 class="font-bold text-xs text-slate-900 group-hover:text-slate-700 transition-colors truncate">Personal Website & Blog</h2>
+                </div>
+                <p class="text-[10px] text-slate-500 truncate">Essays on Go, hypermedia, and systems engineering</p>
+              </div>
+              <span class="text-slate-300 group-hover:text-slate-700 text-xs transition-colors shrink-0">↗</span>
+            </a>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- TAB 3: FEED (Ultra-Compact What I Do Now - Text + Emojis) -->
       <!-- ================================================================= -->
       <section id="pane-feed" class="hidden space-y-1.5">
-        
-        <article class="p-2.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs space-y-1">
-          <div class="flex items-center justify-between text-[10px] text-slate-400">
-            <span class="font-semibold text-indigo-600 flex items-center gap-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Right now
-            </span>
-            <span class="font-mono">2h ago</span>
-          </div>
-          <p class="text-xs text-slate-800 leading-snug font-normal">
-            Shipped Hyperstack v1.1 release! Zero-eval signals are 2x faster now 🚀⚡️ Benchmarks looking super clean 📈✨
-          </p>
-          <div class="pt-1 flex items-center justify-between text-[10px] text-slate-400 border-t border-slate-100">
-            <span>📍 San Francisco, CA</span>
-            <button onclick="toggleLike(this)" class="flex items-center gap-1 text-[10px] text-slate-400 hover:text-rose-500 transition-colors">
-              <span class="like-heart">🤍</span> <span class="like-count">24</span>
-            </button>
-          </div>
-        </article>
+        <div id="locked-feed" class="hidden p-6 rounded-2xl bg-white border border-slate-200/80 text-center space-y-2 shadow-2xs">
+          <span class="text-3xl block">🔒</span>
+          <h3 class="text-xs font-bold text-slate-900">Feed is Restricted</h3>
+          <p class="text-[11px] text-slate-500 max-w-xs mx-auto">This feed is only visible to approved collection groups. Your active role does not have permission.</p>
+          <button onclick="openInviteModal()" class="mt-2 px-3 py-1 rounded-xl bg-slate-900 text-white text-xs font-bold">Request Access</button>
+        </div>
 
-        <article class="p-2.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs space-y-1">
-          <div class="flex items-center justify-between text-[10px] text-slate-400">
-            <span class="font-medium text-slate-500">Earlier today</span>
-            <span class="font-mono">6h ago</span>
-          </div>
-          <p class="text-xs text-slate-800 leading-snug font-normal">
-            Brewing fresh Ethiopian natural pour-over ☕️✨ Reading distributed consensus papers on Sunday morning 📖🎧
-          </p>
-          <div class="pt-1 flex items-center justify-between text-[10px] text-slate-400 border-t border-slate-100">
-            <span>📍 Mission District</span>
-            <button onclick="toggleLike(this)" class="flex items-center gap-1 text-[10px] text-slate-400 hover:text-rose-500 transition-colors">
-              <span class="like-heart">🤍</span> <span class="like-count">19</span>
-            </button>
-          </div>
-        </article>
+        <div id="content-feed" class="space-y-1.5">
+          <article class="p-2.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs space-y-1">
+            <div class="flex items-center justify-between text-[10px] text-slate-400">
+              <span class="font-semibold text-indigo-600 flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Right now
+              </span>
+              <span class="font-mono">2h ago</span>
+            </div>
+            <p class="text-xs text-slate-800 leading-snug font-normal">
+              Shipped Hyperstack v1.1 release! Zero-eval signals are 2x faster now 🚀⚡️ Benchmarks looking super clean 📈✨
+            </p>
+            <div class="pt-1 flex items-center justify-between text-[10px] text-slate-400 border-t border-slate-100">
+              <span>📍 San Francisco, CA</span>
+              <button onclick="toggleLike(this)" class="flex items-center gap-1 text-[10px] text-slate-400 hover:text-rose-500 transition-colors">
+                <span class="like-heart">🤍</span> <span class="like-count">24</span>
+              </button>
+            </div>
+          </article>
 
-        <article class="p-2.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs space-y-1">
-          <div class="flex items-center justify-between text-[10px] text-slate-400">
-            <span class="font-medium text-slate-500">Activity</span>
-            <span class="font-mono">Yesterday</span>
-          </div>
-          <p class="text-xs text-slate-800 leading-snug font-normal">
-            Morning 5km run done 🏃‍♂️💨 Beautiful sunny morning over the bay ☀️🌉 Feeling energized for deep work 🔥💻
-          </p>
-          <div class="pt-1 flex items-center justify-between text-[10px] text-slate-400 border-t border-slate-100">
-            <span>📍 Embarcadero</span>
-            <button onclick="toggleLike(this)" class="flex items-center gap-1 text-[10px] text-slate-400 hover:text-rose-500 transition-colors">
-              <span class="like-heart">🤍</span> <span class="like-count">42</span>
-            </button>
-          </div>
-        </article>
+          <article class="p-2.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs space-y-1">
+            <div class="flex items-center justify-between text-[10px] text-slate-400">
+              <span class="font-medium text-slate-500">Earlier today</span>
+              <span class="font-mono">6h ago</span>
+            </div>
+            <p class="text-xs text-slate-800 leading-snug font-normal">
+              Brewing fresh Ethiopian natural pour-over ☕️✨ Reading distributed consensus papers on Sunday morning 📖🎧
+            </p>
+            <div class="pt-1 flex items-center justify-between text-[10px] text-slate-400 border-t border-slate-100">
+              <span>📍 Mission District</span>
+              <button onclick="toggleLike(this)" class="flex items-center gap-1 text-[10px] text-slate-400 hover:text-rose-500 transition-colors">
+                <span class="like-heart">🤍</span> <span class="like-count">19</span>
+              </button>
+            </div>
+          </article>
 
-        <article class="p-2.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs space-y-1">
-          <div class="flex items-center justify-between text-[10px] text-slate-400">
-            <span class="font-medium text-slate-500">Engineering</span>
-            <span class="font-mono">3 days ago</span>
-          </div>
-          <p class="text-xs text-slate-800 leading-snug font-normal">
-            Deep in Go channels & goroutine scheduling today 🧑‍💻 Benchmarking zero-allocation streaming at 1M RPS ⚡️📊
-          </p>
-          <div class="pt-1 flex items-center justify-between text-[10px] text-slate-400 border-t border-slate-100">
-            <span>📍 Home Lab</span>
-            <button onclick="toggleLike(this)" class="flex items-center gap-1 text-[10px] text-slate-400 hover:text-rose-500 transition-colors">
-              <span class="like-heart">🤍</span> <span class="like-count">31</span>
-            </button>
-          </div>
-        </article>
+          <article class="p-2.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs space-y-1">
+            <div class="flex items-center justify-between text-[10px] text-slate-400">
+              <span class="font-medium text-slate-500">Activity</span>
+              <span class="font-mono">Yesterday</span>
+            </div>
+            <p class="text-xs text-slate-800 leading-snug font-normal">
+              Morning 5km run done 🏃‍♂️💨 Beautiful sunny morning over the bay ☀️🌉 Feeling energized for deep work 🔥💻
+            </p>
+            <div class="pt-1 flex items-center justify-between text-[10px] text-slate-400 border-t border-slate-100">
+              <span>📍 Embarcadero</span>
+              <button onclick="toggleLike(this)" class="flex items-center gap-1 text-[10px] text-slate-400 hover:text-rose-500 transition-colors">
+                <span class="like-heart">🤍</span> <span class="like-count">42</span>
+              </button>
+            </div>
+          </article>
 
+          <article class="p-2.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs space-y-1">
+            <div class="flex items-center justify-between text-[10px] text-slate-400">
+              <span class="font-medium text-slate-500">Engineering</span>
+              <span class="font-mono">3 days ago</span>
+            </div>
+            <p class="text-xs text-slate-800 leading-snug font-normal">
+              Deep in Go channels & goroutine scheduling today 🧑‍💻 Benchmarking zero-allocation streaming at 1M RPS ⚡️📊
+            </p>
+            <div class="pt-1 flex items-center justify-between text-[10px] text-slate-400 border-t border-slate-100">
+              <span>📍 Home Lab</span>
+              <button onclick="toggleLike(this)" class="flex items-center gap-1 text-[10px] text-slate-400 hover:text-rose-500 transition-colors">
+                <span class="like-heart">🤍</span> <span class="like-count">31</span>
+              </button>
+            </div>
+          </article>
+        </div>
       </section>
 
       <!-- ================================================================= -->
-      <!-- TAB 3: TALK (Ultra-Compact Digital Clone AI Agent) -->
+      <!-- TAB 4: TALK (Ultra-Compact Digital Clone AI Agent) -->
       <!-- ================================================================= -->
       <section id="pane-talk" class="hidden">
-        
-        <div class="flex flex-col h-[380px] rounded-2xl bg-white border border-slate-200/80 overflow-hidden shadow-2xs">
-          
-          <!-- Compact Header -->
-          <div class="h-10 px-3 bg-slate-50 border-b border-slate-200/70 flex items-center justify-between shrink-0">
-            <div class="flex items-center gap-1.5">
-              <div class="w-5 h-5 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white text-[9px] font-bold">
-                A
+        <div id="locked-talk" class="hidden p-6 rounded-2xl bg-white border border-slate-200/80 text-center space-y-2 shadow-2xs">
+          <span class="text-3xl block">🔒</span>
+          <h3 class="text-xs font-bold text-slate-900">Talk AI is Restricted</h3>
+          <p class="text-[11px] text-slate-500 max-w-xs mx-auto">Conversations with Alex's Digital Clone are restricted to authorized collections. Switch your role or enter an invite code.</p>
+          <button onclick="openInviteModal()" class="mt-2 px-3 py-1 rounded-xl bg-slate-900 text-white text-xs font-bold">Request Access</button>
+        </div>
+
+        <div id="content-talk" class="space-y-1.5">
+          <div class="flex flex-col h-[380px] rounded-2xl bg-white border border-slate-200/80 overflow-hidden shadow-2xs">
+            
+            <!-- Compact Header -->
+            <div class="h-10 px-3 bg-slate-50 border-b border-slate-200/70 flex items-center justify-between shrink-0">
+              <div class="flex items-center gap-1.5">
+                <div class="w-5 h-5 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white text-[9px] font-bold">
+                  A
+                </div>
+                <span class="text-xs font-bold text-slate-900">Alex's Clone</span>
+                <span id="clone-role-badge" class="text-[9px] text-indigo-600 font-mono font-bold bg-indigo-50 px-1 rounded">AI</span>
               </div>
-              <span class="text-xs font-bold text-slate-900">Alex's Clone</span>
-              <span class="text-[9px] text-indigo-600 font-mono font-bold bg-indigo-50 px-1 rounded">AI</span>
+
+              <!-- Anonymous Toggle -->
+              <label class="flex items-center gap-1 cursor-pointer select-none" title="Ask without identity">
+                <input type="checkbox" id="anon-toggle" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-3 w-3 cursor-pointer" />
+                <span class="text-[10px] font-medium text-slate-600 flex items-center gap-0.5">
+                  <span>🎭</span> <span>Ask Anon</span>
+                </span>
+              </label>
             </div>
 
-            <!-- Anonymous Toggle -->
-            <label class="flex items-center gap-1 cursor-pointer select-none" title="Ask without identity">
-              <input type="checkbox" id="anon-toggle" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-3 w-3 cursor-pointer" />
-              <span class="text-[10px] font-medium text-slate-600 flex items-center gap-0.5">
-                <span>🎭</span> <span>Ask Anon</span>
+            <!-- Chat Stream -->
+            <div id="talk-stream" class="flex-1 overflow-y-auto p-2.5 space-y-2 bg-slate-50/40 custom-scroll text-xs">
+              <div class="flex items-start gap-1.5 max-w-[92%]">
+                <div class="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center text-white text-[9px] font-bold shrink-0">A</div>
+                <div class="p-2 rounded-xl rounded-tl-xs bg-white border border-slate-200/80 text-xs text-slate-800 leading-snug shadow-2xs">
+                  Hey! 👋 I'm <strong>Alex's Digital Clone AI</strong>. I answer strictly based on Alex's own personal inputs and real answers.
+                  <p class="text-slate-500 text-[10px] mt-1">Ask me about relationship status, projects, tech stack, or routine!</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Typing Indicator -->
+            <div id="clone-typing" class="hidden px-3 py-1 bg-white border-t border-slate-100 flex items-center gap-1 text-[10px] text-slate-400">
+              <span class="flex items-center gap-0.5">
+                <span class="w-1 h-1 rounded-full bg-indigo-500 animate-bounce"></span>
+                <span class="w-1 h-1 rounded-full bg-indigo-500 animate-bounce [animation-delay:0.2s]"></span>
+                <span class="w-1 h-1 rounded-full bg-indigo-500 animate-bounce [animation-delay:0.4s]"></span>
               </span>
-            </label>
-          </div>
-
-          <!-- Chat Stream -->
-          <div id="talk-stream" class="flex-1 overflow-y-auto p-2.5 space-y-2 bg-slate-50/40 custom-scroll text-xs">
-            <div class="flex items-start gap-1.5 max-w-[92%]">
-              <div class="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center text-white text-[9px] font-bold shrink-0">A</div>
-              <div class="p-2 rounded-xl rounded-tl-xs bg-white border border-slate-200/80 text-xs text-slate-800 leading-snug shadow-2xs">
-                Hey! 👋 I'm <strong>Alex's Digital Clone AI</strong>. I answer strictly based on Alex's own personal inputs and real answers.
-                <p class="text-slate-500 text-[10px] mt-1">Ask me about relationship status, projects, tech stack, or routine!</p>
-              </div>
+              <span>Looking up verified answer...</span>
             </div>
+
+            <!-- Micro Prompts Chips -->
+            <div class="px-2 py-1 bg-white border-t border-slate-200/70 flex items-center gap-1 overflow-x-auto shrink-0 scrollbar-none">
+              <button onclick="askClone('Do you have a girlfriend?')" 
+                      class="px-2 py-0.5 rounded-full bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 text-[10px] font-medium text-slate-700 shrink-0 transition-colors">
+                Do you have a girlfriend? 👀
+              </button>
+              <button onclick="askClone('What are your top projects?')" 
+                      class="px-2 py-0.5 rounded-full bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 text-[10px] font-medium text-slate-700 shrink-0 transition-colors">
+                Top projects? 🚀
+              </button>
+              <button onclick="askClone('Where do you live?')" 
+                      class="px-2 py-0.5 rounded-full bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 text-[10px] font-medium text-slate-700 shrink-0 transition-colors">
+                Where do you live? 📍
+              </button>
+            </div>
+
+            <!-- Form Input Bar -->
+            <form id="clone-form" onsubmit="handleCloneSubmit(event)" 
+                  class="p-1.5 bg-white border-t border-slate-200/70 flex items-center gap-1.5 shrink-0">
+              <input type="text" id="clone-input" placeholder="Ask Alex's clone anything..." required autocomplete="off"
+                     class="flex-1 bg-slate-50 border border-slate-200/80 rounded-lg px-2.5 py-1 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 shadow-2xs" />
+              <button type="submit" 
+                      class="px-3 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs transition-all active:scale-95">
+                ➤
+              </button>
+            </form>
+
           </div>
-
-          <!-- Typing Indicator -->
-          <div id="clone-typing" class="hidden px-3 py-1 bg-white border-t border-slate-100 flex items-center gap-1 text-[10px] text-slate-400">
-            <span class="flex items-center gap-0.5">
-              <span class="w-1 h-1 rounded-full bg-indigo-500 animate-bounce"></span>
-              <span class="w-1 h-1 rounded-full bg-indigo-500 animate-bounce [animation-delay:0.2s]"></span>
-              <span class="w-1 h-1 rounded-full bg-indigo-500 animate-bounce [animation-delay:0.4s]"></span>
-            </span>
-            <span>Looking up verified answer...</span>
-          </div>
-
-          <!-- Micro Prompts Chips -->
-          <div class="px-2 py-1 bg-white border-t border-slate-200/70 flex items-center gap-1 overflow-x-auto shrink-0 scrollbar-none">
-            <button onclick="askClone('Do you have a girlfriend?')" 
-                    class="px-2 py-0.5 rounded-full bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 text-[10px] font-medium text-slate-700 shrink-0 transition-colors">
-              Do you have a girlfriend? 👀
-            </button>
-            <button onclick="askClone('What are your top projects?')" 
-                    class="px-2 py-0.5 rounded-full bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 text-[10px] font-medium text-slate-700 shrink-0 transition-colors">
-              Top projects? 🚀
-            </button>
-            <button onclick="askClone('Where do you live?')" 
-                    class="px-2 py-0.5 rounded-full bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 text-[10px] font-medium text-slate-700 shrink-0 transition-colors">
-              Where do you live? 📍
-            </button>
-          </div>
-
-          <!-- Form Input Bar -->
-          <form id="clone-form" onsubmit="handleCloneSubmit(event)" 
-                class="p-1.5 bg-white border-t border-slate-200/70 flex items-center gap-1.5 shrink-0">
-            <input type="text" id="clone-input" placeholder="Ask Alex's clone anything..." required autocomplete="off"
-                   class="flex-1 bg-slate-50 border border-slate-200/80 rounded-lg px-2.5 py-1 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 shadow-2xs" />
-            <button type="submit" 
-                    class="px-3 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs transition-all active:scale-95">
-              ➤
-            </button>
-          </form>
-
         </div>
 
       </section>
@@ -362,37 +505,44 @@
 
     </main>
 
-    <!-- ULTRA-COMPACT FLOATING PWA APP NAVBAR (<app-navbar>) -->
+    <!-- 2X SCALED FLOATING PWA APP NAVBAR (<app-navbar>) -->
     <app-navbar mode="float" behavior="always-visible" 
-                class="fixed bottom-2.5 inset-x-0 mx-auto max-w-sm px-3 z-40 flex items-center justify-between">
-      <div class="w-full bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl shadow-lg shadow-slate-900/5 h-13 px-2 flex items-center justify-around">
+                class="fixed bottom-3 inset-x-0 mx-auto max-w-sm px-2.5 z-40 flex items-center justify-between">
+      <div class="w-full bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl shadow-xl shadow-slate-900/5 h-17 px-1.5 flex items-center justify-around">
         
-        <!-- Bio -->
+        <!-- Bio (2x icon & font) -->
         <button onclick="switchTab('bio')" id="nav-btn-bio" 
-                class="nav-tab-item flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-all text-indigo-600 font-bold bg-indigo-50/80 active:scale-95">
-          <span class="text-sm leading-none">🔗</span>
-          <span class="text-[9px] tracking-tight">Bio</span>
+                class="nav-tab-item flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl transition-all text-indigo-600 font-bold bg-indigo-50/80 active:scale-95">
+          <span class="text-2xl leading-none">👤</span>
+          <span class="text-xs font-bold tracking-tight">Bio</span>
         </button>
 
-        <!-- Feed -->
+        <!-- Links (2x icon & font) -->
+        <button onclick="switchTab('links')" id="nav-btn-links" 
+                class="nav-tab-item flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl transition-all text-slate-400 hover:text-slate-700 active:scale-95">
+          <span class="text-2xl leading-none">🔗</span>
+          <span class="text-xs font-bold tracking-tight">Links</span>
+        </button>
+
+        <!-- Feed (2x icon & font) -->
         <button onclick="switchTab('feed')" id="nav-btn-feed" 
-                class="nav-tab-item flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-all text-slate-400 hover:text-slate-700 active:scale-95">
-          <span class="text-sm leading-none">📝</span>
-          <span class="text-[9px] tracking-tight">Feed</span>
+                class="nav-tab-item flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl transition-all text-slate-400 hover:text-slate-700 active:scale-95">
+          <span class="text-2xl leading-none">📝</span>
+          <span class="text-xs font-bold tracking-tight">Feed</span>
         </button>
 
-        <!-- Talk -->
+        <!-- Talk (2x icon & font) -->
         <button onclick="switchTab('talk')" id="nav-btn-talk" 
-                class="nav-tab-item flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-all text-slate-400 hover:text-slate-700 active:scale-95">
-          <span class="text-sm leading-none">💬</span>
-          <span class="text-[9px] tracking-tight">Talk</span>
+                class="nav-tab-item flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl transition-all text-slate-400 hover:text-slate-700 active:scale-95">
+          <span class="text-2xl leading-none">💬</span>
+          <span class="text-xs font-bold tracking-tight">Talk</span>
         </button>
 
-        <!-- Install -->
-        <button onclick="triggerPwaInstall()" id="nav-btn-install" 
-                class="flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-all text-slate-400 hover:text-indigo-600 active:scale-95">
-          <span class="text-sm leading-none">📲</span>
-          <span class="text-[9px] tracking-tight">Install</span>
+        <!-- Invite (2x icon & font) -->
+        <button onclick="openInviteModal()" id="nav-btn-invite" 
+                class="flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl transition-all text-slate-400 hover:text-indigo-600 active:scale-95">
+          <span class="text-2xl leading-none">👥</span>
+          <span class="text-xs font-bold tracking-tight">Invite</span>
         </button>
 
       </div>
@@ -400,19 +550,214 @@
 
   </app-shellui>
 
+  <!-- ===================================================================== -->
+  <!-- INVITE & COLLECTIONS ACCESS CONTROL MODAL -->
+  <!-- ===================================================================== -->
+  <div id="invite-modal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 opacity-0 pointer-events-none transition-opacity duration-200">
+    <div class="w-full max-w-sm bg-white border border-slate-200 rounded-t-3xl sm:rounded-3xl shadow-2xl max-h-[88vh] flex flex-col overflow-hidden">
+      
+      <!-- Modal Header -->
+      <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2">
+          <span class="w-7 h-7 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold">👥</span>
+          <div>
+            <h3 class="text-xs font-bold text-slate-900 leading-none">Invite & Collections</h3>
+            <p class="text-[10px] text-slate-500 mt-0.5">Tag people & configure tab access rules</p>
+          </div>
+        </div>
+        <button onclick="closeInviteModal()" class="w-6 h-6 rounded-full bg-slate-200/80 hover:bg-slate-300 text-slate-600 flex items-center justify-center text-xs font-bold transition-colors">✕</button>
+      </div>
+
+      <!-- Sub Tabs: 1. Invite People | 2. Collections & Access Rules -->
+      <div class="p-1.5 border-b border-slate-100 bg-white flex items-center gap-1 shrink-0 text-xs font-semibold">
+        <button onclick="switchInviteSubTab('invite')" id="subtab-btn-invite" 
+                class="flex-1 py-1 rounded-lg bg-slate-900 text-white font-bold transition-all shadow-xs flex items-center justify-center gap-1">
+          <span>✉️</span> <span>Invite</span>
+        </button>
+        <button onclick="switchInviteSubTab('rules')" id="subtab-btn-rules" 
+                class="flex-1 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1">
+          <span>🔒</span> <span>Access Rules</span>
+        </button>
+      </div>
+
+      <!-- Modal Content Stream -->
+      <div class="flex-1 overflow-y-auto p-3.5 space-y-3.5 custom-scroll text-xs">
+        
+        <!-- SUBTAB 1: INVITE PEOPLE -->
+        <div id="subpane-invite" class="space-y-3">
+          <div class="space-y-1">
+            <label class="text-[11px] font-bold text-slate-700 block">Person's Name or Email</label>
+            <input type="text" id="invitee-name" placeholder="e.g. Sarah or sarah@gmail.com" 
+                   class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white transition-all shadow-2xs" />
+          </div>
+
+          <!-- Tag in Collections -->
+          <div class="space-y-1">
+            <div class="flex items-center justify-between">
+              <label class="text-[11px] font-bold text-slate-700">Tag in Collections</label>
+              <span class="text-[9px] text-slate-400">Select collection tags</span>
+            </div>
+            <div id="invite-collection-chips" class="flex flex-wrap gap-1">
+              <!-- Dynamically populated chips -->
+            </div>
+          </div>
+
+          <button onclick="generateInvite()" 
+                  class="w-full py-2 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs transition-all active:scale-95 flex items-center justify-center gap-1.5">
+            <span>🔗</span> <span>Generate & Copy Invite Link</span>
+          </button>
+
+          <!-- Invited Members List -->
+          <div class="pt-2 border-t border-slate-100 space-y-1.5">
+            <div class="flex items-center justify-between text-[11px] font-bold text-slate-700">
+              <span>Invited People</span>
+              <span id="invited-count" class="text-[10px] font-mono text-indigo-600 font-normal">3 members</span>
+            </div>
+            <div id="invited-list" class="space-y-1.5">
+              <!-- Dynamically populated members -->
+            </div>
+          </div>
+        </div>
+
+        <!-- SUBTAB 2: COLLECTIONS & ACCESS RULES -->
+        <div id="subpane-rules" class="hidden space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] text-slate-500">Edit collection names & tab access:</span>
+            <button onclick="addNewCollectionPrompt()" 
+                    class="px-2 py-0.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-[10px] font-bold border border-indigo-200 flex items-center gap-0.5 transition-colors">
+              <span>+</span> <span>Add Collection</span>
+            </button>
+          </div>
+
+          <!-- Collections Rules Cards -->
+          <div id="collections-rules-list" class="space-y-2">
+            <!-- Dynamically populated collection rules -->
+          </div>
+
+          <div class="p-2 rounded-xl bg-slate-50 border border-slate-200/80 text-[10px] text-slate-500 leading-relaxed">
+            💡 <strong>Rename any collection:</strong> Click its name field above to rename it however you want (e.g. rename <em>relationship</em> to <em>dating</em> or <em>work</em> to <em>founders</em>).
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-2.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between shrink-0">
+        <span class="text-[10px] text-slate-400">Rules apply in real time</span>
+        <button onclick="closeInviteModal()" 
+                class="px-3.5 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs transition-all">
+          Done
+        </button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Notification Toast -->
   <div id="toast" class="fixed top-14 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-xl bg-slate-900 text-white text-[11px] font-medium shadow-lg opacity-0 pointer-events-none transition-opacity duration-200 z-50">
     Copied to clipboard!
   </div>
 
   <script>
-    // Tab Switching (Synchronizes In-Page Tabs & <app-navbar>)
+    // =========================================================================
+    // 1. COLLECTIONS & ACCESS CONTROL STATE
+    // User can rename collections however they want, and set rules for bio, links, feed, talk
+    // =========================================================================
+    let collections = [
+      { id: "friends", name: "Friends", access: { bio: true, links: true, feed: true, talk: true }, color: "emerald", relation: "Close Friend 🤝", relationDesc: "You and Alex are close friends. You share mutual interests, coffee meetups, and open-source ideas." },
+      { id: "bffs", name: "BFFs", access: { bio: true, links: true, feed: true, talk: true }, color: "indigo", relation: "Best Friend Forever 💫", relationDesc: "Inner circle! You have full unfettered access to personal life updates, now feed, and direct clone access." },
+      { id: "relationship", name: "Relationship", access: { bio: true, links: true, feed: true, talk: true }, color: "rose", relation: "Partner / Significant Other ❤️", relationDesc: "You have Alex's whole heart. Alex's clone knows you intimately and gives you priority attention." },
+      { id: "family", name: "Family", access: { bio: true, links: true, feed: true, talk: false }, color: "amber", relation: "Family Member 🏡", relationDesc: "Family ties! You can see Alex's bio and live feed updates on health, activities, and milestones." },
+      { id: "work", name: "Work", access: { bio: true, links: true, feed: false, talk: false }, color: "blue", relation: "Colleague / Tech Partner 💼", relationDesc: "Professional collaboration! You have direct access to Alex's engineering projects, links, and portfolio." },
+      { id: "church", name: "Church", access: { bio: true, links: false, feed: true, talk: false }, color: "purple", relation: "Church Community 🕊️", relationDesc: "Fellowship and faith! You have access to personal bio and life reflections." }
+    ];
+
+    let currentPersona = "public"; // "public" or collection id
+    let selectedInviteTags = new Set(["friends"]);
+
+    let invitedMembers = [
+      { id: "inv-1", name: "Sarah Jenkins", email: "sarah@gmail.com", tags: ["bffs", "friends"], code: "SARAH-BFF" },
+      { id: "inv-2", name: "Marcus Chen", email: "marcus@company.io", tags: ["work"], code: "MARCUS-WORK" },
+      { id: "inv-3", name: "Elena Rostova", email: "elena@partner.com", tags: ["relationship"], code: "ELENA-LOVE" }
+    ];
+
+    // Check if active persona has access to a specific tab
+    function canAccessTab(tab) {
+      if (currentPersona === "public") {
+        return tab === "bio" || tab === "links"; // Public can access bio and links
+      }
+      const col = collections.find(c => c.id === currentPersona);
+      if (!col) return true;
+      return col.access[tab] === true;
+    }
+
+    // Refresh Tab Visibility based on Access Rules & Update Relation with You
+    function enforceAccessRules() {
+      ['bio', 'links', 'feed', 'talk'].forEach(t => {
+        const allowed = canAccessTab(t);
+        const lockedEl = document.getElementById(`locked-${t}`);
+        const contentEl = document.getElementById(`content-${t}`);
+        if (lockedEl && contentEl) {
+          if (allowed) {
+            lockedEl.classList.add('hidden');
+            contentEl.classList.remove('hidden');
+          } else {
+            lockedEl.classList.remove('hidden');
+            contentEl.classList.add('hidden');
+          }
+        }
+      });
+
+      // Update Persona Badge in Clone Header
+      const badge = document.getElementById('clone-role-badge');
+      if (badge) {
+        if (currentPersona === 'public') {
+          badge.textContent = 'Public';
+        } else {
+          const col = collections.find(c => c.id === currentPersona);
+          badge.textContent = col ? col.name : currentPersona;
+        }
+      }
+
+      // Update "Relation with You" card in Bio Tab
+      updateRelationCard();
+    }
+
+    function updateRelationCard() {
+      const badge = document.getElementById('bio-relation-badge');
+      const desc = document.getElementById('bio-relation-desc');
+      if (!badge || !desc) return;
+
+      if (currentPersona === 'public') {
+        badge.textContent = 'Visitor (Public)';
+        desc.innerHTML = `You are viewing Alex's profile as a <strong>public visitor</strong>. If you received an invite code, tap <strong>Invite</strong> above to unlock your personalized relation.`;
+      } else {
+        const col = collections.find(c => c.id === currentPersona);
+        if (col) {
+          badge.textContent = col.relation || `${col.name} Member`;
+          desc.innerHTML = col.relationDesc || `You are connected with Alex in the <strong>${col.name}</strong> collection.`;
+        }
+      }
+    }
+
+    // Change Active Persona (View As)
+    function changePersona(roleId) {
+      currentPersona = roleId;
+      enforceAccessRules();
+      const col = collections.find(c => c.id === roleId);
+      const name = col ? col.name : 'Public';
+      showToast(`Viewing as: ${name} 👥`);
+    }
+
+    // =========================================================================
+    // 2. TAB SWITCHING (Bio | Links | Feed | Talk + 2x <app-navbar>)
+    // =========================================================================
     function switchTab(tabName) {
       if (window.$appz && window.$appz.haptic) {
         window.$appz.haptic('selection');
       }
 
-      ['bio', 'feed', 'talk'].forEach(t => {
+      ['bio', 'links', 'feed', 'talk'].forEach(t => {
         const pane = document.getElementById(`pane-${t}`);
         const tabBtn = document.getElementById(`tab-btn-${t}`);
         const navBtn = document.getElementById(`nav-btn-${t}`);
@@ -423,7 +768,7 @@
             tabBtn.className = 'flex-1 py-1 rounded-lg bg-white text-slate-900 font-bold transition-all shadow-xs flex items-center justify-center gap-1';
           }
           if (navBtn) {
-            navBtn.className = 'nav-tab-item flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-all text-indigo-600 font-bold bg-indigo-50/80 active:scale-95';
+            navBtn.className = 'nav-tab-item flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl transition-all text-indigo-600 font-bold bg-indigo-50/80 active:scale-95';
           }
         } else {
           if (pane) pane.classList.add('hidden');
@@ -431,10 +776,11 @@
             tabBtn.className = 'flex-1 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1';
           }
           if (navBtn) {
-            navBtn.className = 'nav-tab-item flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-all text-slate-400 hover:text-slate-700 active:scale-95';
+            navBtn.className = 'nav-tab-item flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl transition-all text-slate-400 hover:text-slate-700 active:scale-95';
           }
         }
       });
+      enforceAccessRules();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -481,7 +827,252 @@
       setTimeout(() => toast.classList.add('opacity-0', 'pointer-events-none'), 2200);
     }
 
-    // PWA & Service Worker
+    // =========================================================================
+    // 3. INVITE & COLLECTIONS MODAL ORCHESTRATION
+    // =========================================================================
+    function openInviteModal() {
+      renderInviteChips();
+      renderInvitedList();
+      renderCollectionsRules();
+      renderPersonaDropdown();
+      const modal = document.getElementById('invite-modal');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+    }
+
+    function closeInviteModal() {
+      const modal = document.getElementById('invite-modal');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      renderPersonaDropdown();
+      enforceAccessRules();
+    }
+
+    function switchInviteSubTab(subtab) {
+      const btnInvite = document.getElementById('subtab-btn-invite');
+      const btnRules = document.getElementById('subtab-btn-rules');
+      const paneInvite = document.getElementById('subpane-invite');
+      const paneRules = document.getElementById('subpane-rules');
+
+      if (subtab === 'invite') {
+        btnInvite.className = 'flex-1 py-1 rounded-lg bg-slate-900 text-white font-bold transition-all shadow-xs flex items-center justify-center gap-1';
+        btnRules.className = 'flex-1 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1';
+        paneInvite.classList.remove('hidden');
+        paneRules.classList.add('hidden');
+      } else {
+        btnRules.className = 'flex-1 py-1 rounded-lg bg-slate-900 text-white font-bold transition-all shadow-xs flex items-center justify-center gap-1';
+        btnInvite.className = 'flex-1 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1';
+        paneRules.classList.remove('hidden');
+        paneInvite.classList.add('hidden');
+      }
+    }
+
+    // Render Collection Chips in Invite Form
+    function renderInviteChips() {
+      const container = document.getElementById('invite-collection-chips');
+      if (!container) return;
+      container.innerHTML = collections.map(c => {
+        const selected = selectedInviteTags.has(c.id);
+        const activeClass = selected 
+          ? 'bg-indigo-600 text-white font-bold shadow-2xs' 
+          : 'bg-slate-100 hover:bg-slate-200 text-slate-700';
+        return `
+          <button onclick="toggleInviteTag('${c.id}')" type="button"
+                  class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1 ${activeClass}">
+            <span>${c.name}</span>
+            ${selected ? '<span class="text-[9px]">✓</span>' : ''}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function toggleInviteTag(id) {
+      if (selectedInviteTags.has(id)) {
+        selectedInviteTags.delete(id);
+      } else {
+        selectedInviteTags.add(id);
+      }
+      renderInviteChips();
+    }
+
+    // Generate Invite Link
+    function generateInvite() {
+      const nameInput = document.getElementById('invitee-name');
+      const name = nameInput.value.trim() || 'Invited Friend';
+      if (selectedInviteTags.size === 0) {
+        showToast('Please select at least one collection tag! 🏷️');
+        return;
+      }
+      const tags = Array.from(selectedInviteTags);
+      const code = 'INV-' + Math.random().toString(36).substring(2, 7).toUpperCase();
+      const newInv = {
+        id: 'inv-' + Date.now(),
+        name: name,
+        email: name.includes('@') ? name : '',
+        tags: tags,
+        code: code
+      };
+      invitedMembers.unshift(newInv);
+      nameInput.value = '';
+      
+      const inviteUrl = window.location.origin + '/bio?invite=' + code;
+      navigator.clipboard.writeText(inviteUrl);
+      renderInvitedList();
+      showToast(`Invite created for ${name}! Link copied 📋`);
+    }
+
+    // Render Invited Members List
+    function renderInvitedList() {
+      const list = document.getElementById('invited-list');
+      const count = document.getElementById('invited-count');
+      if (count) count.textContent = `${invitedMembers.length} active`;
+      if (!list) return;
+
+      list.innerHTML = invitedMembers.map(m => {
+        const tagBadges = m.tags.map(t => {
+          const col = collections.find(c => c.id === t);
+          const label = col ? col.name : t;
+          return `<span class="px-1.5 py-0.2 rounded bg-indigo-50 text-indigo-700 font-mono text-[9px] font-bold">${label}</span>`;
+        }).join(' ');
+
+        return `
+          <div class="p-2 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-2">
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-1.5">
+                <span class="font-bold text-slate-900 truncate">${escapeHtml(m.name)}</span>
+                <span class="font-mono text-[9px] text-slate-400">#${m.code}</span>
+              </div>
+              <div class="flex items-center gap-1 mt-1 flex-wrap">${tagBadges}</div>
+            </div>
+            <div class="flex items-center gap-1 shrink-0">
+              <button onclick="copyMemberLink('${m.code}')" title="Copy Invite Link" 
+                      class="px-2 py-0.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-[10px] font-bold text-slate-700 transition-colors">
+                🔗 Copy
+              </button>
+              <button onclick="removeInvitedMember('${m.id}')" title="Revoke Invite" 
+                      class="text-slate-400 hover:text-rose-600 px-1 text-xs">✕</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function copyMemberLink(code) {
+      const url = window.location.origin + '/bio?invite=' + code;
+      navigator.clipboard.writeText(url);
+      showToast('Invite link copied to clipboard! 📋');
+    }
+
+    function removeInvitedMember(id) {
+      invitedMembers = invitedMembers.filter(m => m.id !== id);
+      renderInvitedList();
+      showToast('Invite removed.');
+    }
+
+    // Render Collections & Access Rules Cards (Bio, Links, Feed, Talk Checkboxes)
+    function renderCollectionsRules() {
+      const list = document.getElementById('collections-rules-list');
+      if (!list) return;
+
+      list.innerHTML = collections.map(c => {
+        return `
+          <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-1.5 flex-1 min-w-0">
+                <span class="w-2.5 h-2.5 rounded-full bg-${c.color || 'indigo'}-500 shrink-0"></span>
+                <input type="text" value="${escapeHtml(c.name)}" 
+                       onchange="updateCollectionName('${c.id}', this.value)"
+                       title="Click to rename this collection however you want"
+                       class="text-xs font-bold text-slate-900 bg-white border border-slate-200 hover:border-indigo-400 focus:border-indigo-500 rounded-lg px-2 py-0.5 flex-1 min-w-0 transition-colors shadow-2xs" />
+              </div>
+              <span class="font-mono text-[9px] text-slate-400">id: ${c.id}</span>
+            </div>
+
+            <div class="flex items-center justify-between text-[11px] pt-1 border-t border-slate-200/50 flex-wrap gap-y-1">
+              <span class="text-slate-500 font-medium">Access:</span>
+              <div class="flex items-center gap-2 flex-wrap">
+                <label class="flex items-center gap-1 cursor-pointer font-bold ${c.access.bio ? 'text-indigo-600' : 'text-slate-400'}">
+                  <input type="checkbox" ${c.access.bio ? 'checked' : ''} onchange="toggleAccessRule('${c.id}', 'bio', this.checked)" class="rounded border-slate-300 text-indigo-600 h-3 w-3" />
+                  <span>Bio</span>
+                </label>
+                <label class="flex items-center gap-1 cursor-pointer font-bold ${c.access.links ? 'text-indigo-600' : 'text-slate-400'}">
+                  <input type="checkbox" ${c.access.links ? 'checked' : ''} onchange="toggleAccessRule('${c.id}', 'links', this.checked)" class="rounded border-slate-300 text-indigo-600 h-3 w-3" />
+                  <span>Links</span>
+                </label>
+                <label class="flex items-center gap-1 cursor-pointer font-bold ${c.access.feed ? 'text-indigo-600' : 'text-slate-400'}">
+                  <input type="checkbox" ${c.access.feed ? 'checked' : ''} onchange="toggleAccessRule('${c.id}', 'feed', this.checked)" class="rounded border-slate-300 text-indigo-600 h-3 w-3" />
+                  <span>Feed</span>
+                </label>
+                <label class="flex items-center gap-1 cursor-pointer font-bold ${c.access.talk ? 'text-indigo-600' : 'text-slate-400'}">
+                  <input type="checkbox" ${c.access.talk ? 'checked' : ''} onchange="toggleAccessRule('${c.id}', 'talk', this.checked)" class="rounded border-slate-300 text-indigo-600 h-3 w-3" />
+                  <span>Talk</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Rename collection dynamically
+    function updateCollectionName(id, newName) {
+      const col = collections.find(c => c.id === id);
+      if (col && newName.trim()) {
+        col.name = newName.trim();
+        renderInviteChips();
+        renderInvitedList();
+        renderPersonaDropdown();
+        enforceAccessRules();
+        showToast(`Collection renamed to "${col.name}" ✨`);
+      }
+    }
+
+    // Toggle Bio/Links/Feed/Talk permission for a collection
+    function toggleAccessRule(id, tab, allowed) {
+      const col = collections.find(c => c.id === id);
+      if (col) {
+        col.access[tab] = allowed;
+        renderCollectionsRules();
+        enforceAccessRules();
+        showToast(`${col.name}: ${tab.toUpperCase()} ${allowed ? 'unlocked ✅' : 'restricted 🔒'}`);
+      }
+    }
+
+    // Add New Collection
+    function addNewCollectionPrompt() {
+      const name = prompt("Enter new collection name (e.g. 'Gym', 'Mentors', 'Dating'):");
+      if (!name || !name.trim()) return;
+      const cleanName = name.trim();
+      const id = cleanName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+      if (collections.some(c => c.id === id)) {
+        showToast("Collection already exists!");
+        return;
+      }
+      collections.push({
+        id: id,
+        name: cleanName,
+        access: { bio: true, links: true, feed: true, talk: true },
+        color: "teal",
+        relation: `${cleanName} Member`
+      });
+      renderCollectionsRules();
+      renderInviteChips();
+      renderPersonaDropdown();
+      showToast(`Collection "${cleanName}" created! 🎉`);
+    }
+
+    // Render "View As" Persona Dropdown in App Bar
+    function renderPersonaDropdown() {
+      const sel = document.getElementById('persona-select');
+      if (!sel) return;
+      const current = currentPersona;
+      sel.innerHTML = `
+        <option value="public" ${current === 'public' ? 'selected' : ''}>🌐 Public</option>
+        ${collections.map(c => `<option value="${c.id}" ${current === c.id ? 'selected' : ''}>🏷️ ${c.name}</option>`).join('')}
+      `;
+    }
+
+    // =========================================================================
+    // 4. PWA & SERVICE WORKER
+    // =========================================================================
     let deferredPrompt = null;
 
     if ('serviceWorker' in navigator) {
@@ -493,8 +1084,6 @@
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      const topBtn = document.getElementById('top-install-btn');
-      if (topBtn) topBtn.classList.remove('hidden');
     });
 
     window.addEventListener('appinstalled', () => {
@@ -512,34 +1101,38 @@
       }
     }
 
-    // Network Status Indicator
-    function updateNetworkStatus(online) {
-      const pill = document.getElementById('pwa-status-pill');
-      if (!pill) return;
-      if (online) {
-        pill.className = 'inline-flex items-center gap-1 text-[9px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.2 rounded-full';
-        pill.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span><span>Online</span>';
-        showToast('Back online 🟢');
-      } else {
-        pill.className = 'inline-flex items-center gap-1 text-[9px] font-medium text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.2 rounded-full';
-        pill.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span><span>Offline</span>';
-        showToast('Offline • Cached pages available 📴');
-      }
-    }
-
-    window.addEventListener('online', () => updateNetworkStatus(true));
-    window.addEventListener('offline', () => updateNetworkStatus(false));
-
-    // Handle deep-link tab parameter
+    // Check URL invite parameter on load
     window.addEventListener('DOMContentLoaded', () => {
+      renderPersonaDropdown();
+      renderInviteChips();
+      renderInvitedList();
+      renderCollectionsRules();
+
       const params = new URLSearchParams(window.location.search);
+      const inviteCode = params.get('invite');
+      if (inviteCode) {
+        const found = invitedMembers.find(m => m.code.toUpperCase() === inviteCode.toUpperCase());
+        if (found && found.tags.length > 0) {
+          currentPersona = found.tags[0];
+          renderPersonaDropdown();
+          const col = collections.find(c => c.id === currentPersona);
+          showToast(`Welcome ${found.name}! Unlocked as ${col ? col.name : currentPersona} 🎟️`);
+        } else {
+          showToast(`Invite code ${inviteCode} applied 🎟️`);
+        }
+      }
+
       const tabParam = params.get('tab') || window.location.hash.replace('#', '');
-      if (['bio', 'feed', 'talk'].includes(tabParam)) {
+      if (['bio', 'links', 'feed', 'talk'].includes(tabParam)) {
         switchTab(tabParam);
+      } else {
+        enforceAccessRules();
       }
     });
 
-    // DIGITAL CLONE AI AGENT LOGIC (Grounded in Alex's verified personal inputs)
+    // =========================================================================
+    // 5. DIGITAL CLONE AI AGENT LOGIC (Relationship & Collection Grounding)
+    // =========================================================================
     const alexInputs = {
       'girlfriend': "Haha nope, currently single! 100% focused on engineering open-source systems and building Hyperstack right now 🚀",
       'dating': "Currently single! My main commitment right now is building lean software and open-source frameworks ⚡",
@@ -586,7 +1179,7 @@
       const msgDiv = document.createElement('div');
       msgDiv.className = 'flex items-start gap-1.5 max-w-[90%] ml-auto flex-row-reverse animate-fade-in';
       
-      const badge = isAnon ? '🎭 Anon' : 'You';
+      const badge = isAnon ? '🎭 Anon' : (currentPersona !== 'public' ? currentPersona : 'You');
       const badgeBg = isAnon ? 'bg-slate-700' : 'bg-emerald-600';
 
       msgDiv.innerHTML = `
@@ -610,10 +1203,15 @@
       const lower = query.toLowerCase();
       let answer = "Alex hasn't shared his thoughts on that yet! Ask about his relationship, projects, tech stack, or routine 🙂";
 
-      for (const [key, value] of Object.entries(alexInputs)) {
-        if (lower.includes(key)) {
-          answer = value;
-          break;
+      // Special personalized knowledge for Relationship collection
+      if (currentPersona === 'relationship' && (lower.includes('girlfriend') || lower.includes('dating') || lower.includes('love'))) {
+        answer = "Haha, what a question — you already know you have my whole heart! ❤️ 🥰 So glad you're here chatting with my clone.";
+      } else {
+        for (const [key, value] of Object.entries(alexInputs)) {
+          if (lower.includes(key)) {
+            answer = value;
+            break;
+          }
         }
       }
 

@@ -9,7 +9,7 @@ import (
 // LINK IN BIO: GO COMPONENT DSL
 // Pure Mobile-First Link-in-Bio Application using Hyperstack (Ultra-Compact Light Theme & PWA)
 // Conforms to Hyperstack Component Standards & 1:1 Parity Rule
-// Tabs: Bio | Feed | Talk (Digital Clone AI Agent) with <app-navbar> PWA Navigation
+// Tabs: Bio | Links | Feed | Talk (Digital Clone AI Agent) with <app-navbar> PWA Navigation & Invite Modal
 // =============================================================================
 
 // --- 1. Bio Profile Header (Ultra-Compact) ---
@@ -87,7 +87,170 @@ func BioProfile(p BioProfileProps) Component {
 	return Component{html: html}
 }
 
-// --- 2. Bio Link Card (Ultra-Compact) ---
+// --- 2. Bio Details Component (Name, Relation with You, Hobbies, Interests, Goals, Achievements) ---
+
+type AchievementItem struct {
+	Icon        string
+	Title       string
+	Description string
+}
+
+type BioDetailsProps struct {
+	RelationTitle string
+	RelationBadge string
+	RelationDesc  string
+	Hobbies       []string
+	Interests     []string
+	Goals         []string
+	Achievements  []AchievementItem
+}
+
+func BioDetails(p BioDetailsProps) Component {
+	if p.RelationTitle == "" {
+		p.RelationTitle = "Relation with You"
+	}
+	if p.RelationBadge == "" {
+		p.RelationBadge = "Visitor (Public)"
+	}
+	if p.RelationDesc == "" {
+		p.RelationDesc = "You are viewing Alex's bio as a <strong>public visitor</strong>. If you received an invite code, enter it to reveal your personalized connection."
+	}
+	if len(p.Hobbies) == 0 {
+		p.Hobbies = []string{
+			"☕️ Pour-over coffee (V60 Ethiopian)",
+			"🏃‍♂️ Morning 5km runs around the bay",
+			"♟️ Blitz Chess (1800 Elo)",
+			"⌨️ Custom mechanical keyboards",
+		}
+	}
+	if len(p.Interests) == 0 {
+		p.Interests = []string{
+			"⚡ Hypermedia & Zero-VDOM",
+			"🌐 Distributed Consensus & Raft",
+			"📱 Local-First & Spatial Operating Systems",
+			"📚 Hard Sci-Fi Literature",
+		}
+	}
+	if len(p.Goals) == 0 {
+		p.Goals = []string{
+			"Empower 10,000+ developers to build hyperreactive web apps without Node.js or heavy SPAs.",
+			"Run a sub-3:30 marathon in San Francisco.",
+			"Ship Hyperstack v2.0 single-binary full-stack runtime with instant zero-allocation clustering.",
+		}
+	}
+	if len(p.Achievements) == 0 {
+		p.Achievements = []AchievementItem{
+			{
+				Icon:        "⚡",
+				Title:       "Created Hyperstack Framework",
+				Description: "Brought reactive signals, zero-eval runtime, and spatial layouts to HTMX with 0 Node.js footprint.",
+			},
+			{
+				Icon:        "📊",
+				Title:       "Authored Hypersheet DAG Core",
+				Description: "High-performance topological spreadsheet engine in Go with sub-millisecond recalculations.",
+			},
+			{
+				Icon:        "🚀",
+				Title:       "Scaled Systems to 1,000,000 RPS",
+				Description: "Engineered zero-allocation SSE streaming architecture in Go with kernel-level zero-copy sockets.",
+			},
+		}
+	}
+
+	var hobbiesSb strings.Builder
+	for _, h := range p.Hobbies {
+		hobbiesSb.WriteString(fmt.Sprintf(`<span class="px-2 py-1 rounded-lg bg-slate-100 text-slate-700 text-[11px] font-medium">%s</span> `, h))
+	}
+
+	var interestsSb strings.Builder
+	for _, in := range p.Interests {
+		interestsSb.WriteString(fmt.Sprintf(`<span class="px-2 py-1 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-100 text-[11px] font-medium">%s</span> `, in))
+	}
+
+	var goalsSb strings.Builder
+	for _, g := range p.Goals {
+		goalsSb.WriteString(fmt.Sprintf(`
+      <li class="flex items-start gap-2">
+        <span class="text-indigo-600 font-bold shrink-0 mt-0.5">▹</span>
+        <span>%s</span>
+      </li>`, g))
+	}
+
+	var achSb strings.Builder
+	for _, a := range p.Achievements {
+		achSb.WriteString(fmt.Sprintf(`
+      <div class="p-2 rounded-xl bg-slate-50 border border-slate-200/70 flex items-start gap-2">
+        <span class="text-base shrink-0">%s</span>
+        <div>
+          <div class="text-xs font-bold text-slate-900">%s</div>
+          <p class="text-[10px] text-slate-500 mt-0.5">%s</p>
+        </div>
+      </div>`, a.Icon, a.Title, a.Description))
+	}
+
+	html := fmt.Sprintf(`
+<div id="content-bio" class="space-y-2.5">
+  <!-- Relation With You Card (Dynamic based on active collection/persona) -->
+  <div class="p-3 rounded-2xl bg-gradient-to-r from-indigo-50/80 to-purple-50/80 border border-indigo-100 shadow-2xs">
+    <div class="flex items-center justify-between">
+      <span class="text-[10px] font-bold text-indigo-600 uppercase tracking-wider flex items-center gap-1">
+        <span>🤝</span> <span>%s</span>
+      </span>
+      <span id="bio-relation-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white text-indigo-700 border border-indigo-200 shadow-2xs">
+        %s
+      </span>
+    </div>
+    <p id="bio-relation-desc" class="text-xs text-slate-700 mt-1.5 leading-relaxed font-medium">
+      %s
+    </p>
+  </div>
+
+  <!-- Hobbies & Daily Rituals -->
+  <div class="p-3 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-1.5">
+    <h3 class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+      <span>☕️</span> <span>Hobbies & Rituals</span>
+    </h3>
+    <div class="flex flex-wrap gap-1.5 pt-0.5">
+      %s
+    </div>
+  </div>
+
+  <!-- Core Interests -->
+  <div class="p-3 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-1.5">
+    <h3 class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+      <span>🔬</span> <span>Interests</span>
+    </h3>
+    <div class="flex flex-wrap gap-1.5 pt-0.5">
+      %s
+    </div>
+  </div>
+
+  <!-- Future Goals -->
+  <div class="p-3 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-2">
+    <h3 class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+      <span>🎯</span> <span>2026 Goals</span>
+    </h3>
+    <ul class="space-y-1.5 text-xs text-slate-700">
+      %s
+    </ul>
+  </div>
+
+  <!-- Key Achievements -->
+  <div class="p-3 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-2">
+    <h3 class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+      <span>🏆</span> <span>Achievements</span>
+    </h3>
+    <div class="space-y-1.5">
+      %s
+    </div>
+  </div>
+</div>`, p.RelationTitle, p.RelationBadge, p.RelationDesc, hobbiesSb.String(), interestsSb.String(), goalsSb.String(), achSb.String())
+
+	return Component{html: html}
+}
+
+// --- 3. Bio Link Card (Ultra-Compact) ---
 
 type BioLinkProps struct {
 	ID          string
@@ -126,7 +289,7 @@ func BioLinkCard(p BioLinkProps) Component {
 	return Component{html: html}
 }
 
-// --- 3. Bio Feed Component (Ultra-Compact Text & Emojis Only) ---
+// --- 4. Bio Feed Component (Ultra-Compact Text & Emojis Only) ---
 
 type BioFeedPost struct {
 	ID       string
@@ -200,7 +363,7 @@ func BioFeed(p BioFeedProps) Component {
 	return Component{html: html}
 }
 
-// --- 4. Bio Talk Component (Ultra-Compact Digital Clone AI Agent) ---
+// --- 5. Bio Talk Component (Ultra-Compact Digital Clone AI Agent) ---
 
 type BioTalkProps struct {
 	CloneName    string
@@ -279,7 +442,177 @@ func BioTalk(p BioTalkProps) Component {
 	return Component{html: html}
 }
 
-// --- 5. Bio Navbar Component (Ultra-Compact <app-navbar>) ---
+// --- 6. Bio Invite & Collections Access Rules Component ---
+
+type CollectionRuleItem struct {
+	ID        string
+	Name      string
+	Bio       bool
+	Links     bool
+	Feed      bool
+	Talk      bool
+}
+
+type BioInviteProps struct {
+	Collections []CollectionRuleItem
+}
+
+func BioInvite(p BioInviteProps) Component {
+	if len(p.Collections) == 0 {
+		p.Collections = []CollectionRuleItem{
+			{ID: "friends", Name: "Friends", Bio: true, Links: true, Feed: true, Talk: true},
+			{ID: "bffs", Name: "BFFs", Bio: true, Links: true, Feed: true, Talk: true},
+			{ID: "relationship", Name: "Relationship", Bio: true, Links: true, Feed: true, Talk: true},
+			{ID: "family", Name: "Family", Bio: true, Links: true, Feed: true, Talk: false},
+			{ID: "work", Name: "Work", Bio: true, Links: true, Feed: false, Talk: false},
+			{ID: "church", Name: "Church", Bio: true, Links: false, Feed: true, Talk: false},
+		}
+	}
+
+	var chipsSb strings.Builder
+	var rulesSb strings.Builder
+
+	for _, c := range p.Collections {
+		chipsSb.WriteString(fmt.Sprintf(`
+      <button type="button" class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1 bg-slate-100 hover:bg-slate-200 text-slate-700">
+        <span>%s</span>
+      </button>`, c.Name))
+
+		rulesSb.WriteString(fmt.Sprintf(`
+      <div class="p-2.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs space-y-2">
+        <div class="flex items-center justify-between">
+          <input type="text" value="%s" class="text-xs font-bold text-slate-900 bg-transparent border-b border-dashed border-slate-300 focus:outline-none focus:border-indigo-600 px-0.5" />
+          <span class="text-[9px] font-mono text-slate-400">#%s</span>
+        </div>
+        <div class="grid grid-cols-4 gap-1 text-[10px] text-slate-600">
+          <label class="flex items-center gap-1">
+            <input type="checkbox" %s class="rounded text-indigo-600" /> Bio
+          </label>
+          <label class="flex items-center gap-1">
+            <input type="checkbox" %s class="rounded text-indigo-600" /> Links
+          </label>
+          <label class="flex items-center gap-1">
+            <input type="checkbox" %s class="rounded text-indigo-600" /> Feed
+          </label>
+          <label class="flex items-center gap-1">
+            <input type="checkbox" %s class="rounded text-indigo-600" /> Talk
+          </label>
+        </div>
+      </div>`, c.Name, c.ID, checkedAttr(c.Bio), checkedAttr(c.Links), checkedAttr(c.Feed), checkedAttr(c.Talk)))
+	}
+
+	html := fmt.Sprintf(`
+<div id="invite-modal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 opacity-0 pointer-events-none transition-opacity duration-200">
+  <div class="w-full max-w-md bg-white border border-slate-200 rounded-t-3xl sm:rounded-3xl shadow-2xl max-h-[90vh] flex flex-col overflow-hidden animate-slide-up">
+    
+    <!-- Modal Header -->
+    <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between shrink-0">
+      <div class="flex items-center gap-2">
+        <span class="w-7 h-7 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold">👥</span>
+        <div>
+          <h3 class="text-xs font-bold text-slate-900 leading-none">Invite & Collections</h3>
+          <p class="text-[10px] text-slate-500 mt-0.5">Tag people & configure tab access rules</p>
+        </div>
+      </div>
+      <button onclick="closeInviteModal()" class="w-7 h-7 rounded-full bg-slate-200/70 hover:bg-slate-300 text-slate-600 flex items-center justify-center text-xs font-bold transition-colors">✕</button>
+    </div>
+
+    <!-- Sub Tabs: 1. Invite People | 2. Collections & Access Rules -->
+    <div class="p-2 border-b border-slate-100 bg-white flex items-center gap-1.5 shrink-0 text-xs font-semibold">
+      <button onclick="switchInviteSubTab('invite')" id="subtab-btn-invite" 
+              class="flex-1 py-1.5 rounded-xl bg-slate-900 text-white font-bold transition-all shadow-xs flex items-center justify-center gap-1">
+        <span>✉️</span> <span>Invite People</span>
+      </button>
+      <button onclick="switchInviteSubTab('rules')" id="subtab-btn-rules" 
+              class="flex-1 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1">
+        <span>🔒</span> <span>Access Rules</span>
+      </button>
+    </div>
+
+    <!-- Modal Content Stream -->
+    <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scroll text-xs">
+      
+      <!-- SUBTAB 1: INVITE PEOPLE -->
+      <div id="subpane-invite" class="space-y-3.5">
+        <div class="space-y-1.5">
+          <label class="text-[11px] font-bold text-slate-700 block">Person's Name or Email</label>
+          <input type="text" id="invitee-name" placeholder="e.g. Sarah Jenkins or sarah@example.com" 
+                 class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white transition-all shadow-2xs" />
+        </div>
+
+        <!-- Tag in Collections -->
+        <div class="space-y-1.5">
+          <label class="text-[11px] font-bold text-slate-700 flex items-center justify-between">
+            <span>Tag in Collections</span>
+            <span class="text-[10px] font-normal text-slate-400">Select one or more</span>
+          </label>
+          <div id="invite-collection-chips" class="flex flex-wrap gap-1.5">
+            %s
+          </div>
+        </div>
+
+        <button onclick="generateInvite()" 
+                class="w-full py-2 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs transition-all active:scale-95 flex items-center justify-center gap-1.5">
+          <span>🔗</span> <span>Generate & Copy Invite Link</span>
+        </button>
+
+        <!-- Invited People List -->
+        <div class="pt-2 border-t border-slate-100 space-y-2">
+          <div class="flex items-center justify-between text-[11px] font-bold text-slate-700">
+            <span>Invited Members</span>
+            <span id="invited-count" class="text-[10px] font-mono text-indigo-600">3 active</span>
+          </div>
+          <div id="invited-list" class="space-y-1.5">
+            <!-- Dynamic Invited Members -->
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBTAB 2: COLLECTIONS & ACCESS RULES -->
+      <div id="subpane-rules" class="hidden space-y-3.5">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] text-slate-500">Configure which tabs each group can access:</span>
+          <button onclick="addNewCollectionPrompt()" 
+                  class="px-2 py-0.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-[10px] font-bold border border-indigo-200 flex items-center gap-0.5 transition-colors">
+            <span>+</span> <span>New Collection</span>
+          </button>
+        </div>
+
+        <!-- Collections Table / Cards -->
+        <div id="collections-rules-list" class="space-y-2">
+          %s
+        </div>
+
+        <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-[10px] text-slate-500 leading-relaxed">
+          💡 <strong>Tip:</strong> You can click any collection name above to <strong>rename it however you want</strong> (e.g. rename <em>relationship</em> to <em>dating</em> or <em>work</em> to <em>clients</em>).
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between shrink-0">
+      <span class="text-[10px] text-slate-400">Rules apply instantly to active sessions</span>
+      <button onclick="closeInviteModal()" 
+              class="px-4 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs transition-all">
+        Done
+      </button>
+    </div>
+
+  </div>
+</div>`, chipsSb.String(), rulesSb.String())
+
+	return Component{html: html}
+}
+
+func checkedAttr(b bool) string {
+	if b {
+		return "checked"
+	}
+	return ""
+}
+
+// --- 7. Bio Navbar Component (2x Increased Size <app-navbar>) ---
 
 type BioNavItem struct {
 	ID     string
@@ -307,10 +640,11 @@ func BioNavbar(p BioNavbarProps) Component {
 	}
 	if len(p.Items) == 0 {
 		p.Items = []BioNavItem{
-			{ID: "bio", Label: "Bio", Icon: "🔗", Active: p.Active == "bio"},
+			{ID: "bio", Label: "Bio", Icon: "👤", Active: p.Active == "bio"},
+			{ID: "links", Label: "Links", Icon: "🔗", Active: p.Active == "links"},
 			{ID: "feed", Label: "Feed", Icon: "📝", Active: p.Active == "feed"},
 			{ID: "talk", Label: "Talk", Icon: "💬", Active: p.Active == "talk"},
-			{ID: "install", Label: "Install", Icon: "📲", Active: false},
+			{ID: "invite", Label: "Invite", Icon: "👥", Active: false},
 		}
 	}
 
@@ -320,16 +654,22 @@ func BioNavbar(p BioNavbarProps) Component {
 		if it.Active {
 			activeClass = "text-indigo-600 font-bold bg-indigo-50/80"
 		}
+		onClick := fmt.Sprintf("switchTab('%s')", it.ID)
+		if it.ID == "invite" {
+			onClick = "openInviteModal()"
+		}
 		itemsSb.WriteString(fmt.Sprintf(`
-      <button onclick="switchTab('%s')" id="nav-btn-%s" class="nav-tab-item flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-all %s">
-        <span class="text-sm leading-none">%s</span>
-        <span class="text-[9px] tracking-tight">%s</span>
-      </button>`, it.ID, it.ID, activeClass, it.Icon, it.Label))
+    <button onclick="%s" id="nav-btn-%s" 
+            class="nav-tab-item flex flex-col items-center gap-1 py-1 px-2.5 rounded-xl transition-all %s active:scale-95">
+      <span class="text-2xl leading-none">%s</span>
+      <span class="text-xs font-bold tracking-tight">%s</span>
+    </button>`, onClick, it.ID, activeClass, it.Icon, it.Label))
 	}
 
 	html := fmt.Sprintf(`
-<app-navbar mode="%s" behavior="%s" class="fixed bottom-2.5 inset-x-0 mx-auto max-w-sm px-3 z-40 flex items-center justify-between">
-  <div class="w-full bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl shadow-lg shadow-slate-900/5 h-13 px-2 flex items-center justify-around">
+<app-navbar mode="%s" behavior="%s" 
+            class="fixed bottom-3 inset-x-0 mx-auto max-w-sm px-2.5 z-40 flex items-center justify-between">
+  <div class="w-full bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl shadow-xl shadow-slate-900/5 h-17 px-1.5 flex items-center justify-around">
     %s
   </div>
 </app-navbar>`, p.Mode, p.Behavior, itemsSb.String())
@@ -337,32 +677,66 @@ func BioNavbar(p BioNavbarProps) Component {
 	return Component{html: html}
 }
 
-// --- 6. Full Mobile-First Link-in-Bio Page Component ---
+// --- 8. Full Mobile-First Link-in-Bio Page Component ---
 
 type BioPageProps struct {
 	Title   string
 	Profile BioProfileProps
+	Details BioDetailsProps
 	Links   []BioLinkProps
 	Feed    BioFeedProps
 	Talk    BioTalkProps
+	Invite  BioInviteProps
 	Navbar  BioNavbarProps
 }
 
 func BioPage(p BioPageProps) Component {
 	if p.Title == "" {
-		p.Title = "Alex Rivera • Bio, Feed & Talk"
+		p.Title = "Alex Rivera • Bio, Links, Feed & Talk"
 	}
 
 	profileComp := BioProfile(p.Profile)
+	detailsComp := BioDetails(p.Details)
+	inviteComp := BioInvite(p.Invite)
+	feedComp := BioFeed(p.Feed)
+	talkComp := BioTalk(p.Talk)
 	navbarComp := BioNavbar(p.Navbar)
 
 	var linksSb strings.Builder
+	if len(p.Links) == 0 {
+		p.Links = []BioLinkProps{
+			{
+				ID:          "hyperstack",
+				Title:       "Hyperstack Framework",
+				Description: "HTMX on Steroids • Zero Virtual DOM",
+				URL:         "https://github.com/hyperlibs/hyperstack",
+				Icon:        "⚡",
+				Badge:       "v1.0",
+			},
+			{
+				ID:          "hypersheet",
+				Title:       "Hypersheet Live Cloud",
+				Description: "Zero-NPM Reactive Spreadsheet Core",
+				URL:         "/demo/hypersheet",
+				Icon:        "📊",
+				Badge:       "Demo",
+			},
+			{
+				ID:          "appzos",
+				Title:       "AppzOS Mobile Platform",
+				Description: "8 Viewport Modes • 0–9 Z-Index Layers",
+				URL:         "/demo/mobile",
+				Icon:        "📱",
+				Badge:       "Mobile",
+			},
+		}
+	}
 	for _, l := range p.Links {
 		linksSb.WriteString(BioLinkCard(l).Render())
 	}
 
 	html := fmt.Sprintf(`<!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-50 text-slate-900 antialiased select-none">
+<html lang="en" class="h-full bg-slate-50 text-slate-900 antialiased font-sans select-none">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -370,6 +744,8 @@ func BioPage(p BioPageProps) Component {
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Alex Rivera">
+  <link rel="apple-touch-icon" href="/icons/icon-192.svg">
   <meta name="theme-color" content="#f8fafc">
   <title>%s</title>
   <script src="/vendor/htmx.min.js"></script>
@@ -379,41 +755,98 @@ func BioPage(p BioPageProps) Component {
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="/styles.css">
   <style>
-    body { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+    body {
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
+    .custom-scroll::-webkit-scrollbar { width: 3px; }
+    .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.25); border-radius: 3px; }
   </style>
 </head>
 <body class="min-h-full flex flex-col items-center justify-start bg-slate-50 text-slate-900">
-  <app-shellui view-mode="Mob-P" class="w-full max-w-sm flex-1 flex flex-col items-center justify-start pb-20">
-    <main class="w-full flex flex-col space-y-2.5 px-3 pt-2.5">
-      %s
-      
-      <!-- 3 Tabs: Bio | Feed | Talk -->
-      <div class="flex items-center p-0.5 bg-slate-200/60 rounded-xl text-xs font-semibold">
-        <button class="flex-1 py-1 rounded-lg bg-white text-slate-900 font-bold transition-all shadow-xs flex items-center justify-center gap-1">
-          <span>🔗</span> <span>Bio</span>
+  <app-shellui view-mode="Mob-P" class="w-full max-w-sm flex-1 flex flex-col items-center justify-start pb-28">
+
+    <!-- Top App Bar with Role Switcher & Invite Trigger -->
+    <app-bar class="w-full sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200/70 px-3.5 h-11 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-bold text-slate-900 flex items-center gap-1">
+          Alex Rivera <span class="text-blue-500 text-[10px]">✓</span>
+        </span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="openInviteModal()" class="px-2 py-0.5 rounded-lg bg-indigo-50 text-indigo-700 text-[11px] font-bold border border-indigo-200">
+          👥 Invite
         </button>
-        <button class="flex-1 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1">
+      </div>
+    </app-bar>
+
+    <main class="w-full flex flex-col space-y-2.5 px-3 pt-2.5">
+      <!-- Profile Header -->
+      %s
+
+      <!-- 4 Segmented Tabs: Bio | Links | Feed | Talk -->
+      <div class="flex items-center p-0.5 bg-slate-200/60 rounded-xl text-xs font-semibold">
+        <button onclick="switchTab('bio')" id="tab-btn-bio" 
+                class="flex-1 py-1 rounded-lg bg-white text-slate-900 font-bold transition-all shadow-xs flex items-center justify-center gap-1">
+          <span>👤</span> <span>Bio</span>
+        </button>
+        <button onclick="switchTab('links')" id="tab-btn-links" 
+                class="flex-1 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1">
+          <span>🔗</span> <span>Links</span>
+        </button>
+        <button onclick="switchTab('feed')" id="tab-btn-feed" 
+                class="flex-1 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1">
           <span>📝</span> <span>Feed</span>
         </button>
-        <button class="flex-1 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1">
+        <button onclick="switchTab('talk')" id="tab-btn-talk" 
+                class="flex-1 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1">
           <span>💬</span> <span>Talk</span>
         </button>
       </div>
 
-      <!-- Links Stack -->
-      <div class="space-y-1.5">
+      <!-- Tab 1: Bio Details -->
+      <section id="pane-bio" class="space-y-2">
         %s
-      </div>
+      </section>
+
+      <!-- Tab 2: Links Stack -->
+      <section id="pane-links" class="hidden space-y-1.5">
+        <div class="relative">
+          <input type="text" placeholder="Filter links..." class="w-full bg-white border border-slate-200/80 rounded-xl pl-7 pr-3 py-1.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 shadow-2xs" />
+          <span class="absolute left-2.5 top-1.5 text-[11px] text-slate-400">🔍</span>
+        </div>
+        <div class="space-y-1.5">
+          %s
+        </div>
+      </section>
+
+      <!-- Tab 3: Feed -->
+      <section id="pane-feed" class="hidden space-y-2">
+        %s
+      </section>
+
+      <!-- Tab 4: Talk -->
+      <section id="pane-talk" class="hidden space-y-2">
+        %s
+      </section>
 
       <footer class="pt-2 pb-1 text-center">
         <p class="text-[10px] text-slate-400 font-mono">Built with Hyperstack • Zero VDOM</p>
       </footer>
     </main>
 
+    <!-- Floating 2x App Navbar -->
     %s
+
+    <!-- Invite & Collections Modal -->
+    %s
+
   </app-shellui>
 </body>
-</html>`, p.Title, profileComp.Render(), linksSb.String(), navbarComp.Render())
+</html>`, p.Title, profileComp.Render(), detailsComp.Render(), linksSb.String(), feedComp.Render(), talkComp.Render(), navbarComp.Render(), inviteComp.Render())
 
 	return Component{html: html}
 }

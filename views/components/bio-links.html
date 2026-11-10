@@ -1,18 +1,19 @@
 <!-- 
   Component: bio-links.html
   Theme: Ultra-Compact Minimalist Light
-  Usage: Curated link stack with 0ms client-side filter
+  Purpose: "Links" tab for listing curated links with 0ms filter search
 -->
-<div hx-ext="reactive" class="space-y-1.5">
-  <!-- Ultra-compact Filter -->
+<div id="content-links" class="space-y-1.5">
+  <!-- 0ms Search Filter -->
   <div class="relative">
-    <input type="text" id="link-filter" oninput="filterLinks(this.value)" placeholder="Filter links..." 
+    <input type="text" id="link-search" oninput="filterLinks(this.value)" placeholder="Filter links & resources..." 
            class="w-full bg-white border border-slate-200/80 rounded-xl pl-7 pr-3 py-1.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 shadow-2xs" />
     <span class="absolute left-2.5 top-1.5 text-[11px] text-slate-400">🔍</span>
   </div>
 
-  <!-- Ultra-compact Link Items -->
-  <div class="space-y-1.5">
+  <!-- Curated Links Stack (Ultra-Compact) -->
+  <div id="links-container" class="space-y-1.5">
+
     <a href="https://github.com/hyperlibs/hyperstack" target="_blank" rel="noopener noreferrer"
        class="bio-link-item group flex items-center gap-2.5 px-3 py-2 rounded-xl bg-white border border-slate-200/80 hover:border-indigo-400 hover:bg-slate-50/50 transition-all active:scale-[0.99] shadow-2xs"
        data-search="hyperstack framework htmx go reactive zero vdom github">
@@ -80,5 +81,6 @@
       </div>
       <span class="text-slate-300 group-hover:text-slate-700 text-xs transition-colors shrink-0">↗</span>
     </a>
+
   </div>
 </div>

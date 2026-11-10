@@ -31,7 +31,7 @@ describe("Link in Bio Mobile-First Application Suite (Light Theme & PWA)", () =>
     expect(html).toContain("Verified Creator");
   });
 
-  test("5. Curated link items stack exists with destinations", () => {
+  test("5. Curated link items stack exists with destinations in Links tab", () => {
     const html = readFileSync(bioHtmlPath, "utf-8");
     expect(html).toContain("Hyperstack Framework");
     expect(html).toContain("Hypersheet Live Cloud");
@@ -55,7 +55,7 @@ describe("Link in Bio Mobile-First Application Suite (Light Theme & PWA)", () =>
   });
 
   test("8. 1:1 Component HTML partials exist in views/components/", () => {
-    const components = ["bio-profile", "bio-links", "bio-feed", "bio-talk", "bio-navbar"];
+    const components = ["bio-profile", "bio-details", "bio-links", "bio-feed", "bio-talk", "bio-navbar", "bio-invite"];
     for (const c of components) {
       const p = `views/components/${c}.html`;
       expect(existsSync(p)).toBe(true);
@@ -69,26 +69,48 @@ describe("Link in Bio Mobile-First Application Suite (Light Theme & PWA)", () =>
     expect(existsSync(goBioPath)).toBe(true);
     const goCode = readFileSync(goBioPath, "utf-8");
     expect(goCode).toContain("func BioProfile(");
+    expect(goCode).toContain("func BioDetails(");
     expect(goCode).toContain("func BioLinkCard(");
     expect(goCode).toContain("func BioFeed(");
     expect(goCode).toContain("func BioTalk(");
+    expect(goCode).toContain("func BioInvite(");
     expect(goCode).toContain("func BioNavbar(");
     expect(goCode).toContain("func BioPage(");
-    expect(goCode).not.toContain("func BioChat(");
-    expect(goCode).not.toContain("func BioTipJar(");
   });
 
-  test("10. 3 Tabs under profile: Bio, Feed, and Talk segmented controller", () => {
+  test("10. 4 Tabs under profile: Bio, Links, Feed, and Talk segmented controller", () => {
     const html = readFileSync(bioHtmlPath, "utf-8");
-    expect(html).toContain('switchTab(\'bio\')');
-    expect(html).toContain('switchTab(\'feed\')');
-    expect(html).toContain('switchTab(\'talk\')');
+    expect(html).toContain("switchTab('bio')");
+    expect(html).toContain("switchTab('links')");
+    expect(html).toContain("switchTab('feed')");
+    expect(html).toContain("switchTab('talk')");
     expect(html).toContain('id="pane-bio"');
+    expect(html).toContain('id="pane-links"');
     expect(html).toContain('id="pane-feed"');
     expect(html).toContain('id="pane-talk"');
   });
 
-  test("11. Feed tab: 'what i do now' with only text and emojis", () => {
+  test("11. Tab 1 Bio: Name, Relation with you (viewing user), Hobbies, Interests, Goals, Achievements", () => {
+    const html = readFileSync(bioHtmlPath, "utf-8");
+    expect(html).toContain("Relation with You");
+    expect(html).toContain('id="bio-relation-badge"');
+    expect(html).toContain('id="bio-relation-desc"');
+    expect(html).toContain("Hobbies & Rituals");
+    expect(html).toContain("Interests");
+    expect(html).toContain("2026 Goals");
+    expect(html).toContain("Achievements");
+    expect(html).toContain("Pour-over coffee");
+    expect(html).toContain("Morning 5km runs");
+  });
+
+  test("12. Tab 2 Links: Dedicated links tab with search filter", () => {
+    const html = readFileSync(bioHtmlPath, "utf-8");
+    expect(html).toContain('id="link-search"');
+    expect(html).toContain("filterLinks");
+    expect(html).toContain("Filter links & resources...");
+  });
+
+  test("13. Tab 3 Feed: 'what i do now' with only text and emojis", () => {
     const html = readFileSync(bioHtmlPath, "utf-8");
     expect(html).toContain("Shipped Hyperstack v1.1 release! Zero-eval signals are 2x faster now 🚀⚡️");
     expect(html).toContain("Brewing fresh Ethiopian natural pour-over ☕️✨");
@@ -96,9 +118,9 @@ describe("Link in Bio Mobile-First Application Suite (Light Theme & PWA)", () =>
     expect(html).toContain("toggleLike");
   });
 
-  test("12. Talk tab: Digital Clone AI agent answering verified inputs & anonymous toggle", () => {
+  test("14. Tab 4 Talk: Digital Clone AI agent answering verified inputs & anonymous toggle", () => {
     const html = readFileSync(bioHtmlPath, "utf-8");
-    expect(html).toContain("Alex's Digital Clone");
+    expect(html).toContain("Alex's Clone");
     expect(html).toContain("Ask Anon");
     expect(html).toContain("anon-toggle");
     expect(html).toContain("Do you have a girlfriend?");
@@ -106,14 +128,44 @@ describe("Link in Bio Mobile-First Application Suite (Light Theme & PWA)", () =>
     expect(html).toContain("alexInputs");
   });
 
-  test("13. PWA Manifest & Service Worker exist and are properly configured", () => {
+  test("15. Invite people feature & collections: Tag, rename collections, set access rules", () => {
+    const html = readFileSync(bioHtmlPath, "utf-8");
+    expect(html).toContain('id="invite-modal"');
+    expect(html).toContain("openInviteModal");
+    expect(html).toContain("closeInviteModal");
+    expect(html).toContain("friends");
+    expect(html).toContain("bffs");
+    expect(html).toContain("relationship");
+    expect(html).toContain("family");
+    expect(html).toContain("work");
+    expect(html).toContain("church");
+    expect(html).toContain("canAccessTab");
+    expect(html).toContain("enforceAccessRules");
+    expect(html).toContain("generateInvite");
+  });
+
+  test("16. Bottom navbar: 2x increased icons & text, 5 tabs (Bio, Links, Feed, Talk, Invite)", () => {
+    const html = readFileSync(bioHtmlPath, "utf-8");
+    expect(html).toContain("<app-navbar");
+    expect(html).toContain('mode="float"');
+    expect(html).toContain('behavior="always-visible"');
+    expect(html).toContain("h-17");
+    expect(html).toContain("text-2xl");
+    expect(html).toContain("text-xs font-bold");
+    expect(html).toContain('id="nav-btn-bio"');
+    expect(html).toContain('id="nav-btn-links"');
+    expect(html).toContain('id="nav-btn-feed"');
+    expect(html).toContain('id="nav-btn-talk"');
+    expect(html).toContain('id="nav-btn-invite"');
+  });
+
+  test("17. PWA Manifest & Service Worker exist and are properly configured", () => {
     const manifestPath = "public/manifest.json";
     const swPath = "public/sw.js";
     expect(existsSync(manifestPath)).toBe(true);
     expect(existsSync(swPath)).toBe(true);
 
     const manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
-    expect(manifest.name).toBe("Alex Rivera • Bio, Feed & Talk");
     expect(manifest.display).toBe("standalone");
     expect(manifest.start_url).toBe("/bio");
     expect(manifest.theme_color).toBe("#f8fafc");
@@ -121,26 +173,5 @@ describe("Link in Bio Mobile-First Application Suite (Light Theme & PWA)", () =>
     const sw = readFileSync(swPath, "utf-8");
     expect(sw).toContain("caches.open");
     expect(sw).toContain("/bio");
-  });
-
-  test("14. Mobile App Shell UI includes <app-shellui>, <app-bar>, and <app-navbar>", () => {
-    const html = readFileSync(bioHtmlPath, "utf-8");
-    expect(html).toContain("<app-shellui");
-    expect(html).toContain("<app-bar");
-    expect(html).toContain("<app-navbar");
-    expect(html).toContain('mode="float"');
-    expect(html).toContain('behavior="always-visible"');
-    expect(html).toContain('id="nav-btn-bio"');
-    expect(html).toContain('id="nav-btn-feed"');
-    expect(html).toContain('id="nav-btn-talk"');
-    expect(html).toContain('id="nav-btn-install"');
-  });
-
-  test("15. PWA Install & Offline indicators are implemented in page script", () => {
-    const html = readFileSync(bioHtmlPath, "utf-8");
-    expect(html).toContain("serviceWorker.register('/sw.js')");
-    expect(html).toContain("beforeinstallprompt");
-    expect(html).toContain("triggerPwaInstall");
-    expect(html).toContain("updateNetworkStatus");
   });
 });

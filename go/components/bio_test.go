@@ -33,6 +33,46 @@ func TestBioComponents(t *testing.T) {
 		}
 	})
 
+	t.Run("BioDetails renders relation with you, hobbies, interests, goals, achievements", func(t *testing.T) {
+		details := BioDetails(BioDetailsProps{
+			RelationTitle: "Relation with You",
+			RelationBadge: "Close Friend 🤝",
+			RelationDesc:  "You and Alex are close friends.",
+			Hobbies:       []string{"☕️ Pour-over coffee", "🏃‍♂️ Morning 5km runs"},
+			Interests:     []string{"⚡ Hypermedia", "🌐 Distributed Systems"},
+			Goals:         []string{"Ship Hyperstack v2.0"},
+			Achievements: []AchievementItem{
+				{Icon: "⚡", Title: "Created Hyperstack Framework", Description: "Zero Node.js footprint."},
+			},
+		})
+
+		html := details.Render()
+		if !strings.Contains(html, "Relation with You") {
+			t.Errorf("expected Relation with You card, got %s", html)
+		}
+		if !strings.Contains(html, "Close Friend 🤝") {
+			t.Errorf("expected relation badge, got %s", html)
+		}
+		if !strings.Contains(html, "Hobbies & Rituals") {
+			t.Errorf("expected hobbies section, got %s", html)
+		}
+		if !strings.Contains(html, "☕️ Pour-over coffee") {
+			t.Errorf("expected hobby item, got %s", html)
+		}
+		if !strings.Contains(html, "Interests") {
+			t.Errorf("expected interests section, got %s", html)
+		}
+		if !strings.Contains(html, "2026 Goals") {
+			t.Errorf("expected goals section, got %s", html)
+		}
+		if !strings.Contains(html, "Achievements") {
+			t.Errorf("expected achievements section, got %s", html)
+		}
+		if !strings.Contains(html, "Created Hyperstack Framework") {
+			t.Errorf("expected achievement item, got %s", html)
+		}
+	})
+
 	t.Run("BioLinkCard renders link with destination and badge", func(t *testing.T) {
 		link := BioLinkCard(BioLinkProps{
 			ID:          "link-1",
@@ -96,7 +136,30 @@ func TestBioComponents(t *testing.T) {
 		}
 	})
 
-	t.Run("BioNavbar renders PWA <app-navbar> with floating capsule and tab items", func(t *testing.T) {
+	t.Run("BioInvite renders collections and access rule controls", func(t *testing.T) {
+		invite := BioInvite(BioInviteProps{
+			Collections: []CollectionRuleItem{
+				{ID: "friends", Name: "Friends", Bio: true, Links: true, Feed: true, Talk: true},
+				{ID: "work", Name: "Work", Bio: true, Links: true, Feed: false, Talk: false},
+			},
+		})
+
+		html := invite.Render()
+		if !strings.Contains(html, "Invite & Collections") {
+			t.Errorf("expected Invite & Collections header, got %s", html)
+		}
+		if !strings.Contains(html, "Friends") {
+			t.Errorf("expected Friends collection, got %s", html)
+		}
+		if !strings.Contains(html, "Work") {
+			t.Errorf("expected Work collection, got %s", html)
+		}
+		if !strings.Contains(html, "Generate & Copy Invite Link") {
+			t.Errorf("expected generate invite button, got %s", html)
+		}
+	})
+
+	t.Run("BioNavbar renders PWA <app-navbar> with 2x increased icons & text and 5 tabs", func(t *testing.T) {
 		navbar := BioNavbar(BioNavbarProps{
 			Mode:   "float",
 			Active: "bio",
@@ -109,11 +172,26 @@ func TestBioComponents(t *testing.T) {
 		if !strings.Contains(html, "mode=\"float\"") {
 			t.Errorf("expected mode=float, got %s", html)
 		}
+		if !strings.Contains(html, "text-2xl") {
+			t.Errorf("expected 2x increased icon size text-2xl, got %s", html)
+		}
+		if !strings.Contains(html, "text-xs font-bold") {
+			t.Errorf("expected 2x increased font size text-xs font-bold, got %s", html)
+		}
 		if !strings.Contains(html, "switchTab('bio')") {
 			t.Errorf("expected switchTab('bio'), got %s", html)
 		}
-		if !strings.Contains(html, "Install") {
-			t.Errorf("expected install button in navbar, got %s", html)
+		if !strings.Contains(html, "switchTab('links')") {
+			t.Errorf("expected switchTab('links'), got %s", html)
+		}
+		if !strings.Contains(html, "switchTab('feed')") {
+			t.Errorf("expected switchTab('feed'), got %s", html)
+		}
+		if !strings.Contains(html, "switchTab('talk')") {
+			t.Errorf("expected switchTab('talk'), got %s", html)
+		}
+		if !strings.Contains(html, "openInviteModal()") || !strings.Contains(html, "Invite") {
+			t.Errorf("expected Invite tab in navbar, got %s", html)
 		}
 	})
 
@@ -137,6 +215,21 @@ func TestBioComponents(t *testing.T) {
 		}
 		if !strings.Contains(html, "<app-navbar") {
 			t.Errorf("expected <app-navbar>, got %s", html)
+		}
+		if !strings.Contains(html, "pane-bio") {
+			t.Errorf("expected pane-bio, got %s", html)
+		}
+		if !strings.Contains(html, "pane-links") {
+			t.Errorf("expected pane-links, got %s", html)
+		}
+		if !strings.Contains(html, "pane-feed") {
+			t.Errorf("expected pane-feed, got %s", html)
+		}
+		if !strings.Contains(html, "pane-talk") {
+			t.Errorf("expected pane-talk, got %s", html)
+		}
+		if !strings.Contains(html, "invite-modal") {
+			t.Errorf("expected invite-modal, got %s", html)
 		}
 	})
 }
