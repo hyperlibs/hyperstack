@@ -110,3 +110,20 @@ Before reporting any task as completed:
 3. **Verify Go compilation**: Run `go build -o hyperstack-server.exe server.go`.
 4. **Test live endpoints**: Never assume localhost works; test with `bun -e "fetch(...)"` or automated HTTP checks.
 5. **Sync repository**: Commit with conventional commit messages and push to `master` and `main`.
+
+---
+
+## 8. Sacred Ecosystem Boundary: Zero Bleed from Hyperbase / Hyperpage
+
+Hyperstack is strictly and literally a **hyperlanguage framework & foundational application runtime**.
+
+### Absolute Boundary Enforcement
+- **DO NOT add `hyperbase` features to `hyperstack`**:
+  - `hyperbase` is a separate repository/addon tier housing composite workstation packs (`uipack/web`, `uipack/app`, `uipack/os`).
+  - Never bundle complex macroscopic workstations (e.g., complete multi-track video timelines, full DAW audio mixers, or Kiosk checkout flows) into Hyperstack Core. Hyperstack only houses the foundational engines and atomic UI primitives.
+- **DO NOT add `hyperpage` features to `hyperstack`**:
+  - `hyperpage` is a separate CMS & site-building platform containing the `hyperblock` visual editor.
+  - Never add CMS page-builders, document trees, block serializers, or Gutenberg-style CMS plugins into Hyperstack.
+- **Enforcement Mandate**:
+  - If the user or any agent ever attempts or suggests deviating by introducing `hyperbase` composite packs or `hyperpage` CMS features into this repository, you **MUST immediately intercept, prevent the deviation, and uphold this boundary**. Hyperstack must remain the lean, unbloated, high-speed hyperlanguage primitive foundation (<48KB).
+
