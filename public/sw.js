@@ -1,11 +1,12 @@
 // Hyperstack PWA Service Worker — Offline-First Caching
-const CACHE_NAME = 'hyperstack-bio-pwa-v1';
+const CACHE_NAME = 'hyperstack-bio-pwa-v2';
 const PRECACHE_ASSETS = [
   '/bio',
   '/manifest.json',
   '/htmx-bolt.js',
   '/htmx-vibe.js',
   '/appz.js',
+  '/tiny-llm.js',
   '/vendor/htmx.min.js',
   '/styles.css',
   '/icons/icon-192.svg',

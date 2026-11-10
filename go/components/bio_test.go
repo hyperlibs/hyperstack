@@ -118,7 +118,7 @@ func TestBioComponents(t *testing.T) {
 		}
 	})
 
-	t.Run("BioTalk renders Digital Clone AI chat interface with Anonymous toggle", func(t *testing.T) {
+	t.Run("BioTalk renders Digital Clone AI chat interface with Offline LLM badge, Teach drawer & Anonymous toggle", func(t *testing.T) {
 		talk := BioTalk(BioTalkProps{
 			CloneName: "Alex's Digital Clone",
 			Subtitle:  "Responds strictly as per Alex's verified answers",
@@ -127,6 +127,15 @@ func TestBioComponents(t *testing.T) {
 		html := talk.Render()
 		if !strings.Contains(html, "Alex's Digital Clone") {
 			t.Errorf("expected clone name, got %s", html)
+		}
+		if !strings.Contains(html, "Offline LLM") {
+			t.Errorf("expected Offline LLM badge, got %s", html)
+		}
+		if !strings.Contains(html, "Teach") {
+			t.Errorf("expected teach button, got %s", html)
+		}
+		if !strings.Contains(html, "teach-drawer") {
+			t.Errorf("expected teach drawer, got %s", html)
 		}
 		if !strings.Contains(html, "Ask Anon") {
 			t.Errorf("expected anonymous mode option, got %s", html)
@@ -209,6 +218,9 @@ func TestBioComponents(t *testing.T) {
 		}
 		if !strings.Contains(html, "/manifest.json") {
 			t.Errorf("expected PWA manifest link, got %s", html)
+		}
+		if !strings.Contains(html, "/tiny-llm.js") {
+			t.Errorf("expected tiny-llm.js in full page, got %s", html)
 		}
 		if !strings.Contains(html, "<app-shellui") {
 			t.Errorf("expected <app-shellui>, got %s", html)

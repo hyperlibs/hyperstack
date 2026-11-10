@@ -9,7 +9,7 @@ import (
 // LINK IN BIO: GO COMPONENT DSL
 // Pure Mobile-First Link-in-Bio Application using Hyperstack (Ultra-Compact Light Theme & PWA)
 // Conforms to Hyperstack Component Standards & 1:1 Parity Rule
-// Tabs: Bio | Links | Feed | Talk (Digital Clone AI Agent) with <app-navbar> PWA Navigation & Invite Modal
+// Tabs: Bio | Links | Feed | Talk (Digital Clone AI Agent with Embedded Tiny Self-Learning LLM)
 // =============================================================================
 
 // --- 1. Bio Profile Header (Ultra-Compact) ---
@@ -363,13 +363,14 @@ func BioFeed(p BioFeedProps) Component {
 	return Component{html: html}
 }
 
-// --- 5. Bio Talk Component (Ultra-Compact Digital Clone AI Agent) ---
+// --- 5. Bio Talk Component (Digital Clone AI Agent with Embedded Tiny Self-Learning LLM) ---
 
 type BioTalkProps struct {
 	CloneName    string
 	Subtitle     string
 	Greeting     string
 	QuickPrompts []string
+	IsOfflineLLM bool
 }
 
 func BioTalk(p BioTalkProps) Component {
@@ -380,13 +381,14 @@ func BioTalk(p BioTalkProps) Component {
 		p.Subtitle = "Verified answers"
 	}
 	if p.Greeting == "" {
-		p.Greeting = "Hey! 👋 I'm <strong>Alex's Digital Clone AI</strong>. I answer strictly based on Alex's own personal inputs."
+		p.Greeting = "Hey! 👋 I'm <strong>Alex's Digital Clone AI</strong>, powered by an embedded <strong>Tiny Self-Learning LLM</strong> running 100% locally on your device."
 	}
 	if len(p.QuickPrompts) == 0 {
 		p.QuickPrompts = []string{
 			"Do you have a girlfriend? 👀",
 			"Top projects? 🚀",
 			"Where do you live? 📍",
+			"Coffee ritual ☕️",
 		}
 	}
 
@@ -399,30 +401,65 @@ func BioTalk(p BioTalkProps) Component {
 	}
 
 	html := fmt.Sprintf(`
-<div class="flex flex-col h-[380px] rounded-2xl bg-white border border-slate-200/80 overflow-hidden shadow-2xs">
+<div id="talk-container" class="flex flex-col h-[420px] rounded-2xl bg-white border border-slate-200/80 overflow-hidden shadow-2xs">
   <div class="h-10 px-3 bg-slate-50 border-b border-slate-200/70 flex items-center justify-between shrink-0">
     <div class="flex items-center gap-1.5">
       <div class="w-5 h-5 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white text-[9px] font-bold">
         A
       </div>
       <span class="text-xs font-bold text-slate-900">%s</span>
-      <span class="text-[9px] text-indigo-600 font-mono font-bold bg-indigo-50 px-1 rounded">AI</span>
+      <span id="clone-role-badge" class="text-[9px] text-indigo-600 font-mono font-bold bg-indigo-50 px-1 rounded">AI</span>
+      <span id="clone-llm-badge" class="text-[9px] text-emerald-700 font-mono font-bold bg-emerald-50 border border-emerald-200/80 px-1 rounded flex items-center gap-0.5" title="Tiny Self-Learning LLM Running Locally On-Device">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>Offline LLM</span>
+      </span>
     </div>
 
-    <label class="flex items-center gap-1 cursor-pointer select-none">
-      <input type="checkbox" id="anon-checkbox" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-3 w-3" />
-      <span class="text-[10px] font-medium text-slate-600 flex items-center gap-0.5">
-        <span>🎭</span> <span>Ask Anon</span>
-      </span>
-    </label>
+    <div class="flex items-center gap-2">
+      <button onclick="toggleTeachDrawer()" id="teach-drawer-btn" type="button"
+              class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-1.5 py-0.5 rounded-md transition-colors flex items-center gap-0.5" title="Teach new facts to the self-learning LLM">
+        <span>💡</span> <span>Teach</span>
+      </button>
+
+      <label class="flex items-center gap-1 cursor-pointer select-none" title="Ask without identity">
+        <input type="checkbox" id="anon-toggle" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-3 w-3 cursor-pointer" />
+        <span class="text-[10px] font-medium text-slate-600 flex items-center gap-0.5">
+          <span>🎭</span> <span>Ask Anon</span>
+        </span>
+      </label>
+    </div>
   </div>
 
-  <div class="flex-1 overflow-y-auto p-2.5 space-y-2 bg-slate-50/40 text-xs">
+  <!-- Collapsible Self-Learning Teach Drawer -->
+  <div id="teach-drawer" class="hidden px-3 py-2 bg-indigo-50/70 border-b border-indigo-100 text-xs space-y-1.5 animate-slide-down">
+    <div class="flex items-center justify-between text-[10px]">
+      <span class="font-bold text-indigo-900 flex items-center gap-1">
+        <span>🧠</span> <span>Teach Tiny LLM (On-Device Self-Learning)</span>
+      </span>
+      <span id="llm-telemetry-pill" class="font-mono text-[9px] text-indigo-700 bg-white/80 px-1.5 py-0.2 rounded border border-indigo-200">
+        Steps: <span id="telemetry-step">0</span> | Loss: <span id="telemetry-loss">0.038</span>
+      </span>
+    </div>
+    <form onsubmit="handleTeachSubmit(event)" class="flex items-center gap-1.5">
+      <input type="text" id="teach-input" placeholder="e.g. Alex loves building mechanical keyboards with Boba U4T switches" 
+             class="flex-1 bg-white border border-indigo-200 rounded-lg px-2.5 py-1 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 shadow-2xs" />
+      <button type="submit" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[11px] shrink-0 transition-all shadow-xs">
+        Teach & Train
+      </button>
+    </form>
+    <p class="text-[9px] text-indigo-600 leading-tight">
+      ⚡ Fact is tokenized & absorbed into on-device neural weights with zero cloud network calls.
+    </p>
+  </div>
+
+  <div id="talk-stream" class="flex-1 overflow-y-auto p-2.5 space-y-2 bg-slate-50/40 custom-scroll text-xs">
     <div class="flex items-start gap-1.5 max-w-[92%%]">
       <div class="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center text-white text-[9px] font-bold shrink-0">A</div>
       <div class="p-2 rounded-xl rounded-tl-xs bg-white border border-slate-200/80 text-xs text-slate-800 leading-snug shadow-2xs">
         %s
-        <div class="text-[8px] text-slate-400 text-right mt-0.5 font-mono">09:41</div>
+        <div class="text-[8px] text-slate-400 text-right mt-1 font-mono flex items-center justify-end gap-1">
+          <span class="text-emerald-600">● 100%% Offline</span> • <span>Self-Learning</span>
+        </div>
       </div>
     </div>
   </div>
@@ -431,12 +468,12 @@ func BioTalk(p BioTalkProps) Component {
     %s
   </div>
 
-  <div class="p-1.5 bg-white border-t border-slate-200/70 flex items-center gap-1.5 shrink-0">
-    <input type="text" placeholder="Ask Alex's clone anything..." class="flex-1 bg-slate-50 border border-slate-200/80 rounded-lg px-2.5 py-1 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 shadow-2xs" />
-    <button class="px-3 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs transition-all">
+  <form id="clone-form" onsubmit="handleCloneSubmit(event)" class="p-1.5 bg-white border-t border-slate-200/70 flex items-center gap-1.5 shrink-0">
+    <input type="text" id="clone-input" placeholder="Ask Alex's offline clone anything..." class="flex-1 bg-slate-50 border border-slate-200/80 rounded-lg px-2.5 py-1 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 shadow-2xs" />
+    <button type="submit" class="px-3 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs transition-all">
       ➤
     </button>
-  </div>
+  </form>
 </div>`, p.CloneName, p.Greeting, chipsSb.String())
 
 	return Component{html: html}
@@ -445,12 +482,12 @@ func BioTalk(p BioTalkProps) Component {
 // --- 6. Bio Invite & Collections Access Rules Component ---
 
 type CollectionRuleItem struct {
-	ID        string
-	Name      string
-	Bio       bool
-	Links     bool
-	Feed      bool
-	Talk      bool
+	ID    string
+	Name  string
+	Bio   bool
+	Links bool
+	Feed  bool
+	Talk  bool
 }
 
 type BioInviteProps struct {
@@ -752,6 +789,7 @@ func BioPage(p BioPageProps) Component {
   <script src="/htmx-bolt.js"></script>
   <script src="/htmx-vibe.js"></script>
   <script src="/appz.js"></script>
+  <script src="/tiny-llm.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="/styles.css">
   <style>

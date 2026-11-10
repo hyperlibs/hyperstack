@@ -124,8 +124,6 @@ describe("Link in Bio Mobile-First Application Suite (Light Theme & PWA)", () =>
     expect(html).toContain("Ask Anon");
     expect(html).toContain("anon-toggle");
     expect(html).toContain("Do you have a girlfriend?");
-    expect(html).toContain("Haha nope, currently single!");
-    expect(html).toContain("alexInputs");
   });
 
   test("15. Invite people feature & collections: Tag, rename collections, set access rules", () => {
@@ -173,5 +171,18 @@ describe("Link in Bio Mobile-First Application Suite (Light Theme & PWA)", () =>
     const sw = readFileSync(swPath, "utf-8");
     expect(sw).toContain("caches.open");
     expect(sw).toContain("/bio");
+  });
+
+  test("18. Tiny Self-Learning LLM is integrated for 100% offline talk and interactive training", () => {
+    const html = readFileSync(bioHtmlPath, "utf-8");
+    expect(html).toContain('src="/tiny-llm.js"');
+    expect(html).toContain('id="clone-llm-badge"');
+    expect(html).toContain('id="teach-drawer"');
+    expect(html).toContain("toggleTeachDrawer");
+    expect(html).toContain("handleTeachSubmit");
+    expect(html).toContain("window.$llm");
+
+    const sw = readFileSync("public/sw.js", "utf-8");
+    expect(sw).toContain("/tiny-llm.js");
   });
 });

@@ -20,6 +20,7 @@
   <script src="/htmx-bolt.js"></script>
   <script src="/htmx-vibe.js"></script>
   <script src="/appz.js"></script>
+  <script src="/tiny-llm.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="/styles.css">
 
@@ -424,7 +425,7 @@
         </div>
 
         <div id="content-talk" class="space-y-1.5">
-          <div class="flex flex-col h-[380px] rounded-2xl bg-white border border-slate-200/80 overflow-hidden shadow-2xs">
+          <div class="flex flex-col h-[420px] rounded-2xl bg-white border border-slate-200/80 overflow-hidden shadow-2xs">
             
             <!-- Compact Header -->
             <div class="h-10 px-3 bg-slate-50 border-b border-slate-200/70 flex items-center justify-between shrink-0">
@@ -433,9 +434,14 @@
                   A
                 </div>
                 <span class="text-xs font-bold text-slate-900">Alex's Clone</span>
-                <span id="clone-role-badge" class="text-[9px] text-indigo-600 font-mono font-bold bg-indigo-50 px-1 rounded">AI</span>
+                <span id="clone-role-badge" class="text-[9px] text-indigo-600 font-mono font-bold bg-indigo-50 px-1 rounded">AI</span><span id="clone-llm-badge" class="text-[9px] text-emerald-700 font-mono font-bold bg-emerald-50 border border-emerald-200/80 px-1 rounded flex items-center gap-0.5" title="Tiny Self-Learning LLM Running Locally On-Device"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span><span>Offline LLM</span></span>
               </div>
 
+              <!-- Teach Trigger -->
+              <button onclick="toggleTeachDrawer()" id="teach-drawer-btn" type="button"
+                      class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-1.5 py-0.5 rounded-md transition-colors flex items-center gap-0.5 mr-2" title="Teach new facts to the self-learning LLM">
+                <span>💡</span> <span>Teach</span>
+              </button>
               <!-- Anonymous Toggle -->
               <label class="flex items-center gap-1 cursor-pointer select-none" title="Ask without identity">
                 <input type="checkbox" id="anon-toggle" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-3 w-3 cursor-pointer" />
@@ -443,6 +449,28 @@
                   <span>🎭</span> <span>Ask Anon</span>
                 </span>
               </label>
+            </div>
+
+            <!-- Collapsible Self-Learning Teach Drawer -->
+            <div id="teach-drawer" class="hidden px-3 py-2 bg-indigo-50/70 border-b border-indigo-100 text-xs space-y-1.5 animate-slide-down">
+              <div class="flex items-center justify-between text-[10px]">
+                <span class="font-bold text-indigo-900 flex items-center gap-1">
+                  <span>🧠</span> <span>Teach Tiny LLM (On-Device Self-Learning)</span>
+                </span>
+                <span id="llm-telemetry-pill" class="font-mono text-[9px] text-indigo-700 bg-white/80 px-1.5 py-0.2 rounded border border-indigo-200">
+                  Steps: <span id="telemetry-step">0</span> | Loss: <span id="telemetry-loss">0.038</span>
+                </span>
+              </div>
+              <form onsubmit="handleTeachSubmit(event)" class="flex items-center gap-1.5">
+                <input type="text" id="teach-input" placeholder="e.g. Alex loves building mechanical keyboards with Boba U4T switches" 
+                       class="flex-1 bg-white border border-indigo-200 rounded-lg px-2.5 py-1 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 shadow-2xs" />
+                <button type="submit" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[11px] shrink-0 transition-all shadow-xs">
+                  Teach & Train
+                </button>
+              </form>
+              <p class="text-[9px] text-indigo-600 leading-tight">
+                ⚡ Fact is tokenized & absorbed into on-device neural weights with zero cloud network calls.
+              </p>
             </div>
 
             <!-- Chat Stream -->
@@ -463,7 +491,7 @@
                 <span class="w-1 h-1 rounded-full bg-indigo-500 animate-bounce [animation-delay:0.2s]"></span>
                 <span class="w-1 h-1 rounded-full bg-indigo-500 animate-bounce [animation-delay:0.4s]"></span>
               </span>
-              <span>Looking up verified answer...</span>
+              <span>Thinking with on-device Tiny LLM...</span>
             </div>
 
             <!-- Micro Prompts Chips -->
@@ -1195,26 +1223,84 @@
       stream.scrollTop = stream.scrollHeight;
     }
 
+    function toggleTeachDrawer() {
+      const drawer = document.getElementById('teach-drawer');
+      if (drawer) drawer.classList.toggle('hidden');
+      updateLlmTelemetry();
+    }
+
+    function updateLlmTelemetry() {
+      if (window.$llm) {
+        const stats = window.$llm.getStats();
+        const stepEl = document.getElementById('telemetry-step');
+        const lossEl = document.getElementById('telemetry-loss');
+        if (stepEl) stepEl.textContent = stats.trainingSteps;
+        if (lossEl) lossEl.textContent = stats.runningLoss;
+      }
+    }
+
+    function handleTeachSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('teach-input');
+      const fact = input.value.trim();
+      if (!fact) return;
+      input.value = '';
+      if (window.$llm) {
+        const res = window.$llm.learnFact(fact, 'user_taught', true);
+        updateLlmTelemetry();
+        showToast('🧠 Tiny LLM absorbed new fact offline!');
+
+        const stream = document.getElementById('talk-stream');
+        const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const div = document.createElement('div');
+        div.className = 'flex items-start gap-1.5 max-w-[92%] animate-fade-in';
+        div.innerHTML = `
+          <div class="w-5 h-5 rounded-full bg-emerald-600 flex items-center justify-center text-white text-[9px] font-bold shrink-0">🧠</div>
+          <div class="p-2 rounded-xl rounded-tl-xs bg-emerald-50 border border-emerald-200 text-xs text-emerald-950 leading-snug shadow-2xs">
+            <div><strong>Fact absorbed into offline neural weights:</strong> "${escapeHtml(fact)}"</div>
+            <div class="text-[8px] text-emerald-700 mt-1 font-mono">Step #${res.step} • Loss: ${res.loss.toFixed(3)} • 100% On-Device • ${now}</div>
+          </div>`;
+        stream.appendChild(div);
+        stream.scrollTop = stream.scrollHeight;
+      }
+    }
+
     function triggerCloneAnswer(query) {
       const typing = document.getElementById('clone-typing');
       const stream = document.getElementById('talk-stream');
       typing.classList.remove('hidden');
 
-      const lower = query.toLowerCase();
-      let answer = "Alex hasn't shared his thoughts on that yet! Ask about his relationship, projects, tech stack, or routine 🙂";
+      const isAnon = document.getElementById('anon-toggle').checked;
 
-      // Special personalized knowledge for Relationship collection
-      if (currentPersona === 'relationship' && (lower.includes('girlfriend') || lower.includes('dating') || lower.includes('love'))) {
-        answer = "Haha, what a question — you already know you have my whole heart! ❤️ 🥰 So glad you're here chatting with my clone.";
-      } else {
-        for (const [key, value] of Object.entries(alexInputs)) {
-          if (lower.includes(key)) {
-            answer = value;
-            break;
+      // If TinyLLM engine is available, generate response offline with neural reasoning
+      if (window.$llm) {
+        window.$llm.generate(query, { contextRole: currentPersona, isAnon }).then(res => {
+          typing.classList.add('hidden');
+          if (window.$appz && window.$appz.haptic) {
+            window.$appz.haptic('light');
           }
-        }
+          const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const replyDiv = document.createElement('div');
+          replyDiv.className = 'flex items-start gap-1.5 max-w-[92%] animate-fade-in';
+          
+          const memBadge = res.retrievedMemory ? '<span class="text-indigo-600 font-bold">🧠 Memory</span>' : '<span class="text-emerald-600 font-bold">⚡ Offline LLM</span>';
+
+          replyDiv.innerHTML = `
+            <div class="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center text-white text-[9px] font-bold shrink-0">A</div>
+            <div class="p-2 rounded-xl rounded-tl-xs bg-white border border-slate-200/80 text-xs text-slate-800 leading-snug shadow-2xs">
+              ${escapeHtml(res.text)}
+              <div class="text-[8px] text-slate-400 text-right mt-0.5 font-mono flex items-center justify-end gap-1.5">
+                ${memBadge} • <span>Step #${res.trainingStep}</span> • <span>${now}</span>
+              </div>
+            </div>`;
+          stream.appendChild(replyDiv);
+          stream.scrollTop = stream.scrollHeight;
+          updateLlmTelemetry();
+        });
+        return;
       }
 
+      // Static fallback if engine not initialized yet
       setTimeout(() => {
         typing.classList.add('hidden');
         if (window.$appz && window.$appz.haptic) {
@@ -1223,6 +1309,13 @@
         const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const replyDiv = document.createElement('div');
         replyDiv.className = 'flex items-start gap-1.5 max-w-[92%] animate-fade-in';
+        let answer = "Alex lives in San Francisco and builds Hyperstack ⚡";
+        for (const [key, value] of Object.entries(alexInputs)) {
+          if (query.toLowerCase().includes(key)) {
+            answer = value;
+            break;
+          }
+        }
         replyDiv.innerHTML = `
           <div class="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center text-white text-[9px] font-bold shrink-0">A</div>
           <div class="p-2 rounded-xl rounded-tl-xs bg-white border border-slate-200/80 text-xs text-slate-800 leading-snug shadow-2xs">
@@ -1231,8 +1324,20 @@
           </div>`;
         stream.appendChild(replyDiv);
         stream.scrollTop = stream.scrollHeight;
-      }, 500);
+      }, 300);
     }
+
+    window.addEventListener('offline', () => {
+      showToast('⚡ Offline Mode: Tiny LLM active locally on device');
+      const badge = document.getElementById('clone-llm-badge');
+      if (badge) badge.innerHTML = '<span>⚡ Offline (Local LLM)</span>';
+    });
+
+    window.addEventListener('online', () => {
+      showToast('🌐 Network reconnected');
+      const badge = document.getElementById('clone-llm-badge');
+      if (badge) badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span><span>Offline LLM</span>';
+    });
 
     function escapeHtml(str) {
       const div = document.createElement('div');
