@@ -159,6 +159,19 @@ func TestBioComponents(t *testing.T) {
 		if !strings.Contains(html, "1 @list tag only") {
 			t.Errorf("expected 1 @list tag only prompt, got %s", html)
 		}
+		// Rate limiting & credit economics UI validations
+		if !strings.Contains(html, "talk-user-credits") {
+			t.Errorf("expected talk-user-credits element, got %s", html)
+		}
+		if !strings.Contains(html, "talk-alex-credits") {
+			t.Errorf("expected talk-alex-credits element, got %s", html)
+		}
+		if !strings.Contains(html, "rate-limit-banner") {
+			t.Errorf("expected rate-limit-banner element, got %s", html)
+		}
+		if !strings.Contains(html, "like-answer-btn") {
+			t.Errorf("expected like-answer-btn element, got %s", html)
+		}
 	})
 
 	t.Run("BioInvite renders collections and access rule controls", func(t *testing.T) {

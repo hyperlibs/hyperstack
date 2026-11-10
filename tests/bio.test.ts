@@ -292,4 +292,58 @@ describe("Link in Bio Mobile-First Application Suite (Light Theme & PWA)", () =>
     expect(componentHtml).toContain('id="talkback-thread-stream"');
     expect(componentHtml).toContain("1 @list tag only • 1 answer");
   });
+  test("25. Question rate limit: restricts users to ask 1 question per minute", () => {
+    const html = readFileSync(bioHtmlPath, "utf-8");
+    const componentHtml = readFileSync("views/components/bio-talk.html", "utf-8");
+
+    // Rate limit banner & countdown timer elements
+    expect(html).toContain('id="rate-limit-banner"');
+    expect(html).toContain('id="rate-limit-text"');
+    expect(html).toContain('id="rate-limit-countdown"');
+    expect(html).toContain("1 question/min limit");
+
+    // Rate limit JavaScript logic in app-bio.html
+    expect(html).toContain("startRateLimitTimer");
+    expect(html).toContain("showRateLimitBanner");
+    expect(html).toContain("canUserAskQuestion");
+    expect(html).toContain("recordQuestionAsked");
+    expect(html).toContain("Rate limit: 1 question per min!");
+
+    // Component partial parity
+    expect(componentHtml).toContain('id="rate-limit-banner"');
+    expect(componentHtml).toContain('id="rate-limit-countdown"');
+    expect(componentHtml).toContain("1 question/min limit");
+  });
+
+  test("26. Credit economics: User credits, Alex earned credits & like answer credit transfer", () => {
+    const html = readFileSync(bioHtmlPath, "utf-8");
+    const componentHtml = readFileSync("views/components/bio-talk.html", "utf-8");
+
+    // User question credits pill & Alex earned credits badge
+    expect(html).toContain('id="talk-user-credits-badge"');
+    expect(html).toContain('id="talk-user-credits"');
+    expect(html).toContain('id="talk-alex-credits-badge"');
+    expect(html).toContain('id="talk-alex-credits"');
+
+    // Like answer button and handler
+    expect(html).toContain("like-answer-btn");
+    expect(html).toContain("likeAnswerInWhatsApp");
+    expect(html).toContain("Like (+1 cr)");
+    expect(html).toContain("updateCreditsDisplay");
+
+    // Person G persona added for direct testability
+    expect(html).toContain("@persong");
+    expect(html).toContain("Person G");
+
+    // Insufficient credits blocking message
+    expect(html).toContain("Insufficient credits! You have 0 credits. Cannot ask questions");
+
+    // Component partial parity
+    expect(componentHtml).toContain('id="talk-user-credits-badge"');
+    expect(componentHtml).toContain('id="talk-user-credits"');
+    expect(componentHtml).toContain('id="talk-alex-credits-badge"');
+    expect(componentHtml).toContain('id="talk-alex-credits"');
+    expect(componentHtml).toContain("like-answer-btn");
+    expect(componentHtml).toContain("likeAnswerInWhatsApp");
+  });
 });

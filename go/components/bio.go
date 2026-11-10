@@ -440,6 +440,20 @@ func BioTalk(p BioTalkProps) Component {
         <span class="text-[9px] text-white/70">✏️</span>
       </button>
 
+      <!-- User Question Credits Badge -->
+      <div id="talk-user-credits-badge" class="px-1.5 py-0.5 rounded-md bg-amber-400/20 border border-amber-300/40 text-[10px] font-mono font-bold text-amber-200 flex items-center gap-1" title="Your Question Credits: 1 credit required to ask. Liking Alex's answer awards 1 credit to Alex.">
+        <span>🪙</span>
+        <span id="talk-user-credits">3</span>
+        <span class="text-[8px] text-amber-200/80">cr</span>
+      </div>
+
+      <!-- Alex Creator Credits Badge -->
+      <div id="talk-alex-credits-badge" class="px-1.5 py-0.5 rounded-md bg-emerald-400/20 border border-emerald-300/40 text-[10px] font-mono font-bold text-emerald-200 flex items-center gap-1" title="Alex's total credits earned from answer likes">
+        <span>👑</span>
+        <span id="talk-alex-credits">0</span>
+        <span class="text-[8px] text-emerald-200/80">earned</span>
+      </div>
+
       <button onclick="toggleTeachDrawer()" id="teach-drawer-btn" type="button"
               class="text-[10px] font-bold text-white bg-white/15 hover:bg-white/25 px-1.5 py-0.5 rounded-md transition-colors flex items-center gap-0.5" title="Teach new facts to offline LLM">
         <span>💡</span> <span>Teach</span>
@@ -549,9 +563,18 @@ func BioTalk(p BioTalkProps) Component {
             <span class="font-bold text-slate-700">💬 Reply Comment Threads:</span>
             <p>Every reply has strictly <strong>ONE @list tag</strong>. Alex can reply multiple times per question, but cannot mix multiple answers into one reply.</p>
           </div>
-          <div class="text-[8px] text-slate-400 text-right font-mono pt-0.5 flex items-center justify-end gap-1">
-            <span>10:40 AM</span>
-            <span class="text-emerald-600">✓✓</span>
+          <div class="text-[8px] text-slate-400 font-mono pt-1 border-t border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-1.5">
+              <span class="text-[#008069] font-bold">● Welcome</span>
+              <button type="button" onclick="likeAnswerInWhatsApp('qa-init', 'all', this)" 
+                      class="like-answer-btn text-rose-600 hover:text-rose-700 font-bold flex items-center gap-0.5 bg-rose-50 hover:bg-rose-100 px-1.5 py-0.5 rounded-md transition-all active:scale-95" title="Like Alex's answer (awards 1 credit to Alex)">
+                <span>🤍</span> <span>Like (+1 cr)</span>
+              </button>
+            </div>
+            <div class="flex items-center gap-1">
+              <span>10:40 AM</span>
+              <span class="text-emerald-600 font-bold">✓✓</span>
+            </div>
           </div>
         </div>
       </div>
@@ -575,6 +598,15 @@ func BioTalk(p BioTalkProps) Component {
     <!-- Micro Prompt Quick Chips -->
     <div class="px-2 py-1 bg-white/90 border-t border-slate-200/80 flex items-center gap-1 overflow-x-auto shrink-0 scrollbar-none">
       %s
+    </div>
+
+    <!-- Real-Time Rate Limit Banner (1 question per minute) -->
+    <div id="rate-limit-banner" class="hidden px-3 py-1 bg-amber-100/90 border-t border-amber-200 text-[10px] text-amber-900 font-medium flex items-center justify-between animate-slide-down">
+      <div class="flex items-center gap-1.5">
+        <span class="animate-pulse">⏳</span>
+        <span id="rate-limit-text">1 question/min limit: please wait before asking again</span>
+      </div>
+      <span id="rate-limit-countdown" class="font-mono font-bold text-amber-950 bg-amber-200/80 px-1.5 py-0.2 rounded">60s</span>
     </div>
 
     <!-- WhatsApp Bottom Input Bar -->

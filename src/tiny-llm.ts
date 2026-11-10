@@ -22,6 +22,26 @@ export interface GenerationOptions {
 export const USERNAME_COOLDOWN_DAYS = 365;
 export const USERNAME_COOLDOWN_MS = 365 * 24 * 60 * 60 * 1000; // 31,536,000,000 ms
 
+// --- Question Rate Limit & Credit Economics Constants ---
+export const QUESTION_RATE_LIMIT_MS = 60 * 1000; // 1 question per minute (60,000 ms)
+export const DEFAULT_INITIAL_CREDITS = 3; // Starting credits for questioning visitors
+
+export interface QuestionEligibilityResult {
+  allowed: boolean;
+  reason?: string;
+  cooldownSeconds?: number;
+  credits: number;
+  alexCredits: number;
+}
+
+export interface LikeAnswerResult {
+  success: boolean;
+  userCredits: number;
+  alexCredits: number;
+  error?: string;
+  qaItem?: ContextualQAItem;
+}
+
 export interface UsernameCooldownResult {
   allowed: boolean;
   daysRemaining: number;
@@ -193,6 +213,8 @@ export interface ContextualQAItem {
   isAnon: boolean;
   askedAt: number;
   answeredAt?: number;
+  likedBy?: string[]; // Usernames who liked answers to this question
+  likesCount?: number;
 }
 
 export interface TinyLLMStats {
@@ -205,6 +227,7 @@ export interface TinyLLMStats {
   version: string;
   pendingQuestions: number;
   answeredQuestions: number;
+  alexCredits: number;
 }
 
 /**
@@ -281,6 +304,11 @@ export class TinyLLM {
 
   // Contextual Q&A Middleman Store
   private qaStore: ContextualQAItem[] = [];
+
+  // Question Rate Limiting & User Credit Store
+  private userCredits: Map<string, number> = new Map();
+  private userLastQuestionTime: Map<string, number> = new Map();
+  private alexCredits: number = 0;
 
   // Training state
   private trainingSteps: number = 0;
@@ -713,6 +741,160 @@ export class TinyLLM {
     }));
   }
 
+  // --- 3b. Question Rate Limiter & Credit Economics ---
+
+  /**
+   * Retrieves credit balance for a given username.
+   * New users automatically start with DEFAULT_INITIAL_CREDITS (3 credits).
+   */
+  public getUserCredits(username?: string): number {
+    const cleanUser = (username || 'visitor').replace(/^@/, '').toLowerCase().trim();
+    if (!this.userCredits.has(cleanUser)) {
+      this.userCredits.set(cleanUser, DEFAULT_INITIAL_CREDITS);
+    }
+    return this.userCredits.get(cleanUser)!;
+  }
+
+  public setUserCredits(username: string, credits: number): void {
+    const cleanUser = (username || 'visitor').replace(/^@/, '').toLowerCase().trim();
+    this.userCredits.set(cleanUser, Math.max(0, credits));
+    this.persistState();
+  }
+
+  public getAlexCredits(): number {
+    return this.alexCredits;
+  }
+
+  public setAlexCredits(credits: number): void {
+    this.alexCredits = Math.max(0, credits);
+    this.persistState();
+  }
+
+  /**
+   * Checks whether a user can ask a question based on:
+   * 1. Credits balance: "if person G doesnt have credits they cant ask questions"
+   * 2. Rate limit: "restrict users to ask 1 question per min" (60s cooldown)
+   */
+  public canUserAskQuestion(username?: string, now: number = Date.now()): QuestionEligibilityResult {
+    const cleanUser = (username || 'visitor').replace(/^@/, '').toLowerCase().trim();
+    const credits = this.getUserCredits(cleanUser);
+
+    // Rule 1: Must have credits to ask questions
+    if (credits <= 0) {
+      return {
+        allowed: false,
+        reason: `Insufficient credits: You have 0 credits. You need at least 1 credit to ask a question.`,
+        cooldownSeconds: 0,
+        credits: 0,
+        alexCredits: this.alexCredits
+      };
+    }
+
+    // Rule 2: 1 question per minute rate limit
+    const lastTime = this.userLastQuestionTime.get(cleanUser) || 0;
+    const elapsed = now - lastTime;
+    if (lastTime > 0 && elapsed < QUESTION_RATE_LIMIT_MS) {
+      const msRemaining = QUESTION_RATE_LIMIT_MS - elapsed;
+      const cooldownSeconds = Math.ceil(msRemaining / 1000);
+      return {
+        allowed: false,
+        reason: `Rate limit: You can only ask 1 question per minute. Please wait ${cooldownSeconds}s before asking again.`,
+        cooldownSeconds,
+        credits,
+        alexCredits: this.alexCredits
+      };
+    }
+
+    return {
+      allowed: true,
+      credits,
+      alexCredits: this.alexCredits
+    };
+  }
+
+  /**
+   * Records that a question was asked by the user, starting the 1-minute cooldown.
+   */
+  public recordQuestionAsked(username?: string, now: number = Date.now()): void {
+    const cleanUser = (username || 'visitor').replace(/^@/, '').toLowerCase().trim();
+    this.userLastQuestionTime.set(cleanUser, now);
+    this.persistState();
+  }
+
+  /**
+   * Transfers 1 credit from questioning user to Alex when the user likes Alex's answer:
+   * "if person G is asking me a question, if i answer and if person G likes my answer i will earn 1 credit from person G."
+   */
+  public likeAnswer(questionIdOrText: string, tag: string = 'all', username?: string): LikeAnswerResult {
+    const cleanUser = (username || 'visitor').replace(/^@/, '').toLowerCase().trim();
+    const cleanTag = tag.replace(/^@/, '').toLowerCase().trim() || 'all';
+
+    let item = this.qaStore.find(q => q.id === questionIdOrText) || this.findQAByQuestion(questionIdOrText);
+    if (!item) {
+      return {
+        success: false,
+        userCredits: this.getUserCredits(cleanUser),
+        alexCredits: this.alexCredits,
+        error: 'Question not found'
+      };
+    }
+
+    item.likedBy = item.likedBy || [];
+    const likeKey = `${cleanUser}:${cleanTag}`;
+
+    // Cannot like same answer multiple times
+    if (item.likedBy.includes(likeKey) || item.likedBy.includes(cleanUser)) {
+      return {
+        success: false,
+        userCredits: this.getUserCredits(cleanUser),
+        alexCredits: this.alexCredits,
+        error: 'You have already liked this answer',
+        qaItem: item
+      };
+    }
+
+    const currentCredits = this.getUserCredits(cleanUser);
+    if (currentCredits <= 0) {
+      return {
+        success: false,
+        userCredits: 0,
+        alexCredits: this.alexCredits,
+        error: 'Insufficient credits: You need at least 1 credit to like an answer and reward Alex',
+        qaItem: item
+      };
+    }
+
+    // Deduct 1 credit from questioning user and add 1 credit to Alex
+    this.userCredits.set(cleanUser, currentCredits - 1);
+    this.alexCredits += 1;
+    item.likedBy.push(likeKey);
+    item.likesCount = (item.likesCount || 0) + 1;
+
+    // Reinforce learning
+    const answerText = item.answers[cleanTag] || item.answers['all'] || '';
+    if (answerText) {
+      this.feedback(item.question, answerText, 1.0);
+    }
+
+    this.persistState();
+
+    return {
+      success: true,
+      userCredits: this.getUserCredits(cleanUser),
+      alexCredits: this.alexCredits,
+      qaItem: item
+    };
+  }
+
+  public isAnswerLiked(questionIdOrText: string, tag: string = 'all', username?: string): boolean {
+    const cleanUser = (username || 'visitor').replace(/^@/, '').toLowerCase().trim();
+    const cleanTag = tag.replace(/^@/, '').toLowerCase().trim() || 'all';
+    const item = this.qaStore.find(q => q.id === questionIdOrText) || this.findQAByQuestion(questionIdOrText);
+    if (!item || !item.likedBy) return false;
+    const likeKey = `${cleanUser}:${cleanTag}`;
+    return item.likedBy.includes(likeKey) || item.likedBy.includes(cleanUser);
+  }
+
   // --- 4. Vector Arithmetic & Semantic Embedding ---
 
   private textEmbedding(tokens: number[]): Float32Array {
@@ -999,7 +1181,8 @@ export class TinyLLM {
       isOffline: true,
       version: "1.0.0-tiny",
       pendingQuestions: this.getPendingCount(),
-      answeredQuestions: this.qaStore.filter(q => q.status === 'answered').length
+      answeredQuestions: this.qaStore.filter(q => q.status === 'answered').length,
+      alexCredits: this.alexCredits
     };
   }
 
@@ -1027,8 +1210,13 @@ export class TinyLLM {
           askedBy: q.askedBy,
           isAnon: q.isAnon,
           askedAt: q.askedAt,
-          answeredAt: q.answeredAt
-        }))
+          answeredAt: q.answeredAt,
+          likedBy: q.likedBy,
+          likesCount: q.likesCount
+        })),
+        userCredits: Array.from(this.userCredits.entries()),
+        userLastQuestionTime: Array.from(this.userLastQuestionTime.entries()),
+        alexCredits: this.alexCredits
       };
       localStorage.setItem(this.storageKey, JSON.stringify(state));
     } catch {
@@ -1049,6 +1237,17 @@ export class TinyLLM {
           if (m.fact && typeof m.fact === 'string') {
             this.learnFact(m.fact, m.category || 'persisted', false);
           }
+        }
+      }
+      if (typeof parsed.alexCredits === 'number') this.alexCredits = parsed.alexCredits;
+      if (Array.isArray(parsed.userCredits)) {
+        for (const [u, c] of parsed.userCredits) {
+          this.userCredits.set(u, c);
+        }
+      }
+      if (Array.isArray(parsed.userLastQuestionTime)) {
+        for (const [u, t] of parsed.userLastQuestionTime) {
+          this.userLastQuestionTime.set(u, t);
         }
       }
       if (Array.isArray(parsed.qaStore)) {
@@ -1078,6 +1277,9 @@ export class TinyLLM {
     }
     this.memoryStore = [];
     this.qaStore = [];
+    this.userCredits.clear();
+    this.userLastQuestionTime.clear();
+    this.alexCredits = 0;
     this.runningLoss = 0.45;
     this.seedAlexKnowledge();
     this.trainingSteps = 0;

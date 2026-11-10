@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { TinyLLM, checkUsernameCooldown, USERNAME_COOLDOWN_DAYS, USERNAME_COOLDOWN_MS, validateSingleReply, ThreadReply } from "../src/tiny-llm";
+import { TinyLLM, checkUsernameCooldown, USERNAME_COOLDOWN_DAYS, USERNAME_COOLDOWN_MS, validateSingleReply, ThreadReply, QUESTION_RATE_LIMIT_MS, DEFAULT_INITIAL_CREDITS } from "../src/tiny-llm";
 
 describe("TinyLLM Embedded On-Device Self-Learning Language Model", () => {
   test("1. Model initializes with baseline vocab, embeddings, and parameters", () => {
@@ -290,5 +290,100 @@ describe("TinyLLM Embedded On-Device Self-Learning Language Model", () => {
 
     const publicQuery = await llm.generate(q, { contextRole: "public" });
     expect(publicQuery.text).toBe("im at work, chennai");
+  });
+  test("15. Rate limiting: restrict users to ask 1 question per minute", () => {
+    const llm = new TinyLLM();
+    const username = "persong";
+    const startTime = 1000000;
+
+    expect(QUESTION_RATE_LIMIT_MS).toBe(60000);
+
+    // Initial check -> allowed
+    const check1 = llm.canUserAskQuestion(username, startTime);
+    expect(check1.allowed).toBe(true);
+
+    // User asks question at startTime
+    llm.recordQuestionAsked(username, startTime);
+
+    // User attempts to ask another question 20 seconds later -> BLOCKED
+    const check2 = llm.canUserAskQuestion(username, startTime + 20000);
+    expect(check2.allowed).toBe(false);
+    expect(check2.cooldownSeconds).toBe(40);
+    expect(check2.reason).toContain("Rate limit: You can only ask 1 question per minute");
+
+    // User attempts to ask another question 59.5 seconds later -> BLOCKED (1s remaining)
+    const check3 = llm.canUserAskQuestion(username, startTime + 59500);
+    expect(check3.allowed).toBe(false);
+    expect(check3.cooldownSeconds).toBe(1);
+
+    // User attempts to ask another question 61 seconds later -> ALLOWED
+    const check4 = llm.canUserAskQuestion(username, startTime + 61000);
+    expect(check4.allowed).toBe(true);
+    expect(check4.cooldownSeconds).toBeUndefined();
+  });
+
+  test("16. Credit economics: Liking answers transfers 1 credit from questioning user to Alex & users with 0 credits cannot ask", () => {
+    const llm = new TinyLLM();
+    const userG = "persong"; // Person G
+
+    expect(DEFAULT_INITIAL_CREDITS).toBe(3);
+
+    // 1. Initial credit balances
+    expect(llm.getUserCredits(userG)).toBe(3);
+    expect(llm.getAlexCredits()).toBe(0);
+
+    // 2. Person G has credits, can ask question
+    const q1Check = llm.canUserAskQuestion(userG);
+    expect(q1Check.allowed).toBe(true);
+    expect(q1Check.credits).toBe(3);
+
+    // Person G asks a question and Alex answers
+    const question = "Are you available for consulting next week?";
+    llm.addPendingQuestion(question, "@persong", false);
+    llm.addSingleReply(question, "Yes, open for consulting on distributed systems!", "all", "Alex");
+
+    // 3. Person G likes Alex's answer -> Alex earns 1 credit from Person G
+    const likeRes1 = llm.likeAnswer(question, "all", userG);
+    expect(likeRes1.success).toBe(true);
+    expect(likeRes1.userCredits).toBe(2); // Person G balance: 3 - 1 = 2
+    expect(likeRes1.alexCredits).toBe(1); // Alex balance: 0 + 1 = 1
+    expect(llm.getUserCredits(userG)).toBe(2);
+    expect(llm.getAlexCredits()).toBe(1);
+    expect(llm.isAnswerLiked(question, "all", userG)).toBe(true);
+
+    // Duplicate like attempt on same answer is rejected
+    const dupLike = llm.likeAnswer(question, "all", userG);
+    expect(dupLike.success).toBe(false);
+    expect(dupLike.error).toContain("already liked");
+    expect(llm.getUserCredits(userG)).toBe(2);
+    expect(llm.getAlexCredits()).toBe(1);
+
+    // 4. Person G likes 2 more answers until balance reaches 0
+    const q2 = "What framework is this?";
+    llm.addSingleReply(q2, "Hyperstack framework!", "all", "Alex");
+    const likeRes2 = llm.likeAnswer(q2, "all", userG);
+    expect(likeRes2.success).toBe(true);
+    expect(likeRes2.userCredits).toBe(1);
+    expect(likeRes2.alexCredits).toBe(2);
+
+    const q3 = "Is Node.js used?";
+    llm.addSingleReply(q3, "Zero Node.js, 100% Bun & Go!", "all", "Alex");
+    const likeRes3 = llm.likeAnswer(q3, "all", userG);
+    expect(likeRes3.success).toBe(true);
+    expect(likeRes3.userCredits).toBe(0); // 0 credits left
+    expect(likeRes3.alexCredits).toBe(3);
+
+    // 5. "if person G doesnt have credits they cant ask questions"
+    const zeroCreditsCheck = llm.canUserAskQuestion(userG, Date.now() + 100000);
+    expect(zeroCreditsCheck.allowed).toBe(false);
+    expect(zeroCreditsCheck.credits).toBe(0);
+    expect(zeroCreditsCheck.reason).toContain("Insufficient credits: You have 0 credits. You need at least 1 credit to ask a question.");
+
+    // Cannot like another answer when balance is 0
+    const q4 = "Another question?";
+    llm.addSingleReply(q4, "Another answer", "all", "Alex");
+    const zeroLike = llm.likeAnswer(q4, "all", userG);
+    expect(zeroLike.success).toBe(false);
+    expect(zeroLike.error).toContain("Insufficient credits");
   });
 });

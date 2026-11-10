@@ -35,10 +35,14 @@
     checkUsernameCooldown: () => checkUsernameCooldown,
     USERNAME_COOLDOWN_MS: () => USERNAME_COOLDOWN_MS,
     USERNAME_COOLDOWN_DAYS: () => USERNAME_COOLDOWN_DAYS,
-    TinyLLM: () => TinyLLM
+    TinyLLM: () => TinyLLM,
+    QUESTION_RATE_LIMIT_MS: () => QUESTION_RATE_LIMIT_MS,
+    DEFAULT_INITIAL_CREDITS: () => DEFAULT_INITIAL_CREDITS
   });
   var USERNAME_COOLDOWN_DAYS = 365;
   var USERNAME_COOLDOWN_MS = 365 * 24 * 60 * 60 * 1000;
+  var QUESTION_RATE_LIMIT_MS = 60 * 1000;
+  var DEFAULT_INITIAL_CREDITS = 3;
   function checkUsernameCooldown(lastChangeTimestamp, now = Date.now()) {
     if (!lastChangeTimestamp || isNaN(lastChangeTimestamp) || lastChangeTimestamp <= 0) {
       return {
@@ -164,6 +168,9 @@
     contextWeights;
     memoryStore = [];
     qaStore = [];
+    userCredits = new Map;
+    userLastQuestionTime = new Map;
+    alexCredits = 0;
     trainingSteps = 0;
     runningLoss = 0.45;
     storageKey = "hyperstack:tiny_llm_state";
@@ -501,6 +508,119 @@
         timestamp: item.answeredAt || item.askedAt
       }));
     }
+    getUserCredits(username) {
+      const cleanUser = (username || "visitor").replace(/^@/, "").toLowerCase().trim();
+      if (!this.userCredits.has(cleanUser)) {
+        this.userCredits.set(cleanUser, DEFAULT_INITIAL_CREDITS);
+      }
+      return this.userCredits.get(cleanUser);
+    }
+    setUserCredits(username, credits) {
+      const cleanUser = (username || "visitor").replace(/^@/, "").toLowerCase().trim();
+      this.userCredits.set(cleanUser, Math.max(0, credits));
+      this.persistState();
+    }
+    getAlexCredits() {
+      return this.alexCredits;
+    }
+    setAlexCredits(credits) {
+      this.alexCredits = Math.max(0, credits);
+      this.persistState();
+    }
+    canUserAskQuestion(username, now = Date.now()) {
+      const cleanUser = (username || "visitor").replace(/^@/, "").toLowerCase().trim();
+      const credits = this.getUserCredits(cleanUser);
+      if (credits <= 0) {
+        return {
+          allowed: false,
+          reason: `Insufficient credits: You have 0 credits. You need at least 1 credit to ask a question.`,
+          cooldownSeconds: 0,
+          credits: 0,
+          alexCredits: this.alexCredits
+        };
+      }
+      const lastTime = this.userLastQuestionTime.get(cleanUser) || 0;
+      const elapsed = now - lastTime;
+      if (lastTime > 0 && elapsed < QUESTION_RATE_LIMIT_MS) {
+        const msRemaining = QUESTION_RATE_LIMIT_MS - elapsed;
+        const cooldownSeconds = Math.ceil(msRemaining / 1000);
+        return {
+          allowed: false,
+          reason: `Rate limit: You can only ask 1 question per minute. Please wait ${cooldownSeconds}s before asking again.`,
+          cooldownSeconds,
+          credits,
+          alexCredits: this.alexCredits
+        };
+      }
+      return {
+        allowed: true,
+        credits,
+        alexCredits: this.alexCredits
+      };
+    }
+    recordQuestionAsked(username, now = Date.now()) {
+      const cleanUser = (username || "visitor").replace(/^@/, "").toLowerCase().trim();
+      this.userLastQuestionTime.set(cleanUser, now);
+      this.persistState();
+    }
+    likeAnswer(questionIdOrText, tag = "all", username) {
+      const cleanUser = (username || "visitor").replace(/^@/, "").toLowerCase().trim();
+      const cleanTag = tag.replace(/^@/, "").toLowerCase().trim() || "all";
+      let item = this.qaStore.find((q) => q.id === questionIdOrText) || this.findQAByQuestion(questionIdOrText);
+      if (!item) {
+        return {
+          success: false,
+          userCredits: this.getUserCredits(cleanUser),
+          alexCredits: this.alexCredits,
+          error: "Question not found"
+        };
+      }
+      item.likedBy = item.likedBy || [];
+      const likeKey = `${cleanUser}:${cleanTag}`;
+      if (item.likedBy.includes(likeKey) || item.likedBy.includes(cleanUser)) {
+        return {
+          success: false,
+          userCredits: this.getUserCredits(cleanUser),
+          alexCredits: this.alexCredits,
+          error: "You have already liked this answer",
+          qaItem: item
+        };
+      }
+      const currentCredits = this.getUserCredits(cleanUser);
+      if (currentCredits <= 0) {
+        return {
+          success: false,
+          userCredits: 0,
+          alexCredits: this.alexCredits,
+          error: "Insufficient credits: You need at least 1 credit to like an answer and reward Alex",
+          qaItem: item
+        };
+      }
+      this.userCredits.set(cleanUser, currentCredits - 1);
+      this.alexCredits += 1;
+      item.likedBy.push(likeKey);
+      item.likesCount = (item.likesCount || 0) + 1;
+      const answerText = item.answers[cleanTag] || item.answers["all"] || "";
+      if (answerText) {
+        this.feedback(item.question, answerText, 1);
+      }
+      this.persistState();
+      return {
+        success: true,
+        userCredits: this.getUserCredits(cleanUser),
+        alexCredits: this.alexCredits,
+        qaItem: item
+      };
+    }
+    isAnswerLiked(questionIdOrText, tag = "all", username) {
+      const cleanUser = (username || "visitor").replace(/^@/, "").toLowerCase().trim();
+      const cleanTag = tag.replace(/^@/, "").toLowerCase().trim() || "all";
+      const item = this.qaStore.find((q) => q.id === questionIdOrText) || this.findQAByQuestion(questionIdOrText);
+      if (!item || !item.likedBy)
+        return false;
+      const likeKey = `${cleanUser}:${cleanTag}`;
+      return item.likedBy.includes(likeKey) || item.likedBy.includes(cleanUser);
+    }
     textEmbedding(tokens) {
       const pooled = new Float32Array(this.embeddingDim);
       if (tokens.length === 0)
@@ -728,7 +848,8 @@
         isOffline: true,
         version: "1.0.0-tiny",
         pendingQuestions: this.getPendingCount(),
-        answeredQuestions: this.qaStore.filter((q) => q.status === "answered").length
+        answeredQuestions: this.qaStore.filter((q) => q.status === "answered").length,
+        alexCredits: this.alexCredits
       };
     }
     persistState() {
@@ -754,8 +875,13 @@
             askedBy: q.askedBy,
             isAnon: q.isAnon,
             askedAt: q.askedAt,
-            answeredAt: q.answeredAt
-          }))
+            answeredAt: q.answeredAt,
+            likedBy: q.likedBy,
+            likesCount: q.likesCount
+          })),
+          userCredits: Array.from(this.userCredits.entries()),
+          userLastQuestionTime: Array.from(this.userLastQuestionTime.entries()),
+          alexCredits: this.alexCredits
         };
         localStorage.setItem(this.storageKey, JSON.stringify(state));
       } catch {}
@@ -777,6 +903,18 @@
             if (m.fact && typeof m.fact === "string") {
               this.learnFact(m.fact, m.category || "persisted", false);
             }
+          }
+        }
+        if (typeof parsed.alexCredits === "number")
+          this.alexCredits = parsed.alexCredits;
+        if (Array.isArray(parsed.userCredits)) {
+          for (const [u, c] of parsed.userCredits) {
+            this.userCredits.set(u, c);
+          }
+        }
+        if (Array.isArray(parsed.userLastQuestionTime)) {
+          for (const [u, t] of parsed.userLastQuestionTime) {
+            this.userLastQuestionTime.set(u, t);
           }
         }
         if (Array.isArray(parsed.qaStore)) {
@@ -803,6 +941,9 @@
       }
       this.memoryStore = [];
       this.qaStore = [];
+      this.userCredits.clear();
+      this.userLastQuestionTime.clear();
+      this.alexCredits = 0;
       this.runningLoss = 0.45;
       this.seedAlexKnowledge();
       this.trainingSteps = 0;
