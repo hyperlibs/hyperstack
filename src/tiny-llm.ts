@@ -774,12 +774,22 @@ export class TinyLLM {
     if (!this.userCredits.has(cleanUser)) {
       this.userCredits.set(cleanUser, DEFAULT_INITIAL_CREDITS);
     }
-    return this.userCredits.get(cleanUser)!;
+    const val = this.userCredits.get(cleanUser);
+    return (typeof val === 'number' && !isNaN(val)) ? val : DEFAULT_INITIAL_CREDITS;
   }
 
-  public setUserCredits(username: string, credits: number): void {
-    const cleanUser = (username || 'visitor').replace(/^@/, '').toLowerCase().trim();
-    this.userCredits.set(cleanUser, Math.max(0, credits));
+  public setUserCredits(usernameOrCredits: string | number, credits?: number): void {
+    let user = 'visitor';
+    let cred = 0;
+    if (typeof usernameOrCredits === 'number') {
+      cred = usernameOrCredits;
+    } else {
+      user = usernameOrCredits || 'visitor';
+      cred = typeof credits === 'number' ? credits : 0;
+    }
+    if (isNaN(cred)) cred = 0;
+    const cleanUser = user.replace(/^@/, '').toLowerCase().trim();
+    this.userCredits.set(cleanUser, Math.max(0, cred));
     this.persistState();
   }
 
