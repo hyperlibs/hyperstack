@@ -76,7 +76,8 @@
     "deploy:pages": "bun run build && wrangler pages deploy dist --project-name=hyperstack",
     "deploy:worker": "bun run build && wrangler deploy",
     "benchmark": "bun run scripts/benchmark.ts",
-    "test:ui": "bunx playwright test"
+    "test:ui": "bunx playwright test",
+    "pack:clean": "git archive --format=zip -o hyperstack-clean.zip HEAD"
   },
   "type": "commonjs"
 }
