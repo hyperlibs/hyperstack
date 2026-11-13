@@ -355,8 +355,8 @@ func main() {
 			}
 		}
 
-		if p == "/docs" {
-			http.Redirect(w, r, "/docs/components/introduction", http.StatusFound)
+		if p == "/docs" || p == "/docs/1.0" || p == "/docs/release-1.0" {
+			http.ServeFile(w, r, filepath.Join("public", "docs", "index.html"))
 			return
 		}
 

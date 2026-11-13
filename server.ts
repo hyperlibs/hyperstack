@@ -602,9 +602,9 @@ const server = Bun.serve({
       }
     }
 
-    // Redirect /docs to introduction
-    if (url.pathname === "/docs" || url.pathname === "/docs/") {
-      return Response.redirect("/docs/components/introduction", 302);
+    // Hyperstack 1.0 Architecture & Multi-Language Release Guide
+    if (url.pathname === "/docs" || url.pathname === "/docs/" || url.pathname === "/docs/1.0" || url.pathname === "/docs/release-1.0") {
+      return new Response(Bun.file("public/docs/index.html"), { headers: { "Content-Type": "text/html; charset=utf-8" } });
     }
 
     return new Response("Not Found", { status: 404 });
