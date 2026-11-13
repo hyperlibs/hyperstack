@@ -17,9 +17,9 @@
   },
   "exports": {
     ".": {
+      "types": "./src/types.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./public/htmx-bolt.js",
-      "types": "./src/types.d.ts"
+      "require": "./public/htmx-bolt.js"
     },
     "./bolt": "./public/htmx-bolt.js",
     "./flash": "./public/htmx-flash.js",

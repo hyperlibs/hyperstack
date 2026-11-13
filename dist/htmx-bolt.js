@@ -46,11 +46,13 @@
     matchRole: () => matchRole,
     matchPermission: () => matchPermission,
     initComponent: () => initComponent,
+    getOrCreateStream: () => getOrCreateStream,
     getOrCreateChannel: () => getOrCreateChannel,
     getDiagnostics: () => getDiagnostics,
     formatDiag: () => formatDiag,
     executeAction: () => executeAction,
     evaluateExpression: () => evaluateExpression,
+    ensureObjID: () => ensureObjID,
     enforceElementAuth: () => enforceElementAuth,
     discoverMetaAuth: () => discoverMetaAuth,
     diagnosticHistory: () => diagnosticHistory,
@@ -61,9 +63,12 @@
     bindAuthDirectives: () => bindAuthDirectives,
     authState: () => authState,
     applyTransition: () => applyTransition,
+    applyStreamPatch: () => applyStreamPatch,
+    applyLayerMatrix: () => applyLayerMatrix,
     SparseMatrix: () => SparseMatrix,
     SignalTracker: () => SignalTracker,
     HyperFX: () => HyperFX,
+    HyStream: () => HyStream,
     HxSpatial: () => HxSpatial,
     HxBolt: () => HxBolt,
     ERROR_CATALOG: () => ERROR_CATALOG
@@ -2517,13 +2522,15 @@
           }
         });
       }
+      const scheduleNextFrame2 = typeof requestAnimationFrame !== "undefined" ? requestAnimationFrame : (cb) => setTimeout(cb, 16);
       if (tickerCallbacks.size > 0 || typeof document !== "undefined" && document.querySelector("[hx-tick]")) {
-        requestAnimationFrame(loop);
+        scheduleNextFrame2(loop);
       } else {
         tickerRunning = false;
       }
     }
-    requestAnimationFrame(loop);
+    const scheduleNextFrame = typeof requestAnimationFrame !== "undefined" ? requestAnimationFrame : (cb) => setTimeout(cb, 16);
+    scheduleNextFrame(loop);
   }
   var customDirectives = new Map;
   var customEngines = new Map;
@@ -2718,6 +2725,275 @@
   customDirectives.set("3datmos", (el) => HxSpatial.mount(el));
   customDirectives.set("3dfx", (el) => HxSpatial.mount(el));
   customDirectives.set("hx-spatial", (el) => HxSpatial.mount(el));
+  var objIdCounter = 0;
+  function ensureObjID(el) {
+    let id = el.getAttribute("objid");
+    if (!id) {
+      id = el.id ? el.id : `obj_${++objIdCounter}`;
+      el.setAttribute("objid", id);
+    }
+    return id;
+  }
+
+  class HyStream {
+    objid;
+    past = [];
+    future = [];
+    lease = "idle";
+    leaseOwner;
+    constructor(objid) {
+      this.objid = objid;
+    }
+    record(patch) {
+      this.past.push(patch);
+      this.future = [];
+      globalTimeline.push(patch);
+      globalRedoTimeline.length = 0;
+    }
+    undo(authorId) {
+      let patchIndex = -1;
+      if (authorId) {
+        for (let i = this.past.length - 1;i >= 0; i--) {
+          if (this.past[i].sub === authorId) {
+            patchIndex = i;
+            break;
+          }
+        }
+      } else {
+        patchIndex = this.past.length - 1;
+      }
+      if (patchIndex === -1)
+        return;
+      const [patch] = this.past.splice(patchIndex, 1);
+      this.future.push(patch);
+      applyPatchDirect(patch.target, patch.op, patch.prop, patch.inverse);
+      dispatchStreamEvent("hx-stream:undo", patch);
+      return patch;
+    }
+    redo(authorId) {
+      let patchIndex = -1;
+      if (authorId) {
+        for (let i = this.future.length - 1;i >= 0; i--) {
+          if (this.future[i].sub === authorId) {
+            patchIndex = i;
+            break;
+          }
+        }
+      } else {
+        patchIndex = this.future.length - 1;
+      }
+      if (patchIndex === -1)
+        return;
+      const [patch] = this.future.splice(patchIndex, 1);
+      this.past.push(patch);
+      applyPatchDirect(patch.target, patch.op, patch.prop, patch.val);
+      dispatchStreamEvent("hx-stream:redo", patch);
+      return patch;
+    }
+    acquireLease(sub, mode = "focus") {
+      if (this.lease === "edit" && this.leaseOwner && this.leaseOwner !== sub) {
+        return false;
+      }
+      this.lease = mode;
+      this.leaseOwner = sub;
+      if (typeof document !== "undefined") {
+        const el = document.querySelector(`[objid="${this.objid}"]`);
+        if (el) {
+          el.setAttribute("data-lease", mode);
+          el.setAttribute("data-lease-owner", sub);
+          if (mode === "edit") {
+            const parent = el.parentElement ? el.parentElement.closest("[objid]") : null;
+            if (parent)
+              parent.setAttribute("data-parent-locked", "true");
+          }
+        }
+      }
+      return true;
+    }
+    releaseLease(sub) {
+      if (this.leaseOwner === sub) {
+        this.lease = "idle";
+        this.leaseOwner = undefined;
+        if (typeof document !== "undefined") {
+          const el = document.querySelector(`[objid="${this.objid}"]`);
+          if (el) {
+            el.removeAttribute("data-lease");
+            el.removeAttribute("data-lease-owner");
+            const parent = el.parentElement ? el.parentElement.closest("[objid]") : null;
+            if (parent)
+              parent.removeAttribute("data-parent-locked");
+          }
+        }
+      }
+    }
+  }
+  var streams = new Map;
+  var globalTimeline = [];
+  var globalRedoTimeline = [];
+  function getOrCreateStream(objid) {
+    let s = streams.get(objid);
+    if (!s) {
+      s = new HyStream(objid);
+      streams.set(objid, s);
+    }
+    return s;
+  }
+  function applyPatchDirect(targetObjId, op, prop, value) {
+    if (typeof document === "undefined")
+      return;
+    const el = document.querySelector(`[objid="${targetObjId}"]`);
+    if (!el)
+      return;
+    let previousVal = undefined;
+    switch (op) {
+      case "set_attribute":
+        if (prop) {
+          previousVal = el.getAttribute(prop);
+          if (value === null || value === undefined) {
+            el.removeAttribute(prop);
+          } else {
+            el.setAttribute(prop, String(value));
+          }
+        }
+        break;
+      case "set_style":
+        if (prop) {
+          previousVal = el.style[prop];
+          el.style[prop] = value || "";
+        }
+        break;
+      case "set_text":
+        previousVal = el.textContent;
+        el.textContent = value !== undefined ? String(value) : "";
+        break;
+      case "set_state":
+        if (prop && elementStates.has(el)) {
+          const st = elementStates.get(el);
+          previousVal = st[prop];
+          st[prop] = value;
+        }
+        break;
+      case "insert_child":
+        if (typeof value === "string") {
+          el.insertAdjacentHTML("beforeend", value);
+        }
+        break;
+      case "remove_child":
+        if (prop) {
+          const child = el.querySelector(`[objid="${prop}"]`);
+          if (child) {
+            previousVal = child.outerHTML;
+            child.remove();
+          }
+        }
+        break;
+    }
+    return previousVal;
+  }
+  function dispatchStreamEvent(eventName, patch) {
+    if (typeof document === "undefined")
+      return;
+    const el = document.querySelector(`[objid="${patch.target}"]`) || document.body;
+    if (!el)
+      return;
+    const context = {
+      sub: patch.sub || authState.user && authState.user.id || "anonymous",
+      dom: patch.dom || (document.body ? document.body.getAttribute("docid") || "default" : "default"),
+      obj: patch.target,
+      act: patch.op,
+      txId: patch.txId,
+      timestamp: patch.ts || Date.now()
+    };
+    el.dispatchEvent(new CustomEvent(eventName, {
+      bubbles: true,
+      detail: { patch, context }
+    }));
+  }
+  function applyStreamPatch(patch) {
+    const stream = getOrCreateStream(patch.target);
+    if (patch.inverse === undefined) {
+      patch.inverse = applyPatchDirect(patch.target, patch.op, patch.prop, patch.val);
+    } else {
+      applyPatchDirect(patch.target, patch.op, patch.prop, patch.val);
+    }
+    patch.ts = patch.ts || Date.now();
+    stream.record(patch);
+    dispatchStreamEvent("hx-stream:patch", patch);
+    return true;
+  }
+  function applyLayerMatrix(el) {
+    const levelAttr = el.getAttribute("level") || el.getAttribute("layer") || "0";
+    const level = Math.max(0, Math.min(9, parseInt(levelAttr, 10) || 0));
+    const role = (el.getAttribute("role") || "content").toLowerCase();
+    const sub = el.getAttribute("sub") || "";
+    el.style.position = el.style.position || "relative";
+    const hasRole = Boolean(el.hasAttribute ? el.hasAttribute("role") : el.getAttribute && el.getAttribute("role"));
+    if (hasRole) {
+      let planeBase = 100;
+      if (role === "surface")
+        planeBase = 0;
+      else if (role === "content")
+        planeBase = 100;
+      else if (role === "manipulator")
+        planeBase = 200;
+      else if (role === "hud")
+        planeBase = 300;
+      el.style.zIndex = String(planeBase + level * 10);
+      el.setAttribute("data-layer-role", role);
+    } else {
+      el.style.zIndex = String(level * 10);
+    }
+    el.setAttribute("data-resolved-layer", String(level));
+    if (sub)
+      el.setAttribute("data-sub", sub);
+    if (role === "manipulator") {
+      el.style.pointerEvents = "none";
+      el.querySelectorAll('.handle, [handle], [data-handle], [sub="handles"]').forEach((h) => {
+        h.style.pointerEvents = "auto";
+      });
+    } else if (role === "hud") {
+      el.style.pointerEvents = "auto";
+    }
+  }
+  function executeGlobalUndo(objid, authorId) {
+    if (objid) {
+      const s = streams.get(objid);
+      if (s && s.past.length > 0)
+        return s.undo(authorId);
+    }
+    if (typeof document !== "undefined" && document.activeElement) {
+      const activeObj = document.activeElement.closest("[objid]");
+      if (activeObj) {
+        const id = activeObj.getAttribute("objid");
+        if (id && streams.has(id)) {
+          const s = streams.get(id);
+          if (s.past.length > 0)
+            return s.undo(authorId);
+        }
+      }
+    }
+    if (globalTimeline.length > 0) {
+      let patchIndex = -1;
+      if (authorId) {
+        for (let i = globalTimeline.length - 1;i >= 0; i--) {
+          if (globalTimeline[i].sub === authorId) {
+            patchIndex = i;
+            break;
+          }
+        }
+      } else {
+        patchIndex = globalTimeline.length - 1;
+      }
+      if (patchIndex !== -1) {
+        const [patch] = globalTimeline.splice(patchIndex, 1);
+        globalRedoTimeline.push(patch);
+        applyPatchDirect(patch.target, patch.op, patch.prop, patch.inverse);
+        dispatchStreamEvent("hx-stream:undo", patch);
+        return patch;
+      }
+    }
+    return;
+  }
   var HxBolt = {
     config,
     errors: ERROR_CATALOG,
@@ -2727,8 +3003,6 @@
       canUndo: () => historyUndoStack.length > 1,
       canRedo: () => historyRedoStack.length > 0
     },
-    undo: undoState,
-    redo: redoState,
     fx: HyperFX,
     spatial: HxSpatial,
     ticker: {
@@ -2813,6 +3087,50 @@
     },
     struct: defineStructSchema,
     validateStruct,
+    stream: getOrCreateStream,
+    applyPatch: applyStreamPatch,
+    undo(objid, authorId) {
+      if (objid) {
+        return executeGlobalUndo(objid, authorId);
+      }
+      if (historyUndoStack.length > 1) {
+        return undoState();
+      }
+      return executeGlobalUndo(undefined, authorId);
+    },
+    redo(objid, authorId) {
+      if (objid) {
+        const s = streams.get(objid);
+        if (s && s.future.length > 0)
+          return s.redo(authorId);
+      }
+      if (historyRedoStack.length > 0) {
+        return redoState();
+      }
+      if (globalRedoTimeline.length > 0) {
+        let patchIndex = -1;
+        if (authorId) {
+          for (let i = globalRedoTimeline.length - 1;i >= 0; i--) {
+            if (globalRedoTimeline[i].sub === authorId) {
+              patchIndex = i;
+              break;
+            }
+          }
+        } else {
+          patchIndex = globalRedoTimeline.length - 1;
+        }
+        if (patchIndex !== -1) {
+          const [patch] = globalRedoTimeline.splice(patchIndex, 1);
+          globalTimeline.push(patch);
+          applyPatchDirect(patch.target, patch.op, patch.prop, patch.val);
+          dispatchStreamEvent("hx-stream:redo", patch);
+          return patch;
+        }
+      }
+      return;
+    },
+    layer: applyLayerMatrix,
+    ensureObjID,
     init(root) {
       discoverMetaAuth();
       if (typeof document !== "undefined" && root) {
@@ -2824,6 +3142,13 @@
         initComponent(root);
       }
       if (typeof document !== "undefined") {
+        const layerEls = root.querySelectorAll ? root.querySelectorAll("hx-layer, app-layer, [hx-layer], [app-layer], [layer]") : [];
+        layerEls.forEach(applyLayerMatrix);
+        const streamEls = root.querySelectorAll ? root.querySelectorAll("[hx-stream], [objid]") : [];
+        streamEls.forEach((el) => {
+          const id = ensureObjID(el);
+          getOrCreateStream(id);
+        });
         const spatialEls = root.querySelectorAll ? root.querySelectorAll("[hx-3d], [hx-spatial], [hx-env], [hx-atmos], [hx-fx], hx-viewport, hx-mesh, hx-particle, hx-light") : [];
         spatialEls.forEach((el) => HxSpatial.mount(el));
         if (root.matches && root.matches("[hx-3d], [hx-spatial], [hx-env], [hx-atmos], [hx-fx], hx-viewport, hx-mesh, hx-particle, hx-light")) {
@@ -2869,6 +3194,17 @@
                 if (el.hasAttribute("hx-state") || el.querySelector("script[hx-state]"))
                   initComponent(el);
                 el.querySelectorAll("[hx-state]").forEach((child) => initComponent(child));
+                el.querySelectorAll("hx-layer, app-layer, [hx-layer], [app-layer], [layer]").forEach((child) => applyLayerMatrix(child));
+                if (el.matches && el.matches("hx-layer, app-layer, [hx-layer], [app-layer], [layer]"))
+                  applyLayerMatrix(el);
+                el.querySelectorAll("[hx-stream], [objid]").forEach((child) => {
+                  const id = ensureObjID(child);
+                  getOrCreateStream(id);
+                });
+                if (el.hasAttribute && (el.hasAttribute("hx-stream") || el.hasAttribute("objid"))) {
+                  const id = ensureObjID(el);
+                  getOrCreateStream(id);
+                }
                 if (el.matches && el.matches("[hx-3d], [hx-spatial], [hx-env], [hx-atmos], [hx-fx], hx-viewport, hx-mesh, hx-particle, hx-light"))
                   HxSpatial.mount(el);
                 el.querySelectorAll("[hx-3d], [hx-spatial], [hx-env], [hx-atmos], [hx-fx], hx-viewport, hx-mesh, hx-particle, hx-light").forEach((child) => HxSpatial.mount(child));
@@ -2876,7 +3212,7 @@
             });
           }
         }
-      }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["scaleui", "hx-state"] });
+      }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["scaleui", "hx-state", "hx-stream", "objid", "hx-layer", "app-layer"] });
     }, autoInit = function() {
       discoverMetaAuth();
       if (typeof document !== "undefined" && document.body) {
@@ -2891,10 +3227,57 @@
         initComponent(document.body);
       }
       document.querySelectorAll("[scaleui]").forEach((el) => handleScaleUI(el));
+      document.querySelectorAll("hx-layer, app-layer, [hx-layer], [app-layer], [layer]").forEach((el) => applyLayerMatrix(el));
+      document.querySelectorAll("[hx-stream], [objid]").forEach((el) => {
+        const id = ensureObjID(el);
+        getOrCreateStream(id);
+      });
       document.querySelectorAll("[hx-3d], [hx-spatial], [hx-env], [hx-atmos], [hx-fx], hx-viewport, hx-mesh, hx-particle, hx-light").forEach((el) => HxSpatial.mount(el));
       setupObserver();
     };
     window.HxBolt = HxBolt;
+    window.__HYPERSTACK__ = {
+      version: "1.0.0",
+      getStream(objid) {
+        return streams.get(objid);
+      },
+      getHistory(objid) {
+        return streams.get(objid)?.past || [];
+      },
+      undo(objid, authorId) {
+        return executeGlobalUndo(objid, authorId);
+      },
+      redo(objid, authorId) {
+        return HxBolt.redo(objid, authorId);
+      },
+      applyPatch(patch) {
+        return applyStreamPatch(patch);
+      },
+      acquireLease(objid, sub, mode) {
+        return getOrCreateStream(objid).acquireLease(sub, mode);
+      },
+      releaseLease(objid, sub) {
+        streams.get(objid)?.releaseLease(sub);
+      },
+      getLease(objid) {
+        const s = streams.get(objid);
+        return { lease: s ? s.lease : "idle", owner: s?.leaseOwner };
+      }
+    };
+    document.addEventListener("keydown", (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key && e.key.toLowerCase() === "z") {
+        const target = e.target;
+        if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA") && !target.hasAttribute("hx-stream")) {
+          return;
+        }
+        e.preventDefault();
+        if (e.shiftKey) {
+          window.__HYPERSTACK__?.redo();
+        } else {
+          window.__HYPERSTACK__?.undo();
+        }
+      }
+    });
     window.Hyperstack = {
       config,
       errors: ERROR_CATALOG,

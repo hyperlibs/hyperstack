@@ -2,6 +2,14 @@ name = "hyperstack"
 main = "worker.ts"
 compatibility_date = "2026-09-01"
 
+routes = [
+  { pattern = "www.hyperstackhtmx.org", custom_domain = true }
+]
+
+[observability]
+enabled = false
+
 [assets]
 directory = "./dist"
 binding = "ASSETS"
+

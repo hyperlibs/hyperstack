@@ -7,14 +7,14 @@
     <a href="https://github.com/hyperlibs/hyperstack/actions/workflows/ci.yml"><img src="https://github.com/hyperlibs/hyperstack/actions/workflows/ci.yml/badge.svg" alt="CI Status"></a>
     <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/release-v1.0.0-blue?style=flat-square" alt="Release"></a>
     <a href="https://unpkg.com/htmx.org@4.0.0/"><img src="https://img.shields.io/badge/htmx-4.0.0_core-black?style=flat-square&logo=htmx" alt="HTMX 4 Core"></a>
-    <a href="https://hyperstack.cgb.workers.dev/demo/"><img src="https://img.shields.io/badge/Cloudflare-Live_Deployment-F38020?logo=cloudflare&style=flat-square" alt="Cloudflare Deployment"></a>
+    <a href="https://www.hyperstackhtmx.org"><img src="https://img.shields.io/badge/Cloudflare-Live_Deployment-F38020?logo=cloudflare&style=flat-square" alt="Cloudflare Deployment"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-purple?style=flat-square" alt="License"></a>
     <a href="CHECKSUMS.sha256"><img src="https://img.shields.io/badge/SHA--256-13%2F13_Verified-emerald?style=flat-square" alt="Checksums"></a>
   </p>
   <p>
-    <a href="https://hyperstack.cgb.workers.dev/demo/"><strong>⚡ Live Demos on Cloudflare</strong></a> &nbsp;•&nbsp; 
-    <a href="https://hyperstack.cgb.workers.dev/demo/mobile/"><strong>📱 AppzOS Mobile Simulator</strong></a> &nbsp;•&nbsp; 
-    <a href="https://hyperstack.cgb.workers.dev/docs/components/introduction/"><strong>📖 Documentation</strong></a> &nbsp;•&nbsp; 
+    <a href="https://www.hyperstackhtmx.org/demo/"><strong>⚡ Live Demos (www.hyperstackhtmx.org)</strong></a> &nbsp;•&nbsp; 
+    <a href="https://www.hyperstackhtmx.org/demo/mobile/"><strong>📱 AppzOS Mobile Simulator</strong></a> &nbsp;•&nbsp; 
+    <a href="https://www.hyperstackhtmx.org/docs/"><strong>📖 Documentation</strong></a> &nbsp;•&nbsp; 
     <a href="#-about-us--the-hyperlibs-mission"><strong>👥 About Us</strong></a> &nbsp;•&nbsp; 
     <a href="https://github.com/hyperlibs/hyperstack"><strong>⭐ GitHub</strong></a>
   </p>

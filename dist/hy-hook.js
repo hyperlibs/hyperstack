@@ -30,6 +30,7 @@
   // src/hy-hook.ts
   var exports_hy_hook = {};
   __export(exports_hy_hook, {
+    useStream: () => useStream,
     HyperPlane: () => HyperPlane,
     HyperHookEngine: () => HyperHookEngine,
     HyperFrameCodec: () => HyperFrameCodec,
@@ -808,8 +809,20 @@
       observer.observe(document.body, { childList: true, subtree: true });
     }
   }
+  function useStream(objid, callback) {
+    if (typeof document === "undefined")
+      return () => {};
+    const handler = (e) => {
+      if (e.detail && e.detail.patch && e.detail.patch.target === objid) {
+        callback(e.detail.patch);
+      }
+    };
+    document.addEventListener("hx-stream:patch", handler);
+    return () => document.removeEventListener("hx-stream:patch", handler);
+  }
   if (typeof window !== "undefined") {
     window.HyHook = HyHook;
+    window.HyHook.useStream = useStream;
     window.HyperPlane = HyperPlane;
     window.HyperFlag = HyperFlag;
     window.HyperFrameCodec = HyperFrameCodec;
