@@ -12,22 +12,22 @@ Raw and gzip figures below are exact byte counts, and `tests/benchmarks.test.ts`
 
 | Micro-Engine | Responsibility | Raw | Gzipped |
 | :--- | :--- | ---: | ---: |
-| **htmx-bolt.js** | Fine-grained signals, zero-eval parser, auto-fallback | 107,781 B | 23,761 B |
-| **htmx-flash.js** | In-memory fuzzy search & TypedArray columnar queries | 17,235 B | 4,353 B |
-| **htmx-form.js** | Declarative validation, optimistic UI & undo/redo | 17,988 B | 4,518 B |
+| **htmx-bolt.js** | Fine-grained signals, zero-eval parser, auto-fallback | 120,567 B | 26,508 B |
+| **htmx-flash.js** | In-memory fuzzy search & TypedArray columnar queries | 17,235 B | 4,367 B |
+| **htmx-form.js** | Declarative validation, optimistic UI & undo/redo | 17,988 B | 4,527 B |
 | **htmx-vibe.js** | FLIP layout animation & damped-harmonic physics | 11,933 B | 3,335 B |
-| **htmx-a11y.js** | Focus trap, roving tabindex & 2D matrix navigation | 11,966 B | 3,124 B |
-| **htmx-virtual.js** | 1D/2D bi-directional viewport virtualization | 13,997 B | 3,350 B |
-| **htmx-grid.js** | Data grid: column resize, reorder & CSV export | 20,324 B | 5,292 B |
-| **htmx-calc.js** | Reactive formula engine & Kahn DAG topological sort | 11,897 B | 3,254 B |
-| **htmx-offline.js** | IndexedDB offline cache & 409 conflict resolution | 7,914 B | 2,375 B |
-| **htmx-devtools.js** | Signal graph inspector & `@diag` telemetry | 6,292 B | 2,087 B |
-| **htmx-canvas.js** | Spatial node diagram engine | 7,514 B | 2,198 B |
-| **htmx-sim.js** | Kinetic particle physics, swarm boids & 2D simulation | 25,536 B | 6,145 B |
-| **appz.js** | App shell, `app-seg`/`app-layer` stacking, hardware bridge | 35,781 B | 9,155 B |
-| **TOTAL (13 engines)** | **Complete full-stack frontend capability** | **296,158 B** | **72,947 B** |
+| **htmx-a11y.js** | Focus trap, roving tabindex & 2D matrix navigation | 11,966 B | 3,120 B |
+| **htmx-virtual.js** | 1D/2D bi-directional viewport virtualization | 13,997 B | 3,348 B |
+| **htmx-grid.js** | Data grid: column resize, reorder & CSV export | 20,324 B | 5,290 B |
+| **htmx-calc.js** | Reactive formula engine & Kahn DAG topological sort | 11,897 B | 3,253 B |
+| **htmx-offline.js** | IndexedDB offline cache & 409 conflict resolution | 7,914 B | 2,379 B |
+| **htmx-devtools.js** | Signal graph inspector & `@diag` telemetry | 6,292 B | 2,081 B |
+| **htmx-canvas.js** | Spatial node diagram engine | 7,514 B | 2,192 B |
+| **htmx-sim.js** | Kinetic particle physics, swarm boids & 2D simulation | 25,536 B | 6,138 B |
+| **appz.js** | App shell, `app-seg`/`app-layer` stacking, hardware bridge | 36,776 B | 9,439 B |
+| **TOTAL (13 engines)** | **Complete full-stack frontend capability** | **309,939 B** | **75,977 B** |
 
-The gzip total is the sum of the per-file gzip figures, which is the honest number because engines are served as separate requests. The CI bundle budget in `.github/workflows/ci.yml` enforces a **350,000 B** ceiling on the uncompressed `public/htmx-*.js` + `public/appz.js` total; the current total is **296,158 B** (~84% of budget).
+The gzip total is the sum of the per-file gzip figures, which is the honest number because engines are served as separate requests. The CI bundle budget in `.github/workflows/ci.yml` enforces a **350,000 B** ceiling on the uncompressed `public/htmx-*.js` + `public/appz.js` total; the current total is **309,939 B** (~88.5% of budget).
 
 *For comparison, `react-dom` alone is ~130 KB raw / ~42 KB gzip — before any state management library (Zustand/Redux), router, component primitives, physics, or virtualized grid is added.*
 

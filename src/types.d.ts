@@ -25,7 +25,59 @@ declare global {
     HxCalc?: any;
     Hyperstack?: any;
     htmFX?: any;
+    __HYPERSTACK__?: HyperstackGlobal;
   }
+}
+
+export type PatchOp = 'set_attribute' | 'set_style' | 'set_text' | 'set_state' | 'insert_child' | 'remove_child' | 'reparent';
+
+export interface StreamPatch {
+  txId?: string;
+  sub?: string;       // Subject (agent_id, user_id)
+  dom?: string;       // Domain (docid / sceneid / workspace)
+  target: string;     // Target objid
+  op: PatchOp;        // Atomic operation
+  prop?: string;      // Key/Property
+  val?: any;          // Forward value
+  inverse?: any;      // Inverse value for instant 0.02ms rollback
+  ts?: number;        // Timestamp
+}
+
+export interface EventContext {
+  sub: string;
+  dom: string;
+  obj: string;
+  act: string;
+  txId?: string;
+  timestamp: number;
+}
+
+export type LayerRole = 'surface' | 'content' | 'manipulator' | 'hud';
+export type LeaseState = 'idle' | 'focus' | 'edit' | 'locked';
+
+export interface IHyStream {
+  objid: string;
+  past: StreamPatch[];
+  future: StreamPatch[];
+  lease: LeaseState;
+  leaseOwner?: string;
+  record(patch: StreamPatch): void;
+  undo(authorId?: string): StreamPatch | undefined;
+  redo(authorId?: string): StreamPatch | undefined;
+  acquireLease(sub: string, mode?: 'focus' | 'edit'): boolean;
+  releaseLease(sub: string): void;
+}
+
+export interface HyperstackGlobal {
+  version: string;
+  getStream(objid: string): IHyStream | undefined;
+  getHistory(objid: string): StreamPatch[];
+  undo(objid?: string, authorId?: string): StreamPatch | undefined;
+  redo(objid?: string, authorId?: string): StreamPatch | undefined;
+  applyPatch(patch: StreamPatch): boolean;
+  acquireLease(objid: string, sub: string, mode?: 'focus' | 'edit'): boolean;
+  releaseLease(objid: string, sub: string): void;
+  getLease(objid: string): { lease: LeaseState; owner?: string };
 }
 
 export interface HxSpatialAPI {

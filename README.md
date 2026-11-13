@@ -111,19 +111,19 @@ Hyperstack = HTMX 4 (Modern DOM & Fetch Hypermedia Core)
 
 | Engine | Source (`src/`) | Distribution (`public/`) | Size (Gzipped) | Mathematical & Algorithmic Foundation | Capabilities |
 |---|---|---|---|---|---|
-| **⚡ Bolt** | `htmx-bolt.ts` | `htmx-bolt.js` | 23.2 KB | $O(1)$ coordinate-keyed sparse matrix & microtask batching | Signals, dependency tracking via deep Proxies, computed properties, `$store`, `HxBolt.matrix`, 120 FPS ticker, zero-eval safe evaluator. |
-| **🔍 Flash** | `htmx-flash.ts` | `htmx-flash.js` | 4.25 KB | TypedArray columnar indexing & bitmask query filters | In-memory fuzzy search (`hx-flash-search`), multi-column filters, TypedArray columnar store (`createColumnStore`). |
+| **⚡ Bolt** | `htmx-bolt.ts` | `htmx-bolt.js` | 25.89 KB | $O(1)$ coordinate-keyed sparse matrix & microtask batching | Signals, dependency tracking via deep Proxies, computed properties, `$store`, `HxBolt.matrix`, 120 FPS ticker, zero-eval safe evaluator. |
+| **🔍 Flash** | `htmx-flash.ts` | `htmx-flash.js` | 4.26 KB | TypedArray columnar indexing & bitmask query filters | In-memory fuzzy search (`hx-flash-search`), multi-column filters, TypedArray columnar store (`createColumnStore`). |
 | **🪟 Virtual** | `htmx-virtual.ts` | `htmx-virtual.js` | 3.27 KB | $O(1)$ spatial slicing & binary row-height bisecting | Bi-directional 2D windowing virtualization with pinned rows/columns for million-row tables. |
 | **📊 Calc** | `htmx-calc.ts` | `htmx-calc.js` | 3.18 KB | Kahn's algorithm topological DAG sort & cycle detection | Reactive formula DAG engine with coordinate references (`A1`, `SUM(A1:B10)`) and `#CYCLE!` detection. |
-| **📝 Form** | `htmx-form.ts` | `htmx-form.js` | 4.41 KB | Deterministic finite-state machine (FSM) validation | Declarative validation (`hx-validate="required\|email"`), optimistic cell transactions with undo/redo (`Ctrl+Z`). |
+| **📝 Form** | `htmx-form.ts` | `htmx-form.js` | 4.42 KB | Deterministic finite-state machine (FSM) validation | Declarative validation (`hx-validate="required\|email"`), optimistic cell transactions with undo/redo (`Ctrl+Z`). |
 | **🌊 Vibe** | `htmx-vibe.ts` | `htmx-vibe.js` | 3.26 KB | Damped harmonic oscillator kinematics: $m \ddot{x} + c \dot{x} + kx = 0$ | FLIP layout animation engine, spring physics solver (`SpringSolver`), stagger sequences, scroll triggers. |
 | **📋 Grid** | `htmx-grid.ts` | `htmx-grid.js` | 5.17 KB | Frozen-pane offset math over virtualized column indices | Enterprise data grid: column resize, drag reorder, pinned columns, CSV export. |
-| **🧬 Sim** | `htmx-sim.ts` | `htmx-sim.js` | 6.00 KB | Particle physics, Boids Reynolds rules, 2D Barnes-Hut gravity | Swarm intelligence flocking, N-Body orbital dynamics, elastic momentum, 23/3 Conway Life, slime mould sensors. |
+| **🧬 Sim** | `htmx-sim.ts` | `htmx-sim.js` | 5.99 KB | Particle physics, Boids Reynolds rules, 2D Barnes-Hut gravity | Swarm intelligence flocking, N-Body orbital dynamics, elastic momentum, 23/3 Conway Life, slime mould sensors. |
 | **♿ A11y** | `htmx-a11y.ts` | `htmx-a11y.js` | 3.05 KB | WAI-ARIA roving coordinate space navigation | Modal focus trapping (`hx-trap-focus`), roving tabindex, 2D matrix navigation, Excel range selection. |
 | **📶 Offline** | `htmx-offline.ts` | `htmx-offline.js` | 2.32 KB | FIFO transaction journal with exponential backoff | IndexedDB mutation queues with exponential retry backoff and online sync. |
-| **🛠️ DevTools** | `htmx-devtools.ts` | `htmx-devtools.js` | 2.04 KB | Telemetry bridge & SARIF 2.1.0 diagnostic stream | Real-time signal inspector, swap latency timing metrics, `@diag` HUD. |
-| **🖼️ Canvas** | `htmx-canvas.ts` | `htmx-canvas.js` | 2.15 KB | Layer-indexed spatial node graph with live connector routing | Draggable node diagrams, automatic connector/bézier routing between nodes, per-node layer resolution. |
-| **📱 Appz** | `appz.ts` | `appz.js` | 8.94 KB | 0–9 Photoshop-style layer stack, viewport OS modes & coroutine channels | `app-shellui`, `app-bar`, `app-seg`, `app-layer`, `app-navbar`, bottom sheets, joystick HUD, haptics, hardware/network/battery bridge. |
+| **🛠️ DevTools** | `htmx-devtools.ts` | `htmx-devtools.js` | 2.03 KB | Telemetry bridge & SARIF 2.1.0 diagnostic stream | Real-time signal inspector, swap latency timing metrics, `@diag` HUD. |
+| **🖼️ Canvas** | `htmx-canvas.ts` | `htmx-canvas.js` | 2.14 KB | Layer-indexed spatial node graph with live connector routing | Draggable node diagrams, automatic connector/bézier routing between nodes, per-node layer resolution. |
+| **📱 Appz** | `appz.ts` | `appz.js` | 9.22 KB | 0–9 Photoshop-style layer stack, viewport OS modes & coroutine channels | `app-shellui`, `app-bar`, `app-seg`, `app-layer`, `app-navbar`, bottom sheets, joystick HUD, haptics, hardware/network/battery bridge. |
 
 ---
 
@@ -131,7 +131,7 @@ Hyperstack = HTMX 4 (Modern DOM & Fetch Hypermedia Core)
 
 Hyperstack includes an automated, reproducible benchmark suite (`bun run benchmark`) measuring real runtime throughput and payload efficiency. Full table, methodology and variance notes: [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
 
-- **Complete 13-Engine Suite**: **296,284 B raw / 72,947 B gzipped** — smaller than `react-dom` alone before components or state libraries.
+- **Complete 13-Engine Suite**: **309,939 B raw / 75,977 B gzipped** — smaller than `react-dom` alone before components or state libraries.
 - **Atomic 2D Sparse Matrix**: **427,000+ cell writes / second** in $O(1)$ coordinate space.
 - **In-Memory Columnar Search**: **0.146 ms query latency** across 10,000 rows.
 - **DAG Topological Solver**: **0.15 ms cascade resolution** across 500-level formula dependencies.

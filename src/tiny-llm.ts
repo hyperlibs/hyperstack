@@ -499,7 +499,7 @@ export class TinyLLM {
   }
 
   public answerQuestion(questionIdOrText: string, answersInput: string | AudienceAnswers): ContextualQAItem {
-    let item = this.qaStore.find(q => q.id === questionIdOrText);
+    let item: ContextualQAItem | null | undefined = this.qaStore.find(q => q.id === questionIdOrText);
     if (!item) {
       item = this.findQAByQuestion(questionIdOrText);
     }
@@ -703,7 +703,7 @@ export class TinyLLM {
       throw new Error(validation.error || 'Invalid reply');
     }
 
-    let item = this.qaStore.find(q => q.id === questionIdOrText);
+    let item: ContextualQAItem | null | undefined = this.qaStore.find(q => q.id === questionIdOrText);
     if (!item) {
       item = this.findQAByQuestion(questionIdOrText);
     }

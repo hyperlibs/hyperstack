@@ -10,7 +10,7 @@
  * - Deterministic Scoped Expression Evaluator ($store, $refs, $el, $event, $form, $action)
  */
 
-import type { HxBoltAPI, ReactiveProxy, TransitionPreset, ISparseMatrix } from './types';
+import type { HxBoltAPI, ReactiveProxy, TransitionPreset, ISparseMatrix, StreamPatch, PatchOp, IHyStream, LeaseState, LayerRole, EventContext, HyperstackGlobal } from './types';
 
 // Global Framework Configuration
 export const config = {
@@ -2540,14 +2540,16 @@ function startTickerLoop(): void {
       });
     }
 
+    const scheduleNextFrame = typeof requestAnimationFrame !== 'undefined' ? requestAnimationFrame : (cb: Function) => setTimeout(cb, 16);
     if (tickerCallbacks.size > 0 || (typeof document !== 'undefined' && document.querySelector('[hx-tick]'))) {
-      requestAnimationFrame(loop);
+      scheduleNextFrame(loop);
     } else {
       tickerRunning = false;
     }
   }
 
-  requestAnimationFrame(loop);
+  const scheduleNextFrame = typeof requestAnimationFrame !== 'undefined' ? requestAnimationFrame : (cb: Function) => setTimeout(cb, 16);
+  scheduleNextFrame(loop);
 }
 
 // -----------------------------------------------------------------------------
@@ -2767,6 +2769,295 @@ customDirectives.set('3datmos', (el) => HxSpatial.mount(el));
 customDirectives.set('3dfx', (el) => HxSpatial.mount(el));
 customDirectives.set('hx-spatial', (el) => HxSpatial.mount(el));
 
+// =============================================================================
+// UNIVERSAL ADDRESSING (`objid`/`docid`), `hx-stream` & 2D LAYER MATRIX
+// =============================================================================
+
+let objIdCounter = 0;
+
+export function ensureObjID(el: HTMLElement): string {
+  let id = el.getAttribute('objid');
+  if (!id) {
+    id = el.id ? el.id : `obj_${++objIdCounter}`;
+    el.setAttribute('objid', id);
+  }
+  return id;
+}
+
+export class HyStream implements IHyStream {
+  objid: string;
+  past: StreamPatch[] = [];
+  future: StreamPatch[] = [];
+  lease: LeaseState = 'idle';
+  leaseOwner?: string;
+
+  constructor(objid: string) {
+    this.objid = objid;
+  }
+
+  record(patch: StreamPatch): void {
+    this.past.push(patch);
+    this.future = [];
+    globalTimeline.push(patch);
+    globalRedoTimeline.length = 0;
+  }
+
+  undo(authorId?: string): StreamPatch | undefined {
+    let patchIndex = -1;
+    if (authorId) {
+      for (let i = this.past.length - 1; i >= 0; i--) {
+        if (this.past[i].sub === authorId) {
+          patchIndex = i;
+          break;
+        }
+      }
+    } else {
+      patchIndex = this.past.length - 1;
+    }
+
+    if (patchIndex === -1) return undefined;
+    const [patch] = this.past.splice(patchIndex, 1);
+    this.future.push(patch);
+
+    applyPatchDirect(patch.target, patch.op, patch.prop, patch.inverse);
+    dispatchStreamEvent('hx-stream:undo', patch);
+    return patch;
+  }
+
+  redo(authorId?: string): StreamPatch | undefined {
+    let patchIndex = -1;
+    if (authorId) {
+      for (let i = this.future.length - 1; i >= 0; i--) {
+        if (this.future[i].sub === authorId) {
+          patchIndex = i;
+          break;
+        }
+      }
+    } else {
+      patchIndex = this.future.length - 1;
+    }
+
+    if (patchIndex === -1) return undefined;
+    const [patch] = this.future.splice(patchIndex, 1);
+    this.past.push(patch);
+
+    applyPatchDirect(patch.target, patch.op, patch.prop, patch.val);
+    dispatchStreamEvent('hx-stream:redo', patch);
+    return patch;
+  }
+
+  acquireLease(sub: string, mode: 'focus' | 'edit' = 'focus'): boolean {
+    if (this.lease === 'edit' && this.leaseOwner && this.leaseOwner !== sub) {
+      return false; // Mutex locked by another user or agent
+    }
+    this.lease = mode;
+    this.leaseOwner = sub;
+
+    if (typeof document !== 'undefined') {
+      const el = document.querySelector(`[objid="${this.objid}"]`) as HTMLElement;
+      if (el) {
+        el.setAttribute('data-lease', mode);
+        el.setAttribute('data-lease-owner', sub);
+        if (mode === 'edit') {
+          const parent = el.parentElement ? (el.parentElement.closest('[objid]') as HTMLElement) : null;
+          if (parent) parent.setAttribute('data-parent-locked', 'true');
+        }
+      }
+    }
+    return true;
+  }
+
+  releaseLease(sub: string): void {
+    if (this.leaseOwner === sub) {
+      this.lease = 'idle';
+      this.leaseOwner = undefined;
+      if (typeof document !== 'undefined') {
+        const el = document.querySelector(`[objid="${this.objid}"]`) as HTMLElement;
+        if (el) {
+          el.removeAttribute('data-lease');
+          el.removeAttribute('data-lease-owner');
+          const parent = el.parentElement ? (el.parentElement.closest('[objid]') as HTMLElement) : null;
+          if (parent) parent.removeAttribute('data-parent-locked');
+        }
+      }
+    }
+  }
+}
+
+const streams = new Map<string, HyStream>();
+const globalTimeline: StreamPatch[] = [];
+const globalRedoTimeline: StreamPatch[] = [];
+
+export function getOrCreateStream(objid: string): HyStream {
+  let s = streams.get(objid);
+  if (!s) {
+    s = new HyStream(objid);
+    streams.set(objid, s);
+  }
+  return s;
+}
+
+function applyPatchDirect(targetObjId: string, op: PatchOp, prop?: string, value?: any): any {
+  if (typeof document === 'undefined') return undefined;
+  const el = document.querySelector(`[objid="${targetObjId}"]`) as HTMLElement;
+  if (!el) return undefined;
+
+  let previousVal: any = undefined;
+
+  switch (op) {
+    case 'set_attribute':
+      if (prop) {
+        previousVal = el.getAttribute(prop);
+        if (value === null || value === undefined) {
+          el.removeAttribute(prop);
+        } else {
+          el.setAttribute(prop, String(value));
+        }
+      }
+      break;
+    case 'set_style':
+      if (prop) {
+        previousVal = (el.style as any)[prop];
+        (el.style as any)[prop] = value || '';
+      }
+      break;
+    case 'set_text':
+      previousVal = el.textContent;
+      el.textContent = value !== undefined ? String(value) : '';
+      break;
+    case 'set_state':
+      if (prop && elementStates.has(el)) {
+        const st = elementStates.get(el)!;
+        previousVal = (st as any)[prop];
+        (st as any)[prop] = value;
+      }
+      break;
+    case 'insert_child':
+      if (typeof value === 'string') {
+        el.insertAdjacentHTML('beforeend', value);
+      }
+      break;
+    case 'remove_child':
+      if (prop) {
+        const child = el.querySelector(`[objid="${prop}"]`);
+        if (child) {
+          previousVal = child.outerHTML;
+          child.remove();
+        }
+      }
+      break;
+  }
+  return previousVal;
+}
+
+function dispatchStreamEvent(eventName: string, patch: StreamPatch): void {
+  if (typeof document === 'undefined') return;
+  const el = document.querySelector(`[objid="${patch.target}"]`) || document.body;
+  if (!el) return;
+  const context: EventContext = {
+    sub: patch.sub || (authState.user && authState.user.id) || 'anonymous',
+    dom: patch.dom || (document.body ? document.body.getAttribute('docid') || 'default' : 'default'),
+    obj: patch.target,
+    act: patch.op,
+    txId: patch.txId,
+    timestamp: patch.ts || Date.now()
+  };
+  el.dispatchEvent(new CustomEvent(eventName, {
+    bubbles: true,
+    detail: { patch, context }
+  }));
+}
+
+export function applyStreamPatch(patch: StreamPatch): boolean {
+  const stream = getOrCreateStream(patch.target);
+
+  if (patch.inverse === undefined) {
+    patch.inverse = applyPatchDirect(patch.target, patch.op, patch.prop, patch.val);
+  } else {
+    applyPatchDirect(patch.target, patch.op, patch.prop, patch.val);
+  }
+
+  patch.ts = patch.ts || Date.now();
+  stream.record(patch);
+  dispatchStreamEvent('hx-stream:patch', patch);
+  return true;
+}
+
+export function applyLayerMatrix(el: HTMLElement): void {
+  const levelAttr = el.getAttribute('level') || el.getAttribute('layer') || '0';
+  const level = Math.max(0, Math.min(9, parseInt(levelAttr, 10) || 0));
+  const role = ((el.getAttribute('role') || 'content').toLowerCase()) as LayerRole;
+  const sub = el.getAttribute('sub') || '';
+
+  el.style.position = el.style.position || 'relative';
+
+  const hasRole = Boolean(el.hasAttribute ? el.hasAttribute('role') : (el.getAttribute && el.getAttribute('role')));
+  if (hasRole) {
+    let planeBase = 100;
+    if (role === 'surface') planeBase = 0;
+    else if (role === 'content') planeBase = 100;
+    else if (role === 'manipulator') planeBase = 200;
+    else if (role === 'hud') planeBase = 300;
+    el.style.zIndex = String(planeBase + level * 10);
+    el.setAttribute('data-layer-role', role);
+  } else {
+    el.style.zIndex = String(level * 10);
+  }
+
+  el.setAttribute('data-resolved-layer', String(level));
+  if (sub) el.setAttribute('data-sub', sub);
+
+  if (role === 'manipulator') {
+    el.style.pointerEvents = 'none';
+    el.querySelectorAll('.handle, [handle], [data-handle], [sub="handles"]').forEach(h => {
+      (h as HTMLElement).style.pointerEvents = 'auto';
+    });
+  } else if (role === 'hud') {
+    el.style.pointerEvents = 'auto';
+  }
+}
+
+function executeGlobalUndo(objid?: string, authorId?: string): StreamPatch | undefined {
+  if (objid) {
+    const s = streams.get(objid);
+    if (s && s.past.length > 0) return s.undo(authorId);
+  }
+
+  if (typeof document !== 'undefined' && document.activeElement) {
+    const activeObj = document.activeElement.closest('[objid]') as HTMLElement;
+    if (activeObj) {
+      const id = activeObj.getAttribute('objid');
+      if (id && streams.has(id)) {
+        const s = streams.get(id)!;
+        if (s.past.length > 0) return s.undo(authorId);
+      }
+    }
+  }
+
+  if (globalTimeline.length > 0) {
+    let patchIndex = -1;
+    if (authorId) {
+      for (let i = globalTimeline.length - 1; i >= 0; i--) {
+        if (globalTimeline[i].sub === authorId) {
+          patchIndex = i;
+          break;
+        }
+      }
+    } else {
+      patchIndex = globalTimeline.length - 1;
+    }
+
+    if (patchIndex !== -1) {
+      const [patch] = globalTimeline.splice(patchIndex, 1);
+      globalRedoTimeline.push(patch);
+      applyPatchDirect(patch.target, patch.op, patch.prop, patch.inverse);
+      dispatchStreamEvent('hx-stream:undo', patch);
+      return patch;
+    }
+  }
+  return undefined;
+}
+
 // -----------------------------------------------------------------------------
 // Global Public HxBolt API
 // -----------------------------------------------------------------------------
@@ -2779,8 +3070,6 @@ export const HxBolt: HxBoltAPI = {
     canUndo: () => historyUndoStack.length > 1,
     canRedo: () => historyRedoStack.length > 0
   },
-  undo: undoState,
-  redo: redoState,
   fx: HyperFX,
   spatial: HxSpatial,
   ticker: {
@@ -2860,6 +3149,49 @@ export const HxBolt: HxBoltAPI = {
   },
   struct: defineStructSchema,
   validateStruct,
+  stream: getOrCreateStream,
+  applyPatch: applyStreamPatch,
+  undo(objid?: string, authorId?: string): any {
+    if (objid) {
+      return executeGlobalUndo(objid, authorId);
+    }
+    if (historyUndoStack.length > 1) {
+      return undoState();
+    }
+    return executeGlobalUndo(undefined, authorId);
+  },
+  redo(objid?: string, authorId?: string): any {
+    if (objid) {
+      const s = streams.get(objid);
+      if (s && s.future.length > 0) return s.redo(authorId);
+    }
+    if (historyRedoStack.length > 0) {
+      return redoState();
+    }
+    if (globalRedoTimeline.length > 0) {
+      let patchIndex = -1;
+      if (authorId) {
+        for (let i = globalRedoTimeline.length - 1; i >= 0; i--) {
+          if (globalRedoTimeline[i].sub === authorId) {
+            patchIndex = i;
+            break;
+          }
+        }
+      } else {
+        patchIndex = globalRedoTimeline.length - 1;
+      }
+      if (patchIndex !== -1) {
+        const [patch] = globalRedoTimeline.splice(patchIndex, 1);
+        globalTimeline.push(patch);
+        applyPatchDirect(patch.target, patch.op, patch.prop, patch.val);
+        dispatchStreamEvent('hx-stream:redo', patch);
+        return patch;
+      }
+    }
+    return undefined;
+  },
+  layer: applyLayerMatrix,
+  ensureObjID,
   init(root: HTMLElement | Document) {
     discoverMetaAuth();
     if (typeof document !== 'undefined' && root) {
@@ -2871,6 +3203,13 @@ export const HxBolt: HxBoltAPI = {
       initComponent(root as HTMLElement);
     }
     if (typeof document !== 'undefined') {
+      const layerEls = (root.querySelectorAll ? root.querySelectorAll('hx-layer, app-layer, [hx-layer], [app-layer], [layer]') : []) as NodeListOf<HTMLElement>;
+      layerEls.forEach(applyLayerMatrix);
+      const streamEls = (root.querySelectorAll ? root.querySelectorAll('[hx-stream], [objid]') : []) as NodeListOf<HTMLElement>;
+      streamEls.forEach(el => {
+        const id = ensureObjID(el);
+        getOrCreateStream(id);
+      });
       const spatialEls = (root.querySelectorAll ? root.querySelectorAll('[hx-3d], [hx-spatial], [hx-env], [hx-atmos], [hx-fx], hx-viewport, hx-mesh, hx-particle, hx-light') : []) as NodeListOf<HTMLElement>;
       spatialEls.forEach(el => HxSpatial.mount(el));
       if ((root as HTMLElement).matches && (root as HTMLElement).matches('[hx-3d], [hx-spatial], [hx-env], [hx-atmos], [hx-fx], hx-viewport, hx-mesh, hx-particle, hx-light')) {
@@ -2885,6 +3224,39 @@ export const HxBolt: HxBoltAPI = {
 
 if (typeof window !== 'undefined') {
   (window as any).HxBolt = HxBolt;
+  (window as any).__HYPERSTACK__ = {
+    version: '1.0.0',
+    getStream(objid: string) { return streams.get(objid); },
+    getHistory(objid: string) { return streams.get(objid)?.past || []; },
+    undo(objid?: string, authorId?: string) { return executeGlobalUndo(objid, authorId); },
+    redo(objid?: string, authorId?: string) { return HxBolt.redo(objid, authorId); },
+    applyPatch(patch: StreamPatch) { return applyStreamPatch(patch); },
+    acquireLease(objid: string, sub: string, mode?: 'focus' | 'edit') {
+      return getOrCreateStream(objid).acquireLease(sub, mode);
+    },
+    releaseLease(objid: string, sub: string) {
+      streams.get(objid)?.releaseLease(sub);
+    },
+    getLease(objid: string) {
+      const s = streams.get(objid);
+      return { lease: s ? s.lease : 'idle', owner: s?.leaseOwner };
+    }
+  };
+
+  document.addEventListener('keydown', (e: KeyboardEvent) => {
+    if ((e.ctrlKey || e.metaKey) && e.key && e.key.toLowerCase() === 'z') {
+      const target = e.target as HTMLElement;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') && !target.hasAttribute('hx-stream')) {
+        return;
+      }
+      e.preventDefault();
+      if (e.shiftKey) {
+        (window as any).__HYPERSTACK__?.redo();
+      } else {
+        (window as any).__HYPERSTACK__?.undo();
+      }
+    }
+  });
   (window as any).Hyperstack = {
     config,
     errors: ERROR_CATALOG,
@@ -3054,13 +3426,23 @@ if (typeof window !== 'undefined') {
               el.querySelectorAll('[scaleui]').forEach(child => handleScaleUI(child as HTMLElement));
               if (el.hasAttribute('hx-state') || el.querySelector('script[hx-state]')) initComponent(el);
               el.querySelectorAll('[hx-state]').forEach(child => initComponent(child as HTMLElement));
+              el.querySelectorAll('hx-layer, app-layer, [hx-layer], [app-layer], [layer]').forEach(child => applyLayerMatrix(child as HTMLElement));
+              if (el.matches && el.matches('hx-layer, app-layer, [hx-layer], [app-layer], [layer]')) applyLayerMatrix(el);
+              el.querySelectorAll('[hx-stream], [objid]').forEach(child => {
+                const id = ensureObjID(child as HTMLElement);
+                getOrCreateStream(id);
+              });
+              if (el.hasAttribute && (el.hasAttribute('hx-stream') || el.hasAttribute('objid'))) {
+                const id = ensureObjID(el);
+                getOrCreateStream(id);
+              }
               if (el.matches && el.matches('[hx-3d], [hx-spatial], [hx-env], [hx-atmos], [hx-fx], hx-viewport, hx-mesh, hx-particle, hx-light')) HxSpatial.mount(el);
               el.querySelectorAll('[hx-3d], [hx-spatial], [hx-env], [hx-atmos], [hx-fx], hx-viewport, hx-mesh, hx-particle, hx-light').forEach(child => HxSpatial.mount(child as HTMLElement));
             }
           });
         }
       }
-    }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['scaleui', 'hx-state'] });
+    }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['scaleui', 'hx-state', 'hx-stream', 'objid', 'hx-layer', 'app-layer'] });
   }
 
   function autoInit(): void {
@@ -3076,6 +3458,11 @@ if (typeof window !== 'undefined') {
       initComponent(document.body);
     }
     document.querySelectorAll('[scaleui]').forEach(el => handleScaleUI(el as HTMLElement));
+    document.querySelectorAll('hx-layer, app-layer, [hx-layer], [app-layer], [layer]').forEach(el => applyLayerMatrix(el as HTMLElement));
+    document.querySelectorAll('[hx-stream], [objid]').forEach(el => {
+      const id = ensureObjID(el as HTMLElement);
+      getOrCreateStream(id);
+    });
     document.querySelectorAll('[hx-3d], [hx-spatial], [hx-env], [hx-atmos], [hx-fx], hx-viewport, hx-mesh, hx-particle, hx-light').forEach(el => HxSpatial.mount(el as HTMLElement));
     setupObserver();
   }

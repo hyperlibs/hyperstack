@@ -964,8 +964,20 @@ if (typeof document !== 'undefined' && document.readyState) {
   }
 }
 
+export function useStream(objid: string, callback: (patch: any) => void): () => void {
+  if (typeof document === 'undefined') return () => {};
+  const handler = (e: any) => {
+    if (e.detail && e.detail.patch && e.detail.patch.target === objid) {
+      callback(e.detail.patch);
+    }
+  };
+  document.addEventListener('hx-stream:patch', handler);
+  return () => document.removeEventListener('hx-stream:patch', handler);
+}
+
 if (typeof window !== 'undefined') {
   (window as any).HyHook = HyHook;
+  (window as any).HyHook.useStream = useStream;
   (window as any).HyperPlane = HyperPlane;
   (window as any).HyperFlag = HyperFlag;
   (window as any).HyperFrameCodec = HyperFrameCodec;

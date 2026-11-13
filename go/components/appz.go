@@ -397,6 +397,31 @@ func Layer(level int, child Component) Component {
 	return Component{html: html}
 }
 
+func LayerMatrix(level int, role string, sub string, children ...Component) Component {
+	clamped := level
+	if clamped < 0 {
+		clamped = 0
+	}
+	if clamped > 9 {
+		clamped = 9
+	}
+	var sb strings.Builder
+	for _, c := range children {
+		sb.WriteString(c.Render())
+	}
+	subAttr := ""
+	if sub != "" {
+		subAttr = fmt.Sprintf(` sub="%s"`, sub)
+	}
+	roleAttr := ""
+	if role != "" {
+		roleAttr = fmt.Sprintf(` role="%s"`, role)
+	}
+	return Component{
+		html: fmt.Sprintf(`<app-layer level="%d"%s%s class="relative">%s</app-layer>`, clamped, roleAttr, subAttr, sb.String()),
+	}
+}
+
 // =============================================================================
 // 5. NAVIGATION BAR & SPATIAL JOYSTICK
 // =============================================================================

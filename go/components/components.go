@@ -282,4 +282,79 @@ func HypertextEditor(p HypertextEditorProps) Component {
 	return Component{html: html}
 }
 
+// --- Universal Addressing & Event Streaming Primitives ---
+
+type StreamPatch struct {
+	TxID    string      `json:"txId,omitempty"`
+	Sub     string      `json:"sub,omitempty"`
+	Dom     string      `json:"dom,omitempty"`
+	Target  string      `json:"target"`
+	Op      string      `json:"op"`
+	Prop    string      `json:"prop,omitempty"`
+	Val     interface{} `json:"val,omitempty"`
+	Inverse interface{} `json:"inverse,omitempty"`
+	TS      int64       `json:"ts,omitempty"`
+}
+
+type EventContext struct {
+	Sub       string `json:"sub"`
+	Dom       string `json:"dom"`
+	Obj       string `json:"obj"`
+	Act       string `json:"act"`
+	TxID      string `json:"txId,omitempty"`
+	Timestamp int64  `json:"timestamp"`
+}
+
+func ObjID(id string) string {
+	return fmt.Sprintf(`objid="%s"`, id)
+}
+
+func DocID(id string) string {
+	return fmt.Sprintf(`docid="%s"`, id)
+}
+
+func HxStream(enabled ...bool) string {
+	if len(enabled) > 0 && !enabled[0] {
+		return ""
+	}
+	return "hx-stream"
+}
+
+func HxLayer(level int, role string, sub string, children ...Component) Component {
+	clamped := level
+	if clamped < 0 {
+		clamped = 0
+	}
+	if clamped > 9 {
+		clamped = 9
+	}
+	var sb strings.Builder
+	for _, c := range children {
+		sb.WriteString(c.Render())
+	}
+	subAttr := ""
+	if sub != "" {
+		subAttr = fmt.Sprintf(` sub="%s"`, sub)
+	}
+	roleAttr := ""
+	if role != "" {
+		roleAttr = fmt.Sprintf(` role="%s"`, role)
+	}
+	return Component{
+		html: fmt.Sprintf(`<hx-layer level="%d"%s%s>%s</hx-layer>`, clamped, roleAttr, subAttr, sb.String()),
+	}
+}
+
+func ValidatePatch(p StreamPatch) error {
+	if p.Target == "" {
+		return fmt.Errorf("patch validation error: missing target objid")
+	}
+	switch p.Op {
+	case "set_attribute", "set_style", "set_text", "set_state", "insert_child", "remove_child", "reparent":
+		return nil
+	default:
+		return fmt.Errorf("patch validation error: unrecognized op %q", p.Op)
+	}
+}
+
 

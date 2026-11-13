@@ -1,5 +1,5 @@
 # Hyperstack — Hyper Reactive Lean Framework Suite for Humans and AI Agents
-> A hyperreactive, lean hypermedia-first application suite. ~71 KB gzipped for all 13 micro-engines, zero Virtual DOM, zero NPM build step for logic.
+> A hyperreactive, lean hypermedia-first application suite. ~74 KB gzipped for all 13 micro-engines, zero Virtual DOM, zero NPM build step for logic.
 
 ## 🏛️ Core Philosophy
 1. **Hypermedia First**: HTML is the primary medium over the wire; the server remains the authoritative source of truth.
@@ -15,19 +15,19 @@
 
 | Engine | Bundle | Size | Primary Capabilities |
 |---|---|---|---|
-| **HxBolt** | `htmx-bolt.js` | 23.20KB | Signal-based reactive state (`hx-state`), bindings (`hx-text`, `hx-show`, `hx-class`, `hx-style`), 2D sparse matrix (`HxBolt.matrix`), 60fps RAF stream throttle (`hx-stream-batch`). |
-| **HxFlash** | `htmx-flash.js` | 4.25KB | 0ms in-memory fuzzy search (`hx-flash-search`), multi-column filters (`hx-flash-filter`), TypedArray ColumnStore (`HxFlash.createColumnStore`). |
-| **HxForm** | `htmx-form.js` | 4.41KB | Declarative validation pipes (`hx-validate`), multi-step wizard (`hx-wizard`), cascading fields (`hx-depends`), cell transactions (`cellTransaction`). |
+| **HxBolt** | `htmx-bolt.js` | 25.89KB | Signal-based reactive state (`hx-state`), bindings (`hx-text`, `hx-show`, `hx-class`, `hx-style`), 2D sparse matrix (`HxBolt.matrix`), 60fps RAF stream throttle (`hx-stream-batch`). |
+| **HxFlash** | `htmx-flash.js` | 4.26KB | 0ms in-memory fuzzy search (`hx-flash-search`), multi-column filters (`hx-flash-filter`), TypedArray ColumnStore (`HxFlash.createColumnStore`). |
+| **HxForm** | `htmx-form.js` | 4.42KB | Declarative validation pipes (`hx-validate`), multi-step wizard (`hx-wizard`), cascading fields (`hx-depends`), cell transactions (`cellTransaction`). |
 | **HxVibe** | `htmx-vibe.js` | 3.26KB | 60fps FLIP layout animation (`hx-vibe-flip`), 3D card tilt (`hx-vibe-card`), magnetic cursor snapping (`hx-vibe-magnetic`), physics shockwave (`hx-vpx-blast`). |
 | **HxA11y** | `htmx-a11y.js` | 3.05KB | WAI-ARIA focus trapping (`hx-trap-focus`), roving tabindex (`hx-roving`), 2D matrix navigation (`hx-matrix-nav`, `Shift+Arrow` range selection). |
 | **HxVirtual** | `htmx-virtual.js` | 3.27KB | 1D & 2D bi-directional viewport windowing (`hx-virtual`, `hx-virtual-2d`), pinned sticky left/right columns (`hx-pinned-left`), 100k+ row recycling. |
 | **HxGrid** | `htmx-grid.js` | 5.17KB | Enterprise Data Grid (`<div hx-grid>`), interactive column resize handles, drag-and-drop column reordering, bulk actions, CSV export. |
 | **HxCalc** | `htmx-calc.js` | 3.18KB | Zero-dependency reactive formula engine with topological sorting DAG (Kahn's algorithm), cycle detection (`#CYCLE!`), coordinate resolver (`A1` $\leftrightarrow$ `(0, 0)`). |
 | **HxOffline** | `htmx-offline.js` | 2.32KB | IndexedDB offline mutation queue, optimistic local persistence, automatic sync on reconnect, 409 conflict resolution. |
-| **HxDevTools**| `htmx-devtools.js`| 2.04KB | In-browser visualizer (`Hyperstack.devtools`), reactive signal inspector, mutation timeline profiler. |
-| **HxSim** | `htmx-sim.js` | 6.00KB | Kinetic particle physics, Boids flocking, N-body orbital dynamics, elastic momentum, Conway Life. |
-| **HxCanvas** | `htmx-canvas.js` | 2.15KB | Layer-indexed spatial node graph (`hx-canvas`), draggable nodes, automatic connector routing between nodes. |
-| **Appz** | `appz.js` | 8.94KB | Mobile & spatial OS shell: `<app-shellui>`, `<app-bar>`, `<app-seg>`, `<app-layer level="0..9">`, `<app-navbar>`, bottom sheets, joystick HUD, haptics, coroutine channels (`AppzChan`). |
+| **HxDevTools**| `htmx-devtools.js`| 2.03KB | In-browser visualizer (`Hyperstack.devtools`), reactive signal inspector, mutation timeline profiler. |
+| **HxSim** | `htmx-sim.js` | 5.99KB | Kinetic particle physics, Boids flocking, N-body orbital dynamics, elastic momentum, Conway Life. |
+| **HxCanvas** | `htmx-canvas.js` | 2.14KB | Layer-indexed spatial node graph (`hx-canvas`), draggable nodes, automatic connector routing between nodes. |
+| **Appz** | `appz.js` | 9.22KB | Mobile & spatial OS shell: `<app-shellui>`, `<app-bar>`, `<app-seg>`, `<app-layer level="0..9">`, `<app-navbar>`, bottom sheets, joystick HUD, haptics, coroutine channels (`AppzChan`). |
 
 ---
 

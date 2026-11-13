@@ -626,9 +626,36 @@
     const levelAttr = el.getAttribute("level") || el.getAttribute("layer") || "0";
     const level = parseInt(levelAttr, 10);
     const clampedLevel = Math.max(0, Math.min(9, isNaN(level) ? 0 : level));
+    const role = (el.getAttribute("role") || "content").toLowerCase();
+    const sub = el.getAttribute("sub") || "";
     el.style.position = el.style.position || "relative";
-    el.style.zIndex = String(clampedLevel * 10);
+    const hasRole = Boolean(el.hasAttribute ? el.hasAttribute("role") : el.getAttribute && el.getAttribute("role"));
+    if (hasRole) {
+      let planeBase = 100;
+      if (role === "surface")
+        planeBase = 0;
+      else if (role === "content")
+        planeBase = 100;
+      else if (role === "manipulator")
+        planeBase = 200;
+      else if (role === "hud")
+        planeBase = 300;
+      el.style.zIndex = String(planeBase + clampedLevel * 10);
+      el.setAttribute("data-layer-role", role);
+    } else {
+      el.style.zIndex = String(clampedLevel * 10);
+    }
     el.setAttribute("data-resolved-layer", String(clampedLevel));
+    if (sub)
+      el.setAttribute("data-sub", sub);
+    if (role === "manipulator") {
+      el.style.pointerEvents = "none";
+      el.querySelectorAll('.handle, [handle], [data-handle], [sub="handles"]').forEach((h) => {
+        h.style.pointerEvents = "auto";
+      });
+    } else if (role === "hud") {
+      el.style.pointerEvents = "auto";
+    }
   }
 
   class AppzEngine {
