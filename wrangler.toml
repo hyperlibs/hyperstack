@@ -1,6 +1,7 @@
 name = "hyperstack"
 main = "worker.ts"
 compatibility_date = "2026-09-01"
+workers_dev = true
 
 routes = [
   { pattern = "www.hyperstackhtmx.org", custom_domain = true }

@@ -20,27 +20,27 @@
   <style>
     @layer base {
       :root {
-        --background: 222.2 84% 4.9%;
-        --foreground: 210 40% 98%;
-        --card: 222.2 84% 6.5%;
-        --card-foreground: 210 40% 98%;
-        --primary: 217.2 91.2% 59.8%;
-        --primary-foreground: 222.2 47.4% 11.2%;
-        --muted: 217.2 32.6% 17.5%;
-        --muted-foreground: 215 20.2% 65.1%;
-        --border: 217.2 32.6% 17.5%;
-        --input: 217.2 32.6% 17.5%;
+        --background: 210 40% 98%;
+        --foreground: 222.2 84% 4.9%;
+        --card: 0 0% 100%;
+        --card-foreground: 222.2 84% 4.9%;
+        --primary: 221.2 83.2% 53.3%;
+        --primary-foreground: 210 40% 98%;
+        --muted: 210 40% 96.1%;
+        --muted-foreground: 215.4 16.3% 46.9%;
+        --border: 214.3 31.8% 91.4%;
+        --input: 214.3 31.8% 91.4%;
       }
     }
   </style>
 </head>
-<body class="h-full bg-slate-950 text-slate-100 flex flex-col font-sans antialiased selection:bg-primary/30">
+<body hx-state class="h-full bg-slate-50 text-slate-900 flex flex-col font-sans antialiased selection:bg-blue-500/20">
   <script type="application/json" hx-state>
   {
     "currentTab": "dashboard",
     "activeRole": "admin",
     "sidebarOpen": true,
-    "theme": "dark",
+    "theme": "light",
     "notifications": [
       { "id": 1, "title": "System Online", "msg": "Hyperstack 11 Engines Initialized", "time": "Just now" }
     ],
@@ -53,34 +53,34 @@
   }
   </script>
 
-  <!-- Top Global App Bar -->
-  <header class="h-14 border-b border-slate-800 bg-slate-900/80 backdrop-blur px-4 flex items-center justify-between z-30 sticky top-0">
+  <!-- Top Global App Bar (Light Theme) -->
+  <header class="h-14 border-b border-slate-200 bg-white/95 backdrop-blur px-4 flex items-center justify-between z-30 sticky top-0 shadow-xs">
     <div class="flex items-center gap-3">
-      <div class="w-8 h-8 rounded-lg bg-primary text-slate-950 font-extrabold flex items-center justify-center text-sm shadow-md shadow-primary/20">
+      <div class="w-8 h-8 rounded-lg bg-blue-600 text-white font-extrabold flex items-center justify-center text-sm shadow-sm">
         ▲
       </div>
       <div class="flex items-center gap-2">
-        <span class="font-bold text-sm tracking-tight text-white">Apex Logistics ERP</span>
-        <span class="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-primary/20 text-primary border border-primary/30">Hyperstack Flagship</span>
-        <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[10px] font-mono border border-emerald-500/30 font-bold">v0.10.30</span>
+        <span class="font-bold text-sm tracking-tight text-slate-900">Apex Logistics ERP</span>
+        <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 font-semibold">Hyperstack Flagship</span>
+        <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-mono border border-emerald-200 font-bold">v1.0.0</span>
       </div>
     </div>
 
     <!-- Center Offline Indicator Badge -->
-    <div hx-offline-indicator style="display:none;" class="px-3 py-1 bg-amber-500/10 border border-amber-500/30 rounded-full flex items-center gap-2 text-amber-400 text-xs animate-pulse">
-      <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-      <span>Offline Mode (<strong class="hx-offline-queue-count">0</strong> queued)</span>
+    <div hx-offline-indicator style="display:none;" class="px-3 py-1 bg-amber-50 border border-amber-200 rounded-full flex items-center gap-2 text-amber-700 text-xs font-medium animate-pulse">
+      <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+      <span>Offline Mode (<strong class="hx-offline-queue-count font-bold">0</strong> queued)</span>
     </div>
 
     <div class="flex items-center gap-3">
       <!-- DevTools Shortcut Trigger -->
-      <button onclick="window.HxDevTools.toggle()" class="px-2.5 py-1 text-xs bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-md font-mono flex items-center gap-1 text-slate-300">
+      <button onclick="window.HxDevTools && window.HxDevTools.toggle()" class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-md font-mono flex items-center gap-1 text-slate-700 shadow-xs transition-colors">
         <span>🛠️ DevTools</span>
-        <kbd class="text-[10px] bg-slate-900 px-1 rounded text-slate-400">Ctrl+Shift+H</kbd>
+        <kbd class="text-[10px] bg-white px-1 rounded text-slate-500 border border-slate-200">Ctrl+Shift+H</kbd>
       </button>
 
       <!-- Back to Docs -->
-      <a href="/docs/components/introduction" class="px-2.5 py-1 text-xs bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-md text-slate-300">
+      <a href="/docs/components/introduction/" class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-md text-slate-700 shadow-xs transition-colors">
         ← Framework Docs
       </a>
     </div>
@@ -89,151 +89,151 @@
   <!-- Main Workspace Body -->
   <div class="flex-1 flex overflow-hidden">
     <!-- Left Navigation Sidebar -->
-    <aside class="w-60 border-r border-slate-800 bg-slate-900/40 p-3 flex flex-col justify-between">
+    <aside class="w-60 border-r border-slate-200 bg-white p-3 flex flex-col justify-between shadow-xs">
       <div class="space-y-1">
-        <div class="px-3 py-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">Modules</div>
+        <div class="px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-slate-400">Modules</div>
 
-        <button hx-on:click="currentTab = 'dashboard'"
-                hx-class="{ 'bg-primary/15 text-primary font-semibold': currentTab === 'dashboard', 'text-slate-400 hover:bg-slate-800 hover:text-slate-200': currentTab !== 'dashboard' }"
-                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition-colors">
+        <button hx-action="currentTab = 'dashboard'" @click="currentTab = 'dashboard'"
+                hx-class="{ 'bg-blue-50 text-blue-700 font-semibold border-l-2 border-blue-600': currentTab === 'dashboard', 'text-slate-600 hover:bg-slate-100 hover:text-slate-900': currentTab !== 'dashboard' }"
+                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition-colors text-left cursor-pointer">
           <span>📊</span> Dashboard
         </button>
 
-        <button hx-on:click="currentTab = 'invoices'"
-                hx-class="{ 'bg-primary/15 text-primary font-semibold': currentTab === 'invoices', 'text-slate-400 hover:bg-slate-800 hover:text-slate-200': currentTab !== 'invoices' }"
-                class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-colors">
+        <button hx-action="currentTab = 'invoices'" @click="currentTab = 'invoices'"
+                hx-class="{ 'bg-blue-50 text-blue-700 font-semibold border-l-2 border-blue-600': currentTab === 'invoices', 'text-slate-600 hover:bg-slate-100 hover:text-slate-900': currentTab !== 'invoices' }"
+                class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-colors text-left cursor-pointer">
           <div class="flex items-center gap-2.5">
             <span>📋</span> Invoices Data Grid
           </div>
-          <span class="text-[10px] font-mono px-1.5 py-0.2 bg-slate-800 rounded text-slate-400">10k</span>
+          <span class="text-[10px] font-mono px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded text-slate-500 font-medium">10k</span>
         </button>
 
-        <button hx-on:click="currentTab = 'wizard'"
-                hx-class="{ 'bg-primary/15 text-primary font-semibold': currentTab === 'wizard', 'text-slate-400 hover:bg-slate-800 hover:text-slate-200': currentTab !== 'wizard' }"
-                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition-colors">
+        <button hx-action="currentTab = 'wizard'" @click="currentTab = 'wizard'"
+                hx-class="{ 'bg-blue-50 text-blue-700 font-semibold border-l-2 border-blue-600': currentTab === 'wizard', 'text-slate-600 hover:bg-slate-100 hover:text-slate-900': currentTab !== 'wizard' }"
+                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition-colors text-left cursor-pointer">
           <span>🧙</span> Create Invoice Wizard
         </button>
 
-        <button hx-on:click="currentTab = 'offline'"
-                hx-class="{ 'bg-primary/15 text-primary font-semibold': currentTab === 'offline', 'text-slate-400 hover:bg-slate-800 hover:text-slate-200': currentTab !== 'offline' }"
-                class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-colors">
+        <button hx-action="currentTab = 'offline'" @click="currentTab = 'offline'"
+                hx-class="{ 'bg-blue-50 text-blue-700 font-semibold border-l-2 border-blue-600': currentTab === 'offline', 'text-slate-600 hover:bg-slate-100 hover:text-slate-900': currentTab !== 'offline' }"
+                class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-colors text-left cursor-pointer">
           <div class="flex items-center gap-2.5">
             <span>📴</span> Offline &amp; Sync Hub
           </div>
           <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
         </button>
 
-        <button hx-on:click="currentTab = 'fleet-sim'"
-                hx-class="{ 'bg-primary/15 text-primary font-semibold': currentTab === 'fleet-sim', 'text-slate-400 hover:bg-slate-800 hover:text-slate-200': currentTab !== 'fleet-sim' }"
-                class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-colors">
+        <button hx-action="currentTab = 'fleet-sim'" @click="currentTab = 'fleet-sim'"
+                hx-class="{ 'bg-blue-50 text-blue-700 font-semibold border-l-2 border-blue-600': currentTab === 'fleet-sim', 'text-slate-600 hover:bg-slate-100 hover:text-slate-900': currentTab !== 'fleet-sim' }"
+                class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-colors text-left cursor-pointer">
           <div class="flex items-center gap-2.5">
             <span>🚚</span> Fleet Kinetic Sim
           </div>
-          <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/15 text-cyan-400 font-bold">120Hz</span>
+          <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-50 text-cyan-700 border border-cyan-200 font-bold">120Hz</span>
         </button>
 
-        <button hx-on:click="currentTab = 'rbac'"
-                hx-class="{ 'bg-primary/15 text-primary font-semibold': currentTab === 'rbac', 'text-slate-400 hover:bg-slate-800 hover:text-slate-200': currentTab !== 'rbac' }"
-                class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-colors">
+        <button hx-action="currentTab = 'rbac'" @click="currentTab = 'rbac'"
+                hx-class="{ 'bg-blue-50 text-blue-700 font-semibold border-l-2 border-blue-600': currentTab === 'rbac', 'text-slate-600 hover:bg-slate-100 hover:text-slate-900': currentTab !== 'rbac' }"
+                class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-colors text-left cursor-pointer">
           <div class="flex items-center gap-2.5">
             <span>🛡️</span> RBAC &amp; Approvals
           </div>
-          <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 font-bold">Bank</span>
+          <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold">Bank</span>
         </button>
 
-        <button hx-on:click="currentTab = 'settings'"
-                hx-class="{ 'bg-primary/15 text-primary font-semibold': currentTab === 'settings', 'text-slate-400 hover:bg-slate-800 hover:text-slate-200': currentTab !== 'settings' }"
-                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition-colors">
+        <button hx-action="currentTab = 'settings'" @click="currentTab = 'settings'"
+                hx-class="{ 'bg-blue-50 text-blue-700 font-semibold border-l-2 border-blue-600': currentTab === 'settings', 'text-slate-600 hover:bg-slate-100 hover:text-slate-900': currentTab !== 'settings' }"
+                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition-colors text-left cursor-pointer">
           <span>⚙️</span> Workspace Settings
         </button>
       </div>
 
       <!-- Quick Status Card -->
-      <div class="p-3 rounded-xl border border-slate-800 bg-slate-900/80 space-y-1">
-        <div class="text-[10px] text-slate-400 font-semibold uppercase">Engine Status</div>
-        <div class="text-xs text-emerald-400 font-bold flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-400"></span> 11 Engines Active
+      <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 space-y-1">
+        <div class="text-[10px] text-slate-500 font-semibold uppercase">Engine Status</div>
+        <div class="text-xs text-emerald-600 font-bold flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span> 11 Engines Active
         </div>
-        <div class="text-[10px] text-slate-400 font-mono">0ms Local Reactivity</div>
+        <div class="text-[10px] text-slate-500 font-mono">0ms Local Reactivity</div>
       </div>
     </aside>
 
     <!-- Main Content Work Area -->
-    <main class="flex-1 overflow-y-auto p-6 space-y-6">
+    <main class="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/60">
 
       <!-- SCREEN 1: EXECUTIVE DASHBOARD -->
       <div hx-show="currentTab === 'dashboard'" class="space-y-6">
         <div>
-          <h2 class="text-2xl font-bold text-white tracking-tight">Executive Performance Overview</h2>
-          <p class="text-xs text-slate-400">Real-time enterprise metrics rendered with zero virtual DOM overhead.</p>
+          <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Executive Performance Overview</h2>
+          <p class="text-xs text-slate-500">Real-time enterprise metrics rendered with zero virtual DOM overhead.</p>
         </div>
 
         <!-- Metric KPI Cards -->
-        <div class="grid grid-cols-4 gap-4">
-          <div class="p-4 rounded-xl border border-slate-800 bg-slate-900/60 shadow-sm space-y-1">
-            <div class="text-xs font-semibold text-slate-400">Total Revenue</div>
-            <div class="text-2xl font-bold text-white tracking-tight">$1,284,500.00</div>
-            <div class="text-[11px] text-emerald-400 font-medium">↑ +14.2% this month</div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="p-4 rounded-xl border border-slate-200 bg-white shadow-sm space-y-1">
+            <div class="text-xs font-semibold text-slate-500">Total Revenue</div>
+            <div class="text-2xl font-bold text-slate-900 tracking-tight">$1,284,500.00</div>
+            <div class="text-[11px] text-emerald-600 font-semibold">↑ +14.2% this month</div>
           </div>
 
-          <div class="p-4 rounded-xl border border-slate-800 bg-slate-900/60 shadow-sm space-y-1">
-            <div class="text-xs font-semibold text-slate-400">Active Orders</div>
-            <div class="text-2xl font-bold text-white tracking-tight">1,420</div>
-            <div class="text-[11px] text-sky-400 font-medium">98.4% on schedule</div>
+          <div class="p-4 rounded-xl border border-slate-200 bg-white shadow-sm space-y-1">
+            <div class="text-xs font-semibold text-slate-500">Active Orders</div>
+            <div class="text-2xl font-bold text-slate-900 tracking-tight">1,420</div>
+            <div class="text-[11px] text-sky-600 font-semibold">98.4% on schedule</div>
           </div>
 
-          <div class="p-4 rounded-xl border border-slate-800 bg-slate-900/60 shadow-sm space-y-1">
-            <div class="text-xs font-semibold text-slate-400">Invoices In Memory</div>
-            <div class="text-2xl font-bold text-white tracking-tight">10,000</div>
-            <div class="text-[11px] text-purple-400 font-medium">Windowed at 60 FPS</div>
+          <div class="p-4 rounded-xl border border-slate-200 bg-white shadow-sm space-y-1">
+            <div class="text-xs font-semibold text-slate-500">Invoices In Memory</div>
+            <div class="text-2xl font-bold text-slate-900 tracking-tight">10,000</div>
+            <div class="text-[11px] text-purple-600 font-semibold">Windowed at 60 FPS</div>
           </div>
 
-          <div class="p-4 rounded-xl border border-slate-800 bg-slate-900/60 shadow-sm space-y-1">
-            <div class="text-xs font-semibold text-slate-400">Sync Engine</div>
-            <div class="text-2xl font-bold text-emerald-400 tracking-tight">Zero-Drop</div>
-            <div class="text-[11px] text-slate-400 font-medium">IndexedDB active</div>
+          <div class="p-4 rounded-xl border border-slate-200 bg-white shadow-sm space-y-1">
+            <div class="text-xs font-semibold text-slate-500">Sync Engine</div>
+            <div class="text-2xl font-bold text-emerald-600 tracking-tight">Zero-Drop</div>
+            <div class="text-[11px] text-slate-500 font-medium">IndexedDB active</div>
           </div>
         </div>
 
         <!-- Recent Activity Feed -->
-        <div class="p-5 rounded-xl border border-slate-800 bg-slate-900/40 space-y-3">
-          <div class="flex items-center justify-between">
-            <h3 class="text-sm font-semibold text-white">Live Transaction Stream</h3>
-            <span class="text-[11px] font-mono text-slate-400">Auto-refresh via SSE</span>
+        <div class="p-5 rounded-xl border border-slate-200 bg-white shadow-sm space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 class="text-sm font-semibold text-slate-900">Live Transaction Stream</h3>
+            <span class="text-[11px] font-mono text-slate-500">Auto-refresh via SSE</span>
           </div>
 
-          <div class="divide-y divide-slate-800/80 text-xs">
+          <div class="divide-y divide-slate-100 text-xs">
             <div class="py-2.5 flex items-center justify-between">
               <div class="flex items-center gap-3">
-                <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-[10px]">✓</span>
+                <span class="w-6 h-6 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-[10px] border border-emerald-200">✓</span>
                 <div>
-                  <span class="font-medium text-white">INV-100492 approved for payout</span>
-                  <span class="text-slate-400 ml-2">Cyberdyne Systems</span>
+                  <span class="font-medium text-slate-800">INV-100492 approved for payout</span>
+                  <span class="text-slate-500 ml-2">Cyberdyne Systems</span>
                 </div>
               </div>
-              <span class="font-mono text-emerald-400 font-semibold">$4,850.00</span>
+              <span class="font-mono text-emerald-600 font-semibold">$4,850.00</span>
             </div>
 
             <div class="py-2.5 flex items-center justify-between">
               <div class="flex items-center gap-3">
-                <span class="w-6 h-6 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-[10px]">🚚</span>
+                <span class="w-6 h-6 rounded-full bg-sky-50 text-sky-600 flex items-center justify-center font-bold text-[10px] border border-sky-200">🚚</span>
                 <div>
-                  <span class="font-medium text-white">Shipment dispatched to Rotterdam warehouse</span>
-                  <span class="text-slate-400 ml-2">Globex Logistics</span>
+                  <span class="font-medium text-slate-800">Shipment dispatched to Rotterdam warehouse</span>
+                  <span class="text-slate-500 ml-2">Globex Logistics</span>
                 </div>
               </div>
-              <span class="font-mono text-slate-300">420 containers</span>
+              <span class="font-mono text-slate-600">420 containers</span>
             </div>
 
             <div class="py-2.5 flex items-center justify-between">
               <div class="flex items-center gap-3">
-                <span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-[10px]">✎</span>
+                <span class="w-6 h-6 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-[10px] border border-purple-200">✎</span>
                 <div>
-                  <span class="font-medium text-white">Invoice #100881 modified offline</span>
-                  <span class="text-slate-400 ml-2">Tablet #4</span>
+                  <span class="font-medium text-slate-800">Invoice #100881 modified offline</span>
+                  <span class="text-slate-500 ml-2">Tablet #4</span>
                 </div>
               </div>
-              <span class="font-mono text-purple-400 font-semibold">$1,200.00</span>
+              <span class="font-mono text-purple-600 font-semibold">$1,200.00</span>
             </div>
           </div>
         </div>
@@ -243,95 +243,97 @@
       <div hx-show="currentTab === 'invoices'" class="space-y-4" style="display:none;">
         <div class="flex items-center justify-between">
           <div>
-            <h2 class="text-2xl font-bold text-white tracking-tight">Enterprise Invoices Data Grid</h2>
-            <p class="text-xs text-slate-400">10,000 virtualized records with column resize, drag &amp; drop reorder, inline edit, and CSV export.</p>
+            <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Enterprise Invoices Data Grid</h2>
+            <p class="text-xs text-slate-500">10,000 virtualized records with column resize, drag &amp; drop reorder, inline edit, and CSV export.</p>
           </div>
-          <button hx-on:click="currentTab = 'wizard'" class="px-3.5 py-1.5 bg-primary text-slate-950 font-semibold text-xs rounded-md shadow hover:bg-primary/90">
+          <button hx-action="currentTab = 'wizard'" @click="currentTab = 'wizard'" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-lg shadow-sm transition-colors cursor-pointer">
             + New Invoice
           </button>
         </div>
 
         <!-- The 10,000-Row Grid Primitive -->
-        <div hx-grid hx-grid-src="/api/erp-invoices.json?count=10000" hx-grid-row-height="40" class="w-full"></div>
+        <div class="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden p-1">
+          <div hx-grid hx-grid-src="/api/erp-invoices.json?count=10000" hx-grid-row-height="40" class="w-full"></div>
+        </div>
       </div>
 
       <!-- SCREEN 3: CREATE INVOICE WIZARD -->
       <div hx-show="currentTab === 'wizard'" class="space-y-6 max-w-3xl" style="display:none;">
         <div>
-          <h2 class="text-2xl font-bold text-white tracking-tight">Create Invoice Wizard</h2>
-          <p class="text-xs text-slate-400">Multi-step orchestration (<code class="bg-slate-800 px-1 py-0.5 rounded text-xs">&lt;form hx-wizard&gt;</code>) with step validation gates and cascading dropdowns.</p>
+          <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Create Invoice Wizard</h2>
+          <p class="text-xs text-slate-500">Multi-step orchestration (<code class="bg-slate-100 text-slate-700 px-1 py-0.5 rounded text-xs border border-slate-200">&lt;form hx-wizard&gt;</code>) with step validation gates and cascading dropdowns.</p>
         </div>
 
-        <div class="p-6 rounded-xl border border-slate-800 bg-slate-900/60 shadow-sm space-y-6">
-          <div class="space-y-2 border-b border-slate-800 pb-4">
+        <div class="p-6 rounded-xl border border-slate-200 bg-white shadow-sm space-y-6">
+          <div class="space-y-2 border-b border-slate-100 pb-4">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-primary uppercase tracking-wider">Step <span class="hx-wizard-current-step">1</span> of <span class="hx-wizard-total-steps">3</span></span>
-              <span class="text-xs text-slate-400 font-medium">New Billing Record</span>
+              <span class="text-xs font-semibold text-blue-600 uppercase tracking-wider">Step <span class="hx-wizard-current-step">1</span> of <span class="hx-wizard-total-steps">3</span></span>
+              <span class="text-xs text-slate-500 font-medium">New Billing Record</span>
             </div>
-            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
-              <div class="hx-wizard-progress-bar h-full bg-primary transition-all duration-300 w-1/3"></div>
+            <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+              <div class="hx-wizard-progress-bar h-full bg-blue-600 transition-all duration-300 w-1/3"></div>
             </div>
           </div>
 
           <form hx-wizard class="space-y-6">
             <!-- Step 1: Customer Details -->
             <fieldset hx-step="1" class="space-y-4">
-              <h3 class="text-base font-semibold text-white">1. Client &amp; Billing Entity</h3>
+              <h3 class="text-base font-semibold text-slate-900">1. Client &amp; Billing Entity</h3>
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-xs font-medium text-slate-300 mb-1">Company / Customer Name *</label>
-                  <input type="text" name="customer" hx-validate="required|min:3" placeholder="Acme Logistics Inc." class="w-full px-3 py-2 text-xs bg-slate-950 border border-slate-800 rounded-md text-white">
-                  <span hx-error-for="customer" class="text-destructive text-xs mt-1 block"></span>
+                  <label class="block text-xs font-medium text-slate-700 mb-1">Company / Customer Name *</label>
+                  <input type="text" name="customer" hx-validate="required|min:3" placeholder="Acme Logistics Inc." class="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-md text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <span hx-error-for="customer" class="text-rose-600 text-xs mt-1 block"></span>
                 </div>
                 <div>
-                  <label class="block text-xs font-medium text-slate-300 mb-1">Billing Email *</label>
-                  <input type="email" name="email" hx-validate="required|email" placeholder="billing@acme.com" class="w-full px-3 py-2 text-xs bg-slate-950 border border-slate-800 rounded-md text-white">
-                  <span hx-error-for="email" class="text-destructive text-xs mt-1 block"></span>
+                  <label class="block text-xs font-medium text-slate-700 mb-1">Billing Email *</label>
+                  <input type="email" name="email" hx-validate="required|email" placeholder="billing@acme.com" class="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-md text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <span hx-error-for="email" class="text-rose-600 text-xs mt-1 block"></span>
                 </div>
               </div>
             </fieldset>
 
             <!-- Step 2: Cascading Line Item -->
             <fieldset hx-step="2" class="space-y-4" style="display:none;" disabled>
-              <h3 class="text-base font-semibold text-white">2. Shipping Destination &amp; Cascading Fields</h3>
+              <h3 class="text-base font-semibold text-slate-900">2. Shipping Destination &amp; Cascading Fields</h3>
               <div class="grid grid-cols-2 gap-4" hx-depends="country->state">
                 <div>
-                  <label class="block text-xs font-medium text-slate-300 mb-1">Country *</label>
-                  <select name="country" id="country" hx-validate="required" class="w-full px-3 py-2 text-xs bg-slate-950 border border-slate-800 rounded-md text-white">
+                  <label class="block text-xs font-medium text-slate-700 mb-1">Country *</label>
+                  <select name="country" id="country" hx-validate="required" class="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-md text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Select Country...</option>
                     <option value="us">United States</option>
                     <option value="ca">Canada</option>
                     <option value="uk">United Kingdom</option>
                   </select>
-                  <span hx-error-for="country" class="text-destructive text-xs mt-1 block"></span>
+                  <span hx-error-for="country" class="text-rose-600 text-xs mt-1 block"></span>
                 </div>
                 <div>
-                  <label class="block text-xs font-medium text-slate-300 mb-1">State / Province *</label>
-                  <select name="state" id="state" hx-validate="required" class="w-full px-3 py-2 text-xs bg-slate-950 border border-slate-800 rounded-md text-white">
+                  <label class="block text-xs font-medium text-slate-700 mb-1">State / Province *</label>
+                  <select name="state" id="state" hx-validate="required" class="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-md text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Select State...</option>
                     <option value="ca_state">California</option>
                     <option value="ny_state">New York</option>
                     <option value="tx_state">Texas</option>
                     <option value="on_state">Ontario</option>
                   </select>
-                  <span hx-error-for="state" class="text-destructive text-xs mt-1 block"></span>
+                  <span hx-error-for="state" class="text-rose-600 text-xs mt-1 block"></span>
                 </div>
               </div>
             </fieldset>
 
             <!-- Step 3: Confirmation -->
             <fieldset hx-step="3" class="space-y-4" style="display:none;" disabled>
-              <h3 class="text-base font-semibold text-white">3. Final Verification &amp; Submit</h3>
-              <div class="p-4 rounded-lg bg-slate-950 border border-slate-800 text-xs space-y-1">
-                <p class="text-white font-medium">Ready to record invoice into ERP ledger.</p>
-                <p class="text-slate-400">All fields validated. Click Finish to save.</p>
+              <h3 class="text-base font-semibold text-slate-900">3. Final Verification &amp; Submit</h3>
+              <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 text-xs space-y-1">
+                <p class="text-slate-900 font-semibold">Ready to record invoice into ERP ledger.</p>
+                <p class="text-slate-500">All fields validated. Click Finish to save.</p>
               </div>
             </fieldset>
 
             <!-- Navigation Controls -->
-            <div class="flex items-center justify-between pt-4 border-t border-slate-800">
-              <button type="button" hx-wizard-prev class="px-4 py-2 text-xs font-medium bg-slate-900 border border-slate-700 rounded-md hover:bg-slate-800 disabled:opacity-50">← Back</button>
-              <button type="button" hx-wizard-next class="px-4 py-2 text-xs font-medium bg-primary text-slate-950 font-bold rounded-md hover:bg-primary/90">Next →</button>
+            <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+              <button type="button" hx-wizard-prev class="px-4 py-2 text-xs font-medium bg-white border border-slate-300 rounded-md hover:bg-slate-50 text-slate-700 disabled:opacity-50 shadow-xs cursor-pointer">← Back</button>
+              <button type="button" hx-wizard-next class="px-4 py-2 text-xs font-bold bg-blue-600 text-white rounded-md hover:bg-blue-700 shadow-xs cursor-pointer">Next →</button>
             </div>
           </form>
         </div>
@@ -340,30 +342,30 @@
       <!-- SCREEN 4: OFFLINE & SYNC HUB -->
       <div hx-show="currentTab === 'offline'" class="space-y-6 max-w-4xl" style="display:none;">
         <div>
-          <h2 class="text-2xl font-bold text-white tracking-tight">Offline Resilience &amp; Mutation Sync Hub</h2>
-          <p class="text-xs text-slate-400">IndexedDB local mutation queue with 409 conflict detection and background replay.</p>
+          <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Offline Resilience &amp; Mutation Sync Hub</h2>
+          <p class="text-xs text-slate-500">IndexedDB local mutation queue with 409 conflict detection and background replay.</p>
         </div>
 
-        <div class="p-6 rounded-xl border border-slate-800 bg-slate-900/60 shadow-sm space-y-6">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div class="p-6 rounded-xl border border-slate-200 bg-white shadow-sm space-y-6">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-4">
             <div class="flex items-center gap-2">
               <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span class="text-sm font-semibold text-white">IndexedDB Storage Driver</span>
+              <span class="text-sm font-semibold text-slate-900">IndexedDB Storage Driver</span>
             </div>
-            <div class="text-xs font-mono text-slate-400">
-              Queue: <strong class="hx-offline-queue-count text-primary">0</strong> pending mutations
+            <div class="text-xs font-mono text-slate-500">
+              Queue: <strong class="hx-offline-queue-count text-blue-600 font-bold">0</strong> pending mutations
             </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-4">
-            <button onclick="window.HxOffline.queueRequest({ id: 'inv_' + Date.now(), url: '/api/erp-invoices.json', method: 'POST', headers: {}, body: JSON.stringify({ customer: 'Stark Industries', amount: 8900 }), timestamp: Date.now(), retries: 0 })" class="p-4 rounded-xl border border-slate-800 bg-slate-950 hover:bg-slate-800/80 text-left transition-colors">
-              <div class="text-sm font-semibold text-white mb-1">➕ Simulate Offline Invoice Mutation</div>
-              <p class="text-xs text-slate-400">Queues an invoice creation into IndexedDB.</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <button onclick="window.HxOffline && window.HxOffline.queueRequest({ id: 'inv_' + Date.now(), url: '/api/erp-invoices.json', method: 'POST', headers: {}, body: JSON.stringify({ customer: 'Stark Industries', amount: 8900 }), timestamp: Date.now(), retries: 0 })" class="p-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-left transition-colors shadow-xs cursor-pointer">
+              <div class="text-sm font-semibold text-slate-900 mb-1">➕ Simulate Offline Invoice Mutation</div>
+              <p class="text-xs text-slate-500">Queues an invoice creation into IndexedDB.</p>
             </button>
 
-            <button onclick="window.HxOffline.replayQueue()" class="p-4 rounded-xl border border-slate-800 bg-slate-950 hover:bg-slate-800/80 text-left transition-colors">
-              <div class="text-sm font-semibold text-white mb-1">🔄 Replay Mutation Queue</div>
-              <p class="text-xs text-slate-400">Processes all queued mutations with HTTP headers.</p>
+            <button onclick="window.HxOffline && window.HxOffline.replayQueue()" class="p-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-left transition-colors shadow-xs cursor-pointer">
+              <div class="text-sm font-semibold text-slate-900 mb-1">🔄 Replay Mutation Queue</div>
+              <p class="text-xs text-slate-500">Processes all queued mutations with HTTP headers.</p>
             </button>
           </div>
         </div>
@@ -372,33 +374,33 @@
       <!-- SCREEN 5: WORKSPACE SETTINGS -->
       <div hx-show="currentTab === 'settings'" class="space-y-6 max-w-3xl" style="display:none;">
         <div>
-          <h2 class="text-2xl font-bold text-white tracking-tight">Workspace &amp; ERP Settings</h2>
-          <p class="text-xs text-slate-400">Reactive settings bound directly to local Bolt signal state.</p>
+          <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Workspace &amp; ERP Settings</h2>
+          <p class="text-xs text-slate-500">Reactive settings bound directly to local Bolt signal state.</p>
         </div>
 
-        <div class="p-6 rounded-xl border border-slate-800 bg-slate-900/60 shadow-sm space-y-4">
-          <div class="flex items-center justify-between py-2 border-b border-slate-800">
+        <div class="p-6 rounded-xl border border-slate-200 bg-white shadow-sm space-y-4">
+          <div class="flex items-center justify-between py-2 border-b border-slate-100">
             <div>
-              <div class="text-xs font-semibold text-white">Default Ledger Currency</div>
-              <div class="text-[11px] text-slate-400">Used for financial summaries and exports</div>
+              <div class="text-xs font-semibold text-slate-900">Default Ledger Currency</div>
+              <div class="text-[11px] text-slate-500">Used for financial summaries and exports</div>
             </div>
-            <select class="px-3 py-1.5 text-xs bg-slate-950 border border-slate-800 rounded-md text-white">
+            <select class="px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-md text-slate-900 focus:ring-2 focus:ring-blue-500">
               <option value="usd">USD ($)</option>
               <option value="eur">EUR (€)</option>
               <option value="gbp">GBP (£)</option>
             </select>
           </div>
 
-          <div class="flex items-center justify-between py-2 border-b border-slate-800">
+          <div class="flex items-center justify-between py-2 border-b border-slate-100">
             <div>
-              <div class="text-xs font-semibold text-white">Undo / Redo History Depth</div>
-              <div class="text-[11px] text-slate-400">Maximum snapshots stored in memory</div>
+              <div class="text-xs font-semibold text-slate-900">Undo / Redo History Depth</div>
+              <div class="text-[11px] text-slate-500">Maximum snapshots stored in memory</div>
             </div>
-            <span class="text-xs font-mono text-primary font-bold">50 Steps</span>
+            <span class="text-xs font-mono text-blue-600 font-bold">50 Steps</span>
           </div>
 
           <div class="pt-2 flex justify-end">
-            <button onclick="alert('Settings saved into local Bolt state!')" class="px-4 py-2 bg-primary text-slate-950 font-bold text-xs rounded-md hover:bg-primary/90">
+            <button onclick="alert('Settings saved into local Bolt state!')" class="px-4 py-2 bg-blue-600 text-white font-bold text-xs rounded-md hover:bg-blue-700 shadow-xs transition-colors cursor-pointer">
               Save Preferences
             </button>
           </div>
@@ -409,42 +411,42 @@
       <div hx-show="currentTab === 'fleet-sim'" class="space-y-6" style="display:none;">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 class="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+            <h2 class="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
               <span>🚚</span> Logistics Fleet Kinetic Simulation
             </h2>
-            <p class="text-xs text-slate-400 mt-1">120Hz Decoupled Kinetic Engine • Multi-Agent Autonomous Fleet Routing</p>
+            <p class="text-xs text-slate-500 mt-1">120Hz Decoupled Kinetic Engine • Multi-Agent Autonomous Fleet Routing</p>
           </div>
           <div class="flex items-center gap-2">
-            <span class="text-[11px] font-mono bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-2.5 py-1 rounded-md">Engine: htmx-sim.js</span>
-            <span class="text-[11px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-md">Spatial Partitioning</span>
+            <span class="text-[11px] font-mono bg-cyan-50 text-cyan-700 border border-cyan-200 px-2.5 py-1 rounded-md font-semibold">Engine: htmx-sim.js</span>
+            <span class="text-[11px] font-mono bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-md font-semibold">Spatial Partitioning</span>
           </div>
         </div>
 
         <!-- Simulation Toolbar -->
-        <div class="p-4 rounded-xl border border-slate-800 bg-slate-900/60 flex flex-wrap items-center justify-between gap-4">
+        <div class="p-4 rounded-xl border border-slate-200 bg-white shadow-sm flex flex-wrap items-center justify-between gap-4">
           <div class="flex items-center gap-2">
-            <span class="text-xs text-slate-400 font-semibold mr-1">Fleet Mode:</span>
-            <button onclick="$sim('#erp-fleet-canvas', 'preset', 'boids')" class="px-3 py-1.5 rounded-lg bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-300 border border-cyan-500/30 text-xs font-mono font-semibold transition-all">🦅 Convoy Flocking</button>
-            <button onclick="$sim('#erp-fleet-canvas', 'preset', 'collision')" class="px-3 py-1.5 rounded-lg bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/30 text-xs font-mono font-semibold transition-all">📦 Warehouse Elastic Bounds</button>
-            <button onclick="$sim('#erp-fleet-canvas', 'preset', 'gravity')" class="px-3 py-1.5 rounded-lg bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 text-xs font-mono font-semibold transition-all">🪐 Hub Gravity Wells</button>
-            <button onclick="$sim('#erp-fleet-canvas', 'preset', 'slime')" class="px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 text-xs font-mono font-semibold transition-all">🛣️ Route Optimization (Physarum)</button>
+            <span class="text-xs text-slate-500 font-semibold mr-1">Fleet Mode:</span>
+            <button onclick="$sim('#erp-fleet-canvas', 'preset', 'boids')" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-xs font-mono font-semibold transition-colors cursor-pointer">🦅 Convoy Flocking</button>
+            <button onclick="$sim('#erp-fleet-canvas', 'preset', 'collision')" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-xs font-mono font-semibold transition-colors cursor-pointer">📦 Warehouse Elastic Bounds</button>
+            <button onclick="$sim('#erp-fleet-canvas', 'preset', 'gravity')" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-xs font-mono font-semibold transition-colors cursor-pointer">🪐 Hub Gravity Wells</button>
+            <button onclick="$sim('#erp-fleet-canvas', 'preset', 'slime')" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-xs font-mono font-semibold transition-colors cursor-pointer">🛣️ Route Optimization (Physarum)</button>
           </div>
 
           <div class="flex items-center gap-2">
-            <button onclick="$sim('#erp-fleet-canvas', 'reset')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700">↺ Reset Fleet</button>
-            <button onclick="$sim('#erp-fleet-canvas', 'burst', 80)" class="px-3 py-1.5 rounded-lg bg-primary text-slate-950 font-bold text-xs shadow-sm">+ Deploy 80 Trucks</button>
+            <button onclick="$sim('#erp-fleet-canvas', 'reset')" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-300 transition-colors cursor-pointer">↺ Reset Fleet</button>
+            <button onclick="$sim('#erp-fleet-canvas', 'burst', 80)" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer">+ Deploy 80 Trucks</button>
           </div>
         </div>
 
         <!-- Canvas Frame -->
-        <div class="rounded-xl border border-slate-800 bg-slate-950 p-2 shadow-2xl relative overflow-hidden">
+        <div class="rounded-xl border border-slate-200 bg-slate-950 p-2 shadow-lg relative overflow-hidden">
           <canvas id="erp-fleet-canvas"
                   hx-sim="boids"
                   hx-sim-particles="300"
                   hx-sim-speed="1.2"
                   hx-sim-responsive="true"
                   class="w-full h-[450px] rounded-lg block bg-slate-950"></canvas>
-          <div class="absolute bottom-5 left-5 pointer-events-none bg-slate-900/80 backdrop-blur border border-slate-800 rounded-lg p-3 text-[11px] font-mono text-slate-400 space-y-1">
+          <div class="absolute bottom-5 left-5 pointer-events-none bg-slate-900/90 backdrop-blur border border-slate-700 rounded-lg p-3 text-[11px] font-mono text-slate-300 space-y-1">
             <div>💡 Click canvas to create fleet attraction points</div>
             <div>⚡ Real-time collision avoidance accumulator running at 120Hz</div>
           </div>
@@ -455,67 +457,71 @@
       <div hx-show="currentTab === 'rbac'" class="space-y-6 max-w-4xl" style="display:none;">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 class="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+            <h2 class="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
               <span>🛡️</span> Bank-Grade RBAC &amp; Invoice Authorization
             </h2>
-            <p class="text-xs text-slate-400 mt-1">Reactive Access Control Matrix with Declarative Directives (<code class="text-emerald-400 font-mono">hx-role</code>, <code class="text-emerald-400 font-mono">hx-can</code>, <code class="text-emerald-400 font-mono">hx-role.redact</code>)</p>
+            <p class="text-xs text-slate-500 mt-1">Reactive Access Control Matrix with Declarative Directives (<code class="text-emerald-700 font-mono bg-emerald-50 px-1 py-0.5 rounded border border-emerald-200">hx-role</code>, <code class="text-emerald-700 font-mono bg-emerald-50 px-1 py-0.5 rounded border border-emerald-200">hx-can</code>, <code class="text-emerald-700 font-mono bg-emerald-50 px-1 py-0.5 rounded border border-emerald-200">hx-role.redact</code>)</p>
           </div>
           <div class="flex items-center gap-2">
-            <span class="text-[11px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-md">Zero-Eval CSP Level 3</span>
+            <span class="text-[11px] font-mono bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-md font-semibold">Zero-Eval CSP Level 3</span>
           </div>
         </div>
 
         <!-- Role Simulator -->
-        <div class="p-6 rounded-xl border border-slate-800 bg-slate-900/60 space-y-4">
+        <div class="p-6 rounded-xl border border-slate-200 bg-white shadow-sm space-y-4">
           <div class="flex items-center justify-between">
-            <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Current Simulation Identity:</div>
-            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 uppercase" hx-text="activeRole">admin</span>
+            <div class="text-xs font-semibold uppercase tracking-wider text-slate-500">Current Simulation Identity:</div>
+            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase" hx-text="activeRole">admin</span>
           </div>
 
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <button @click="activeRole = 'admin'; window.Hyperstack && window.Hyperstack.setRole('admin', ['invoice:approve', 'payroll:view', 'ledger:write'])"
-                    hx-class="{ 'ring-2 ring-emerald-500 bg-emerald-600/20 text-emerald-300': activeRole === 'admin', 'bg-slate-950 text-slate-300 hover:bg-slate-800': activeRole !== 'admin' }"
-                    class="p-3 rounded-lg border border-slate-800 text-left transition-all">
-              <div class="font-bold text-xs">👑 Finance Director (Admin)</div>
-              <div class="text-[10px] text-slate-400 mt-1">Full Payout &amp; Approval</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <button hx-action="activeRole = 'admin'; window.Hyperstack && window.Hyperstack.setRole('admin', ['invoice:approve', 'payroll:view', 'ledger:write'])"
+                    @click="activeRole = 'admin'; window.Hyperstack && window.Hyperstack.setRole('admin', ['invoice:approve', 'payroll:view', 'ledger:write'])"
+                    hx-class="{ 'ring-2 ring-emerald-500 bg-emerald-50 text-emerald-800 border-emerald-300 font-semibold': activeRole === 'admin', 'bg-slate-50 text-slate-700 hover:bg-slate-100 border-slate-200': activeRole !== 'admin' }"
+                    class="p-3 rounded-lg border text-left transition-all cursor-pointer">
+              <div class="font-bold text-xs text-slate-900">👑 Finance Director (Admin)</div>
+              <div class="text-[10px] text-slate-500 mt-1">Full Payout &amp; Approval</div>
             </button>
 
-            <button @click="activeRole = 'manager'; window.Hyperstack && window.Hyperstack.setRole('manager', ['invoice:approve'])"
-                    hx-class="{ 'ring-2 ring-emerald-500 bg-emerald-600/20 text-emerald-300': activeRole === 'manager', 'bg-slate-950 text-slate-300 hover:bg-slate-800': activeRole !== 'manager' }"
-                    class="p-3 rounded-lg border border-slate-800 text-left transition-all">
-              <div class="font-bold text-xs">👔 Logistics Manager</div>
-              <div class="text-[10px] text-slate-400 mt-1">Can Approve Invoices</div>
+            <button hx-action="activeRole = 'manager'; window.Hyperstack && window.Hyperstack.setRole('manager', ['invoice:approve'])"
+                    @click="activeRole = 'manager'; window.Hyperstack && window.Hyperstack.setRole('manager', ['invoice:approve'])"
+                    hx-class="{ 'ring-2 ring-emerald-500 bg-emerald-50 text-emerald-800 border-emerald-300 font-semibold': activeRole === 'manager', 'bg-slate-50 text-slate-700 hover:bg-slate-100 border-slate-200': activeRole !== 'manager' }"
+                    class="p-3 rounded-lg border text-left transition-all cursor-pointer">
+              <div class="font-bold text-xs text-slate-900">👔 Logistics Manager</div>
+              <div class="text-[10px] text-slate-500 mt-1">Can Approve Invoices</div>
             </button>
 
-            <button @click="activeRole = 'clerk'; window.Hyperstack && window.Hyperstack.setRole('clerk', ['invoice:create'])"
-                    hx-class="{ 'ring-2 ring-emerald-500 bg-emerald-600/20 text-emerald-300': activeRole === 'clerk', 'bg-slate-950 text-slate-300 hover:bg-slate-800': activeRole !== 'clerk' }"
-                    class="p-3 rounded-lg border border-slate-800 text-left transition-all">
-              <div class="font-bold text-xs">📝 Billing Clerk</div>
-              <div class="text-[10px] text-slate-400 mt-1">Create Only (No Approval)</div>
+            <button hx-action="activeRole = 'clerk'; window.Hyperstack && window.Hyperstack.setRole('clerk', ['invoice:create'])"
+                    @click="activeRole = 'clerk'; window.Hyperstack && window.Hyperstack.setRole('clerk', ['invoice:create'])"
+                    hx-class="{ 'ring-2 ring-emerald-500 bg-emerald-50 text-emerald-800 border-emerald-300 font-semibold': activeRole === 'clerk', 'bg-slate-50 text-slate-700 hover:bg-slate-100 border-slate-200': activeRole !== 'clerk' }"
+                    class="p-3 rounded-lg border text-left transition-all cursor-pointer">
+              <div class="font-bold text-xs text-slate-900">📝 Billing Clerk</div>
+              <div class="text-[10px] text-slate-500 mt-1">Create Only (No Approval)</div>
             </button>
 
-            <button @click="activeRole = 'auditor'; window.Hyperstack && window.Hyperstack.setRole('auditor', ['ledger:read'])"
-                    hx-class="{ 'ring-2 ring-emerald-500 bg-emerald-600/20 text-emerald-300': activeRole === 'auditor', 'bg-slate-950 text-slate-300 hover:bg-slate-800': activeRole !== 'auditor' }"
-                    class="p-3 rounded-lg border border-slate-800 text-left transition-all">
-              <div class="font-bold text-xs">🔍 External Auditor</div>
-              <div class="text-[10px] text-slate-400 mt-1">Read Only (Redacted)</div>
+            <button hx-action="activeRole = 'auditor'; window.Hyperstack && window.Hyperstack.setRole('auditor', ['ledger:read'])"
+                    @click="activeRole = 'auditor'; window.Hyperstack && window.Hyperstack.setRole('auditor', ['ledger:read'])"
+                    hx-class="{ 'ring-2 ring-emerald-500 bg-emerald-50 text-emerald-800 border-emerald-300 font-semibold': activeRole === 'auditor', 'bg-slate-50 text-slate-700 hover:bg-slate-100 border-slate-200': activeRole !== 'auditor' }"
+                    class="p-3 rounded-lg border text-left transition-all cursor-pointer">
+              <div class="font-bold text-xs text-slate-900">🔍 External Auditor</div>
+              <div class="text-[10px] text-slate-500 mt-1">Read Only (Redacted)</div>
             </button>
           </div>
         </div>
 
         <!-- High Value Approvals Table -->
-        <div class="p-6 rounded-xl border border-slate-800 bg-slate-900/40 space-y-4">
-          <h3 class="text-sm font-semibold text-white">Pending High-Value Invoices ($100k+)</h3>
+        <div class="p-6 rounded-xl border border-slate-200 bg-white shadow-sm space-y-4">
+          <h3 class="text-sm font-semibold text-slate-900">Pending High-Value Invoices ($100k+)</h3>
 
           <div class="space-y-3">
-            <div class="p-4 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between gap-4">
+            <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between gap-4">
               <div>
-                <div class="text-xs font-semibold text-white">INV-89042 • Maersk Line Freight Shipping</div>
-                <div class="text-[11px] text-slate-400">Total: <strong class="text-white font-mono">$480,000.00</strong> • 1,200 TEU Intermodal</div>
+                <div class="text-xs font-semibold text-slate-900">INV-89042 • Maersk Line Freight Shipping</div>
+                <div class="text-[11px] text-slate-500">Total: <strong class="text-slate-900 font-mono font-bold">$480,000.00</strong> • 1,200 TEU Intermodal</div>
               </div>
 
               <div class="flex items-center gap-3">
-                <button hx-can.disable="invoice:approve" onclick="alert('Invoice approved!')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-30 disabled:cursor-not-allowed text-white font-semibold text-xs rounded-md shadow transition-colors">
+                <button hx-can.disable="invoice:approve" onclick="alert('Invoice approved!')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-30 disabled:cursor-not-allowed text-white font-semibold text-xs rounded-md shadow-xs transition-colors cursor-pointer">
                   Approve Payout
                 </button>
                 <div hx-role.redact="admin, manager" class="text-xs text-slate-500 italic">
@@ -524,14 +530,14 @@
               </div>
             </div>
 
-            <div class="p-4 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between gap-4">
+            <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between gap-4">
               <div>
-                <div class="text-xs font-semibold text-white">INV-89043 • Hapag-Lloyd Port Terminal Access</div>
-                <div class="text-[11px] text-slate-400">Total: <strong class="text-white font-mono">$125,000.00</strong> • Rotterdam Hub</div>
+                <div class="text-xs font-semibold text-slate-900">INV-89043 • Hapag-Lloyd Port Terminal Access</div>
+                <div class="text-[11px] text-slate-500">Total: <strong class="text-slate-900 font-mono font-bold">$125,000.00</strong> • Rotterdam Hub</div>
               </div>
 
               <div class="flex items-center gap-3">
-                <button hx-can.disable="invoice:approve" onclick="alert('Invoice approved!')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-30 disabled:cursor-not-allowed text-white font-semibold text-xs rounded-md shadow transition-colors">
+                <button hx-can.disable="invoice:approve" onclick="alert('Invoice approved!')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-30 disabled:cursor-not-allowed text-white font-semibold text-xs rounded-md shadow-xs transition-colors cursor-pointer">
                   Approve Payout
                 </button>
                 <div hx-role.redact="admin, manager" class="text-xs text-slate-500 italic">

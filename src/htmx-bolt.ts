@@ -1828,7 +1828,9 @@ export function initComponent(rootEl: HTMLElement): ReactiveProxy {
   let initialData: Record<string, any> = {};
 
   // 1. Check for child <script type="application/json" hx-state> or <script type="text/hx-state">
-  const stateScript = rootEl.querySelector(':scope > script[type="application/json"][hx-state], :scope > script[type="text/hx-state"], :scope > script[hx-state]');
+  const stateScript = rootEl.querySelector(':scope > script[type="application/json"][hx-state], :scope > script[type="text/hx-state"], :scope > script[hx-state]')
+    || (Array.from(rootEl.children).find(c => c.tagName === 'SCRIPT' && c.hasAttribute('hx-state')) as HTMLElement | null)
+    || rootEl.querySelector('script[type="application/json"][hx-state], script[type="text/hx-state"], script[hx-state]');
   if (stateScript && stateScript.textContent) {
     try {
       initialData = JSON.parse(stateScript.textContent.trim());
@@ -3454,7 +3456,7 @@ if (typeof window !== 'undefined') {
       const root = el.tagName === 'SCRIPT' ? el.parentElement : el;
       if (root) initComponent(root as HTMLElement);
     });
-    if (document.body && document.body.hasAttribute('hx-state')) {
+    if (document.body && (document.body.hasAttribute('hx-state') || document.body.querySelector('script[hx-state]'))) {
       initComponent(document.body);
     }
     document.querySelectorAll('[scaleui]').forEach(el => handleScaleUI(el as HTMLElement));

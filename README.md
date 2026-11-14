@@ -111,7 +111,7 @@ Hyperstack = HTMX 4 (Modern DOM & Fetch Hypermedia Core)
 
 | Engine | Source (`src/`) | Distribution (`public/`) | Size (Gzipped) | Mathematical & Algorithmic Foundation | Capabilities |
 |---|---|---|---|---|---|
-| **⚡ Bolt** | `htmx-bolt.ts` | `htmx-bolt.js` | 25.89 KB | $O(1)$ coordinate-keyed sparse matrix & microtask batching | Signals, dependency tracking via deep Proxies, computed properties, `$store`, `HxBolt.matrix`, 120 FPS ticker, zero-eval safe evaluator. |
+| **⚡ Bolt** | `htmx-bolt.ts` | `htmx-bolt.js` | 25.95 KB | $O(1)$ coordinate-keyed sparse matrix & microtask batching | Signals, dependency tracking via deep Proxies, computed properties, `$store`, `HxBolt.matrix`, 120 FPS ticker, zero-eval safe evaluator. |
 | **🔍 Flash** | `htmx-flash.ts` | `htmx-flash.js` | 4.26 KB | TypedArray columnar indexing & bitmask query filters | In-memory fuzzy search (`hx-flash-search`), multi-column filters, TypedArray columnar store (`createColumnStore`). |
 | **🪟 Virtual** | `htmx-virtual.ts` | `htmx-virtual.js` | 3.27 KB | $O(1)$ spatial slicing & binary row-height bisecting | Bi-directional 2D windowing virtualization with pinned rows/columns for million-row tables. |
 | **📊 Calc** | `htmx-calc.ts` | `htmx-calc.js` | 3.18 KB | Kahn's algorithm topological DAG sort & cycle detection | Reactive formula DAG engine with coordinate references (`A1`, `SUM(A1:B10)`) and `#CYCLE!` detection. |
@@ -131,7 +131,7 @@ Hyperstack = HTMX 4 (Modern DOM & Fetch Hypermedia Core)
 
 Hyperstack includes an automated, reproducible benchmark suite (`bun run benchmark`) measuring real runtime throughput and payload efficiency. Full table, methodology and variance notes: [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
 
-- **Complete 13-Engine Suite**: **309,939 B raw / 75,977 B gzipped** — smaller than `react-dom` alone before components or state libraries.
+- **Complete 13-Engine Suite**: **310,206 B raw / 76,041 B gzipped** — smaller than `react-dom` alone before components or state libraries.
 - **Atomic 2D Sparse Matrix**: **427,000+ cell writes / second** in $O(1)$ coordinate space.
 - **In-Memory Columnar Search**: **0.146 ms query latency** across 10,000 rows.
 - **DAG Topological Solver**: **0.15 ms cascade resolution** across 500-level formula dependencies.

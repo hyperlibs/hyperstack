@@ -15,7 +15,7 @@
 
 | Engine | Bundle | Size | Primary Capabilities |
 |---|---|---|---|
-| **HxBolt** | `htmx-bolt.js` | 25.89KB | Signal-based reactive state (`hx-state`), bindings (`hx-text`, `hx-show`, `hx-class`, `hx-style`), 2D sparse matrix (`HxBolt.matrix`), 60fps RAF stream throttle (`hx-stream-batch`). |
+| **HxBolt** | `htmx-bolt.js` | 25.95KB | Signal-based reactive state (`hx-state`), bindings (`hx-text`, `hx-show`, `hx-class`, `hx-style`), 2D sparse matrix (`HxBolt.matrix`), 60fps RAF stream throttle (`hx-stream-batch`). |
 | **HxFlash** | `htmx-flash.js` | 4.26KB | 0ms in-memory fuzzy search (`hx-flash-search`), multi-column filters (`hx-flash-filter`), TypedArray ColumnStore (`HxFlash.createColumnStore`). |
 | **HxForm** | `htmx-form.js` | 4.42KB | Declarative validation pipes (`hx-validate`), multi-step wizard (`hx-wizard`), cascading fields (`hx-depends`), cell transactions (`cellTransaction`). |
 | **HxVibe** | `htmx-vibe.js` | 3.26KB | 60fps FLIP layout animation (`hx-vibe-flip`), 3D card tilt (`hx-vibe-card`), magnetic cursor snapping (`hx-vibe-magnetic`), physics shockwave (`hx-vpx-blast`). |
